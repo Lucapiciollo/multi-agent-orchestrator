@@ -1,0 +1,68 @@
+[
+  {
+    "id": "devops-work-items",
+    "name": "DevOps Work Items",
+    "description": "Lettura e processamento di bug e task da Azure DevOps assegnati all'utente corrente in stato New.",
+    "file": "skills/devops-work-items/SKILL.md"
+  },
+  {
+    "id": "multi-agent-orchestrator",
+    "name": "Multi-Agent Orchestrator",
+    "description": "Pianificazione, routing, dipendenze, conflitti, retry e approvazione.",
+    "file": "skills/multi-agent-orchestrator/SKILL.md"
+  },
+  {
+    "id": "pl-angular-architecture",
+    "name": "PL Angular Architecture",
+    "description": "Struttura Angular enterprise NgModule multi-project: componenti, routing, servizi, librerie personali. Senza NgRx.",
+    "file": "skills/pl-angular-architecture/SKILL.md"
+  },
+  {
+    "id": "pl-ngrx-store",
+    "name": "PL NgRx Store",
+    "description": "Feature state isolato con actions, reducer, effects, selectors e facade obbligatoria. Loading ed error gestiti.",
+    "file": "skills/pl-ngrx-store/SKILL.md"
+  },
+  {
+    "id": "pl-prototype-angular-library-agent",
+    "name": "PL Prototype Angular Library Agent",
+    "description": "Trasforma prototipi HTML/CSS in librerie Angular NgModule pacchettizzate, modulari e compatibili con il formato TimeVision.",
+    "file": "skills/pl-prototype-angular-library-agent/SKILL.md"
+  },
+  {
+    "id": "pl-enterprise-angular-agent",
+    "name": "PL Enterprise Angular Agent",
+    "description": "Progetta, analizza, prototipa, sviluppa, rifattorizza e promuove applicazioni Angular enterprise: Angular CLI multi-project, NgModule, NgRx, routing versionato, Signals e migrazioni supervisionate.",
+    "file": "skills/pl-enterprise-angular-agent/SKILL.md"
+  },
+  {
+    "id": "pl-responsive-layout-agent",
+    "name": "PL Responsive Layout Intelligence Agent",
+    "description": "Rende ogni pagina e componente realmente responsive su mobile, tablet e desktop senza rompere il layout esistente.",
+    "file": "skills/pl-responsive-layout-agent/SKILL.md"
+  },
+  {
+    "id": "pl-enterprise-dark-mode-theme-agent",
+    "name": "PL Enterprise Dark Mode & Theme Automation Agent",
+    "description": "Progetta, implementa, verifica e valida un dark mode professionale in applicazioni Angular enterprise con token, mixin e Playwright.",
+    "file": "skills/pl-enterprise-dark-mode-theme-agent/SKILL.md"
+  },
+  {
+    "id": "pl-visual-scss-compare-skill",
+    "name": "PL Visual SCSS Compare & Portal Parity Agent",
+    "description": "Confronta due versioni dello stesso portale con audit visuale SCSS, Playwright, design token e pixel comparison.",
+    "file": "skills/pl-visual-scss-compare-skill/SKILL.md"
+  },
+  {
+    "id": "pl-translate",
+    "name": "PL Translate — Static Text to i18n Agent",
+    "description": "Scansiona testi statici hardcoded in Angular e applica il sistema di traduzione (XLF + translateAsync + i18n). Opera in modalità audit, apply, check o spell.",
+    "file": "skills/pl-translate/SKILL.md"
+  },
+  {
+    "id": "code-review",
+    "name": "Code Review",
+    "description": "Revisione indipendente, build, test e controllo regressioni.",
+    "file": "skills/code-review/SKILL.md"
+  }
+]

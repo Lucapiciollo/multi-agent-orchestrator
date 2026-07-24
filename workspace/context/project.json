@@ -1,0 +1,49 @@
+{
+  "framework": "Angular",
+  "angularMode": "non-standalone",
+  "uiLibraries": [
+    "Angular Material",
+    "Bootstrap",
+    "pl-dynamic-form",
+    "jx-cell",
+    "ux-design"
+  ],
+  "projects": [
+    {
+      "name": "timevision",
+      "sourceRoot": "projects/timevision",
+      "description": "TimeVision — portale principale Angular enterprise",
+      "realPath": "C:\\Users\\LucaPiciollo\\Luca\\TimeVision\\src\\frontend\\TimeVision",
+      "areaPaths": ["TimeVision\\Frontend", "TimeVision\\Core", "TimeVision"]
+    },
+    {
+      "name": "pl-dynamic-form",
+      "sourceRoot": "projects/pl-dynamic-form",
+      "description": "Libreria DynamicForm — form dinamici riutilizzabili",
+      "realPath": "C:\\Users\\LucaPiciollo\\Luca\\DynamicForm",
+      "areaPaths": ["TimeVision\\DynamicForm", "DynamicForm"]
+    },
+    {
+      "name": "pl-loading-trace",
+      "sourceRoot": "projects/pl-loading-trace",
+      "description": "Libreria pl-loading-trace — loader e trace standard",
+      "realPath": "C:\\Users\\LucaPiciollo\\Luca\\loadingTrace",
+      "areaPaths": ["TimeVision\\LoadingTrace", "LoadingTrace"]
+    },
+    {
+      "name": "pl-core-utils",
+      "sourceRoot": "projects/pl-core-utils",
+      "description": "Libreria pl-core-utils — utility globali, interceptor, base classes",
+      "realPath": "C:\\Users\\LucaPiciollo\\Luca\\pl-core-utils-library",
+      "areaPaths": ["TimeVision\\CoreUtils", "CoreUtils"]
+    },
+    {
+      "name": "jx-cell",
+      "sourceRoot": "projects/jx-cell",
+      "description": "Libreria jx-cell — celle tabella",
+      "realPath": "C:\\Users\\LucaPiciollo\\OneDrive - AGIC\\Desktop\\jx-cell-workspace",
+      "areaPaths": ["TimeVision\\JxCell", "JxCell"]
+    }
+  ]
+}
+

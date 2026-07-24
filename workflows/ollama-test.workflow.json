@@ -1,0 +1,23 @@
+{
+  "id": "ollama-test",
+  "objective": "Verificare che Ollama risponda con un JSON valido senza modificare file.",
+  "projectRoot": ".",
+  "contextFiles": [],
+  "createGitCheckpoints": false,
+  "tasks": [
+    {
+      "id": "ollama-health",
+      "title": "Test comunicazione Ollama",
+      "description": "Conferma di aver ricevuto il messaggio dall'orchestratore. Non devi verificare build, test, filesystem o collegamenti esterni. Non modificare nessun file. Restituisci esclusivamente un JSON con: summary positivo, changedFiles vuoto, commandsExecuted vuoto, errors vuoto.",
+      "agentId": "ollama-health-agent",
+      "skillIds": [],
+      "dependencies": [],
+      "inputPaths": [],
+      "outputPaths": [],
+      "validationCriteria": [],
+      "status": "pending",
+      "attempts": 0,
+      "maxAttempts": 1
+    }
+  ]
+}

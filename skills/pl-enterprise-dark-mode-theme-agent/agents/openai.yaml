@@ -1,0 +1,17 @@
+name: PL Enterprise Dark Mode & Theme Automation Agent
+version: 1.0.0
+instructions: ../SKILL.md
+references:
+  - ../references/dark-mode-implementation-playbook.md
+  - ../references/playwright-dark-mode-audit.md
+  - ../references/wcag-contrast-checklist.md
+  - ../references/anti-breaking-rules.md
+  - ../references/report-template.md
+capabilities:
+  - angular-theme-analysis
+  - scss-token-generation
+  - angular-material-dark-theme
+  - playwright-visual-audit
+  - wcag-contrast-report
+  - safe-patch-generation
+  - rollback-planning

@@ -1,0 +1,23 @@
+{
+  "id": "copilot-test",
+  "objective": "Verificare che Copilot riceva e restituisca correttamente un messaggio JSON.",
+  "projectRoot": ".",
+  "contextFiles": [],
+  "createGitCheckpoints": false,
+  "tasks": [
+    {
+      "id": "health-check",
+      "title": "Test comunicazione Copilot",
+      "description": "Conferma di aver ricevuto il messaggio dall'orchestratore. Non devi verificare build, test, filesystem o collegamenti esterni. Restituisci un riepilogo positivo, changedFiles vuoto, commandsExecuted vuoto ed errors vuoto.",
+      "agentId": "copilot-health-agent",
+      "skillIds": [],
+      "dependencies": [],
+      "inputPaths": [],
+      "outputPaths": [],
+      "validationCriteria": [],
+      "status": "pending",
+      "attempts": 0,
+      "maxAttempts": 1
+    }
+  ]
+}

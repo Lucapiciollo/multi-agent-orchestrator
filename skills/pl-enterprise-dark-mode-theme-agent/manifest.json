@@ -1,0 +1,25 @@
+{
+  "name": "PL Enterprise Dark Mode & Theme Automation Agent",
+  "version": "1.1.0",
+  "author": "Luca Piciollo / ChatGPT",
+  "description": "Skill specialistica per progettare, implementare, verificare e rendere sicura una dark mode enterprise in applicazioni Angular con SCSS, Angular Material e Playwright visual audit.",
+  "entry": "SKILL.md",
+  "references": [
+    "references/dark-mode-implementation-playbook.md",
+    "references/playwright-dark-mode-audit.md",
+    "references/wcag-contrast-checklist.md",
+    "references/anti-breaking-rules.md",
+    "references/report-template.md",
+    "references/fluent-ui-dark-palette.md"
+  ],
+  "tags": [
+    "angular",
+    "scss",
+    "dark-mode",
+    "theme",
+    "playwright",
+    "visual-audit",
+    "accessibility",
+    "enterprise-design"
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "id": "demo-orchestration",
+  "objective": "Dimostrare l'esecuzione di agenti specializzati con dipendenze e validazione.",
+  "projectRoot": ".",
+  "contextFiles": ["workspace/context/project.json"],
+  "createGitCheckpoints": false,
+  "tasks": [
+    {
+      "id": "analyse",
+      "title": "Analisi iniziale",
+      "description": "Analizzare il progetto e produrre una mappa dei componenti.",
+      "agentId": "angular-architecture-agent",
+      "skillIds": ["pl-prototype-angular-library-agent"],
+      "dependencies": [],
+      "inputPaths": ["workspace/input/**"],
+      "outputPaths": ["workspace/reports/component-map.json"],
+      "validationCriteria": ["Mappa componenti prodotta", "Nessun macro-componente"],
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "store",
+      "title": "Progettazione store",
+      "description": "Definire lo store NgRx sulla base della mappa.",
+      "agentId": "ngrx-agent",
+      "skillIds": ["pl-enterprise-angular-agent"],
+      "dependencies": ["analyse"],
+      "inputPaths": ["workspace/reports/component-map.json"],
+      "outputPaths": ["workspace/reports/store-design.json"],
+      "validationCriteria": ["Feature state isolato", "Selector e facade previsti"],
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "responsive",
+      "title": "Analisi responsive",
+      "description": "Verificare i principali breakpoint.",
+      "agentId": "responsive-agent",
+      "skillIds": ["pl-responsive-layout-agent", "pl-visual-scss-compare-skill"],
+      "dependencies": ["analyse"],
+      "inputPaths": ["workspace/reports/component-map.json"],
+      "outputPaths": ["workspace/screenshots/**", "workspace/reports/responsive.md"],
+      "validationCriteria": ["Breakpoint verificati", "Overflow documentati"],
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "review",
+      "title": "Revisione finale",
+      "description": "Validare risultati e produrre il report finale.",
+      "agentId": "quality-review-agent",
+      "skillIds": ["code-review"],
+      "dependencies": ["store", "responsive"],
+      "inputPaths": ["workspace/reports/**"],
+      "outputPaths": ["workspace/reports/final-review.md"],
+      "validationCriteria": ["Nessun problema critico", "Esito dichiarato"],
+      "status": "pending",
+      "attempts": 0
+    }
+  ]
+}

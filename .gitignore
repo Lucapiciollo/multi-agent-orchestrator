@@ -1,0 +1,20 @@
+node_modules/
+dist/
+.env
+workspace/output/*
+!workspace/output/.gitkeep
+workspace/reports/*
+!workspace/reports/.gitkeep
+!workspace/reports/devops/
+workspace/reports/devops/*
+!workspace/reports/devops/.gitkeep
+workspace/logs/*
+!workspace/logs/.gitkeep
+workspace/checkpoints/*
+!workspace/checkpoints/.gitkeep
+
+# Cartella progetti sorgente — contiene junction locali a repo separati
+# Non deve essere tracciata: ogni progetto ha il proprio repository git
+projects/**
+!projects/.gitkeep
+

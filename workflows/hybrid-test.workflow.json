@@ -1,0 +1,51 @@
+{
+  "id": "hybrid-test",
+  "objective": "Verificare che provider Copilot e Ollama collaborino correttamente in un workflow misto.",
+  "projectRoot": ".",
+  "contextFiles": [],
+  "createGitCheckpoints": false,
+  "tasks": [
+    {
+      "id": "copilot-step",
+      "title": "Step Copilot",
+      "description": "Conferma comunicazione con il provider Copilot. Non modificare file. Restituisci summary positivo, changedFiles vuoto, commandsExecuted vuoto, errors vuoto.",
+      "agentId": "copilot-health-agent",
+      "skillIds": [],
+      "dependencies": [],
+      "inputPaths": [],
+      "outputPaths": ["workspace/reports/hybrid-copilot.json"],
+      "validationCriteria": [],
+      "status": "pending",
+      "attempts": 0,
+      "maxAttempts": 1
+    },
+    {
+      "id": "ollama-step",
+      "title": "Step Ollama",
+      "description": "Conferma comunicazione con il provider Ollama. Non modificare file. Restituisci summary positivo, changedFiles vuoto, commandsExecuted vuoto, errors vuoto.",
+      "agentId": "ollama-health-agent",
+      "skillIds": [],
+      "dependencies": [],
+      "inputPaths": [],
+      "outputPaths": ["workspace/reports/hybrid-ollama.json"],
+      "validationCriteria": [],
+      "status": "pending",
+      "attempts": 0,
+      "maxAttempts": 1
+    },
+    {
+      "id": "copilot-review",
+      "title": "Review finale Copilot",
+      "description": "Sulla base degli step precedenti, conferma che il workflow ibrido è completato con successo. Non modificare file. Restituisci summary positivo, changedFiles vuoto, commandsExecuted vuoto, errors vuoto.",
+      "agentId": "copilot-health-agent",
+      "skillIds": [],
+      "dependencies": ["copilot-step", "ollama-step"],
+      "inputPaths": [],
+      "outputPaths": ["workspace/reports/hybrid-review.json"],
+      "validationCriteria": [],
+      "status": "pending",
+      "attempts": 0,
+      "maxAttempts": 1
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "name": "multi-agent-orchestrator",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Orchestratore multi-agent con skill Markdown, workflow JSON, validazione e provider intercambiabili.",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx src/cli.ts",
+    "start": "node dist/src/cli.js",
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "demo": "tsx src/cli.ts run workflows/demo.workflow.json --all",
+    "test:copilot": "tsx src/cli.ts run workflows/copilot-test.workflow.json --all",
+    "test:ollama": "tsx src/cli.ts run workflows/ollama-test.workflow.json --all",
+    "test:hybrid": "tsx src/cli.ts run workflows/hybrid-test.workflow.json --all",
+    "watch:devops": "tsx src/devops-watcher.ts",
+    "list:devops-states": "tsx src/cli.ts devops:states",
+    "list:devops-members": "tsx src/cli.ts devops:members",
+    "devops:inspect": "tsx src/cli.ts devops:inspect",
+    "devops:analyze": "tsx src/cli.ts devops:analyze",
+    "list:agents": "tsx src/cli.ts agents",
+    "list:skills": "tsx src/cli.ts skills",
+    "clean": "node -e \"import('node:fs').then(fs=>fs.rmSync('dist',{recursive:true,force:true}))\""
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@azure/identity": "^4.13.1",
+    "@inquirer/prompts": "^8.5.2",
+    "chalk": "^5.4.1",
+    "commander": "^13.1.0",
+    "dotenv": "^16.4.7",
+    "glob": "^13.0.6",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.5",
+    "tsx": "^4.19.3",
+    "typescript": "^5.7.3"
+  }
+}

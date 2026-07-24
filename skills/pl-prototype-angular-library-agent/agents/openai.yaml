@@ -1,0 +1,22 @@
+name: PL Prototype Angular Library Agent
+description: Trasforma prototipi HTML in librerie Angular NgModule enterprise nel formato TimeVision, con componenti separati, routing, NgRx, adapters, config e deleghe responsive/dark mode scoped.
+version: 1.0.0
+language: it
+entrypoint: SKILL.md
+capabilities:
+  - html_prototype_analysis
+  - angular_library_generation
+  - ngmodule_architecture
+  - ngrx_store_generation
+  - component_splitting
+  - timevision_format_alignment
+  - personal_library_integration
+  - scoped_responsive_delegation
+  - scoped_darkmode_delegation
+constraints:
+  - only_modify_projects_feature_folder
+  - no_macro_component
+  - no_flat_components
+  - no_global_side_effects
+  - no_fake_imports
+  - no_personal_library_modification_without_consent

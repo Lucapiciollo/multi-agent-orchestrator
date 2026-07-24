@@ -1,0 +1,9 @@
+{
+  "constraints": [
+    "Ogni componente deve avere una cartella sotto components",
+    "version1 e version2 devono avere Material e SCSS indipendenti",
+    "index e store possono essere condivisi ma senza temi specifici",
+    "Responsive e dark mode devono restare nella libreria generata",
+    "Nessuna libreria personale può essere modificata senza approvazione"
+  ]
+}

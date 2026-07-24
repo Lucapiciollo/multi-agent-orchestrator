@@ -1,0 +1,26 @@
+{
+  "name": "PL Visual SCSS Compare & Portal Parity Agent",
+  "version": "1.1.0",
+  "author": "Luca Piciollo / ChatGPT",
+  "description": "Skill strict per comparare SCSS e resa visuale di due ambienti dello stesso portale con Playwright, screenshot, computed styles, bounding box, report tecnico, fix sicuri e rollback.",
+  "language": "it",
+  "tags": [
+    "angular",
+    "scss",
+    "playwright",
+    "visual-regression",
+    "portal-parity",
+    "frontend-audit",
+    "design-system",
+    "safe-fix",
+    "rollback",
+    "pixel-diff",
+    "dom-snapshot"
+  ],
+  "entrypoint": "SKILL.md",
+  "references": [
+    "references/playwright-visual-audit-playbook.md",
+    "references/scss-diff-checklist.md",
+    "references/report-template.md"
+  ]
+}
