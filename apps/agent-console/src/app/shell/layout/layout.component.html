@@ -1,0 +1,12 @@
+<mat-sidenav-container class="sidenav-container" [class.dark-theme]="isDarkMode">
+  <mat-sidenav #sidenav mode="side" opened class="sidenav">
+    <app-sidebar></app-sidebar>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="main-content">
+    <app-header (toggleSidenav)="sidenav.toggle()" (toggleDark)="isDarkMode = !isDarkMode" [isDark]="isDarkMode"></app-header>
+    <main class="content-area container-fluid py-3">
+      <router-outlet></router-outlet>
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

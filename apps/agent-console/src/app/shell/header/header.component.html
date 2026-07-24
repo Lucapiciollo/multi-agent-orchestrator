@@ -1,0 +1,21 @@
+<mat-toolbar color="primary" class="header-toolbar">
+  <button mat-icon-button (click)="toggleSidenav.emit()">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <span class="ms-2 breadcrumb-text">{{ title }}</span>
+  <span class="flex-grow-1"></span>
+
+  <!-- Provider indicators -->
+  <div class="d-flex align-items-center gap-2 me-2">
+    <mat-icon [class]="copilotClass" [matTooltip]="'Copilot: ' + copilotStatus">circle</mat-icon>
+    <mat-icon [class]="ollamaClass" [matTooltip]="'Ollama: ' + ollamaStatus">circle</mat-icon>
+  </div>
+
+  <!-- Dark mode toggle -->
+  <mat-slide-toggle [checked]="isDark" (change)="toggleDark.emit()" matTooltip="Dark mode" class="me-2">
+  </mat-slide-toggle>
+
+  <button mat-icon-button matTooltip="Impostazioni">
+    <mat-icon>settings</mat-icon>
+  </button>
+</mat-toolbar>

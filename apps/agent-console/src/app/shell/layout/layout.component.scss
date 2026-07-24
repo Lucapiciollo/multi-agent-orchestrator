@@ -1,0 +1,5 @@
+.sidenav-container { height: 100vh; }
+.sidenav { width: 240px; background: var(--sidebar-bg, #1e293b); color: #e2e8f0; }
+.main-content { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+.content-area { flex: 1; overflow-y: auto; background: var(--content-bg, #f8fafc); }
+.dark-theme { --sidebar-bg: #0f172a; --content-bg: #1e293b; color-scheme: dark; }

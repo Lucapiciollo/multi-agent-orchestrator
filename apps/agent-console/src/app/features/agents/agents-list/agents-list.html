@@ -1,0 +1,1 @@
+<div class="container-fluid"><h2>Agenti</h2><div *ngIf="loading"><mat-spinner diameter="32"></mat-spinner></div><div *ngIf="!loading"><mat-card *ngFor="let a of agents" class="mb-2"><mat-card-content>{{a.name}} - {{a.provider?.type}}</mat-card-content></mat-card></div></div>

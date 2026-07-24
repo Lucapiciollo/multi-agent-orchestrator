@@ -1,0 +1,1 @@
+<div class="container-fluid"><h2>Esecuzioni</h2><div *ngIf="loading"><mat-spinner diameter="32"></mat-spinner></div><mat-card *ngFor="let e of executions" class="mb-2"><mat-card-content><b>{{e.workflowId}}</b> - <span>{{e.status}}</span></mat-card-content></mat-card></div>
