@@ -4,6 +4,7 @@ import { readdir } from "node:fs/promises";
 import { readJson, initSseHeaders, sendSse } from "../utils.js";
 import { ROOT_DIR } from "../config.js";
 import { executionStore, type ExecutionEvent, type TaskResult } from "../execution-store.js";
+import { CancellationRegistry } from "../../../../src/cancellation.js";
 
 export const executionsRouter = Router();
 
@@ -120,6 +121,10 @@ async function runWorkflowAsync(
   workflow: WorkflowDefinition,
   _req: StartExecutionRequest
 ): Promise<void> {
+  const abortCtrl = new AbortController();
+  executionStore.registerAbort(execId, abortCtrl);
+  CancellationRegistry.register(execId);  // Also register for providers
+
   try {
     executionStore.setStatus(execId, "running");
     executionStore.update(execId, { startedAt: new Date().toISOString() });
@@ -171,11 +176,43 @@ async function runWorkflowAsync(
         skills: [...(task.skillIds ?? [])],
         status: "pending",
         attempts: 0,
-        errors: []
+        errors: [],
+        inputPaths: [...(task.inputPaths ?? [])],
+        changedFiles: [],
+        commandsExecuted: []
       } as TaskResult);
     }
 
+    // Emit task.started for the first task (tasks run sequentially, first always starts immediately)
+    if (plan.tasks.length > 0) {
+      const first = plan.tasks[0]!;
+      executionStore.updateTask(execId, first.id, { status: "running" } as Partial<TaskResult>);
+      executionStore.addLog(execId, {
+        type: "task.started",
+        executionId: execId,
+        taskId: first.id,
+        timestamp: new Date().toISOString(),
+        message: `Avvio task: ${first.title}`
+      });
+      // Emit input files being read
+      if (first.inputPaths?.length) {
+        executionStore.addLog(execId, {
+          type: "task.reading-files",
+          executionId: execId,
+          taskId: first.id,
+          timestamp: new Date().toISOString(),
+          message: `File in lettura: ${first.inputPaths.join(", ")}`
+        });
+      }
+    }
+
     const report = await orchestrator.execute(plan as Parameters<typeof orchestrator.execute>[0]);
+
+    // Check if cancelled mid-execution
+    if (abortCtrl.signal.aborted) {
+      executionStore.deregisterAbort(execId);
+      return;
+    }
 
     // Update task results from report
     for (const taskReport of report.tasks) {
@@ -187,8 +224,10 @@ async function runWorkflowAsync(
         errors: taskReport.errors,
         provider: taskReport.provider ?? "",
         model: taskReport.model ?? "",
-        skills: taskReport.skills ?? []
-      });
+        skills: taskReport.skills ?? [],
+        changedFiles: taskReport.changedFiles ?? [],
+        commandsExecuted: taskReport.commandsExecuted ?? []
+      } as Partial<TaskResult>);
       executionStore.addLog(execId, {
         type: status === "completed" ? "task.completed" : "task.failed",
         executionId: execId,
@@ -196,6 +235,16 @@ async function runWorkflowAsync(
         timestamp: new Date().toISOString(),
         message: taskReport.summary ?? taskReport.status
       });
+      // Emit changed files event if any
+      if (taskReport.changedFiles?.length) {
+        executionStore.addLog(execId, {
+          type: "task.files-changed",
+          executionId: execId,
+          taskId: taskReport.id,
+          timestamp: new Date().toISOString(),
+          message: `File modificati: ${taskReport.changedFiles.join(", ")}`
+        });
+      }
     }
 
     executionStore.setStatus(execId, report.success ? "completed" : "failed");
@@ -211,7 +260,14 @@ async function runWorkflowAsync(
       timestamp: new Date().toISOString(),
       message: report.success ? "Workflow completato con successo" : "Workflow terminato con errori"
     });
+    executionStore.deregisterAbort(execId);
+    CancellationRegistry.deregister(execId);
   } catch (err) {
+    executionStore.deregisterAbort(execId);
+    CancellationRegistry.deregister(execId);
+    // If aborted by user, the status is already "cancelled" — don't overwrite
+    const ex = executionStore.get(execId);
+    if (ex?.status === "cancelled") return;
     executionStore.setStatus(execId, "failed");
     executionStore.update(execId, { completedAt: new Date().toISOString() });
     executionStore.addLog(execId, {

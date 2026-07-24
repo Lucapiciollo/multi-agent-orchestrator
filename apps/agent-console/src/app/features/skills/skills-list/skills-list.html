@@ -1,1 +1,30 @@
-<div class="container-fluid"><h2>Skill</h2><div *ngIf="loading"><mat-spinner diameter="32"></mat-spinner></div><mat-card *ngFor="let s of skills" class="mb-2"><mat-card-content>{{s.name}}: {{s.description}}</mat-card-content></mat-card></div>
+<div class="dv-page">
+  <div class="dv-page-bar">
+    <div>
+      <div class="dv-page-title">Skill</div>
+      <div class="dv-page-sub">{{items.length}} skill disponibili</div>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="dv-loading"><mat-spinner [diameter]="20"></mat-spinner> Caricamento...</div>
+  <div *ngIf="error" class="dv-error">{{error}}</div>
+
+  <table class="dv-table" *ngIf="!loading && !error && items.length > 0">
+    <thead>
+      <tr>
+        <th>ID SKILL</th>
+        <th>DESCRIZIONE</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of items">
+        <td><span class="mono">{{item.id || item.name}}</span></td>
+        <td class="td-desc">{{item.description}}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="items.length === 0 && !loading" class="dv-empty">
+    <mat-icon>bolt</mat-icon><p>Nessuna skill trovata</p>
+  </div>
+</div>

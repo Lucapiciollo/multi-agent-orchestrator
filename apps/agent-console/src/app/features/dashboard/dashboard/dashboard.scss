@@ -1,0 +1,110 @@
+.dv-page { padding: 24px 28px; max-width: 1280px; }
+
+/* KPI bar */
+.kpi-bar {
+  display: flex; align-items: stretch;
+  background: #fff; border: 1px solid #e5e7eb; border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
+  margin-bottom: 24px; overflow: hidden;
+}
+.kpi-sep { width: 1px; background: #e5e7eb; flex-shrink: 0; }
+.kpi-card {
+  flex: 1; display: flex; align-items: center; gap: 14px; padding: 18px 20px;
+  text-decoration: none; color: inherit; transition: background .12s;
+  &:hover { background: #f8f9ff; }
+}
+.kpi-icon {
+  width: 40px; height: 40px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  mat-icon { font-size: 20px; width: 20px; height: 20px; color: #fff; }
+  &.agents  { background: #2563eb; }
+  &.skills  { background: #d97706; }
+  &.wf      { background: #059669; }
+  &.exec    { background: #7c3aed; }
+}
+.kpi-val { font-size: 26px; font-weight: 700; color: #111827; line-height: 1; }
+.kpi-lbl { font-size: 12px; color: #6b7280; margin-top: 3px; font-weight: 500; }
+
+/* Section */
+.dv-section { margin-top: 8px; }
+.dv-section-title {
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+  color: #6b7280; margin-bottom: 12px;
+}
+
+/* Quick grid */
+.quick-grid {
+  display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px;
+}
+.quick-btn {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 6px; padding: 16px 8px;
+  background: #fff; border: 1px solid #e5e7eb; border-radius: 8px;
+  text-decoration: none; color: #374151; font-size: 12px; font-weight: 500;
+  cursor: pointer; transition: all .12s;
+  mat-icon { font-size: 20px; width: 20px; height: 20px; color: #2563eb; }
+  &:hover { border-color: #2563eb; color: #2563eb; background: #eff6ff; box-shadow: 0 0 0 3px rgba(37,99,235,.08); }
+}
+
+
+/* ── Stats grid ── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 20px;
+  border-radius: 14px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform .18s, box-shadow .18s;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  &:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,.12); }
+}
+
+.stat-icon {
+  width: 52px; height: 52px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  mat-icon { font-size: 26px; width: 26px; height: 26px; }
+}
+.stat-body { flex: 1; }
+.stat-value { font-size: 32px; font-weight: 800; line-height: 1; }
+.stat-label { font-size: 13px; font-weight: 500; margin-top: 3px; opacity: .7; }
+.stat-arrow { opacity: .3; }
+
+.stat-agents    { background: linear-gradient(135deg,#eef2ff,#e0e7ff); .stat-icon{background:#6366f1;color:#fff;} .stat-value{color:#4338ca;} }
+.stat-skills    { background: linear-gradient(135deg,#fffbeb,#fef3c7); .stat-icon{background:#f59e0b;color:#fff;} .stat-value{color:#d97706;} }
+.stat-workflows { background: linear-gradient(135deg,#ecfdf5,#d1fae5); .stat-icon{background:#10b981;color:#fff;} .stat-value{color:#059669;} }
+.stat-executions{ background: linear-gradient(135deg,#fef2f2,#fee2e2); .stat-icon{background:#ef4444;color:#fff;} .stat-value{color:#dc2626;} }
+
+/* ── Quick section ── */
+.quick-section { margin-top: 8px; }
+.section-title { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: #94a3b8; margin-bottom: 16px; }
+
+.quick-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.quick-card {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+  padding: 22px 12px;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  text-decoration: none;
+  font-size: 13px; font-weight: 500;
+  transition: all .18s;
+  cursor: pointer;
+  mat-icon { font-size: 24px; width: 24px; height: 24px; color: #6366f1; }
+  &:hover { background: #6366f1; color: #fff; border-color: #6366f1; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(99,102,241,.3); mat-icon { color: #fff; } }
+}

@@ -1,1 +1,50 @@
-<div class="container-fluid"><h2>Agenti</h2><div *ngIf="loading"><mat-spinner diameter="32"></mat-spinner></div><div *ngIf="!loading"><mat-card *ngFor="let a of agents" class="mb-2"><mat-card-content>{{a.name}} - {{a.provider?.type}}</mat-card-content></mat-card></div></div>
+<div class="dv-page">
+  <div class="dv-page-bar">
+    <div>
+      <div class="dv-page-title">Agenti</div>
+      <div class="dv-page-sub">{{items.length}} agenti registrati</div>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="dv-loading">
+    <mat-spinner [diameter]="20"></mat-spinner> Caricamento...
+  </div>
+  <div *ngIf="error" class="dv-error">{{error}}</div>
+
+  <table class="dv-table" *ngIf="!loading && !error && items.length > 0">
+    <thead>
+      <tr>
+        <th>ID AGENTE</th>
+        <th>DESCRIZIONE</th>
+        <th>PROVIDER</th>
+        <th>FALLBACK</th>
+        <th>SKILL</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of items">
+        <td><span class="mono">{{item.id || item.name}}</span></td>
+        <td class="td-desc">{{item.description}}</td>
+        <td>
+          <span class="dv-badge blue" *ngIf="item.provider?.type === 'copilot'">copilot</span>
+          <span class="dv-badge ok"   *ngIf="item.provider?.type === 'ollama'">ollama</span>
+          <span class="dv-badge neutral" *ngIf="item.provider?.type === 'mock'">mock</span>
+          <span class="dv-badge neutral" *ngIf="!item.provider?.type">N/A</span>
+        </td>
+        <td>
+          <span class="dv-badge neutral" *ngIf="item.provider?.fallback">{{item.provider.fallback}}</span>
+          <span class="td-none" *ngIf="!item.provider?.fallback">—</span>
+        </td>
+        <td class="td-skills">
+          <span *ngFor="let s of item.skills" class="skill-tag">{{s}}</span>
+          <span class="td-none" *ngIf="!item.skills?.length">—</span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="items.length === 0 && !loading" class="dv-empty">
+    <mat-icon>smart_toy</mat-icon>
+    <p>Nessun agente trovato</p>
+  </div>
+</div>

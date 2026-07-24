@@ -8,6 +8,7 @@ import { executionsRouter } from "./routes/executions.js";
 import { providersRouter } from "./routes/providers.js";
 import { healthRouter } from "./routes/health.js";
 import { projectsRouter } from "./routes/projects.js";
+import { workspaceRouter } from "./routes/workspace.js";
 import { ROOT_DIR } from "./config.js";
 
 const app = express();
@@ -36,6 +37,7 @@ app.use("/api/workflows",  workflowsRouter);
 app.use("/api/executions", executionsRouter);
 app.use("/api/providers",  providersRouter);
 app.use("/api/projects",   projectsRouter);
+app.use("/api/workspace",  workspaceRouter);
 
 // ── 404 ───────────────────────────────────────────────────────────────────
 app.use((_req, res) => {

@@ -23,16 +23,14 @@ export class CopilotProvider implements AgentProvider {
   ): Promise<AgentRunResult> {
     const commandArgs = [
       ...this.args,
-      "--no-custom-instructions",
-      "-p",
-      prompt
+      "--no-custom-instructions"
     ];
 
     const cwd = path.resolve(process.cwd(), request.plan.projectRoot);
 
     let output: ProcessOutput;
     try {
-      output = await this.execute(commandArgs, cwd);
+      output = await this.execute(commandArgs, cwd, prompt);
     } catch (err) {
       // Timeout throws — allow FallbackProvider to catch
       throw err;
@@ -58,15 +56,21 @@ export class CopilotProvider implements AgentProvider {
 
   private execute(
     args: string[],
-    cwd: string
+    cwd: string,
+    stdinData: string
   ): Promise<ProcessOutput> {
     return new Promise((resolve, reject) => {
       const child = spawn(this.command, args, {
         cwd,
         shell: false,
         env: { ...process.env, NO_COLOR: "1" },
-        windowsHide: true
+        windowsHide: true,
+        stdio: ["pipe", "pipe", "pipe"]
       });
+
+      // Prompt via stdin — evita ENAMETOOLONG su Windows (limite 32767 chars)
+      child.stdin.write(stdinData, "utf8");
+      child.stdin.end();
 
       let stdout = "";
       let stderr = "";

@@ -1,1 +1,76 @@
-<div class="container-fluid"><h2>Workflow</h2><div *ngIf="loading"><mat-spinner diameter="32"></mat-spinner></div><mat-card *ngFor="let w of workflows" class="mb-2"><mat-card-header><mat-card-title>{{w.id}}</mat-card-title></mat-card-header><mat-card-content>{{w.objective}}</mat-card-content><mat-card-actions><button mat-raised-button color="primary" (click)="start(w)">Avvia</button></mat-card-actions></mat-card></div>
+<div class="dv-page">
+  <div class="dv-page-bar">
+    <div>
+      <div class="dv-page-title">Workflow</div>
+      <div class="dv-page-sub">{{items.length}} workflow configurati</div>
+    </div>
+  </div>
+
+  <!-- ── File di input ─────────────────────────────── -->
+  <div class="input-panel">
+    <div class="input-panel-header">
+      <div class="input-panel-title">
+        <mat-icon>folder_open</mat-icon>
+        <span>File di input</span>
+        <span class="input-count" *ngIf="inputFiles.length">{{inputFiles.length}}</span>
+      </div>
+      <button class="upload-btn" (click)="openFilePicker()" [disabled]="uploading">
+        <mat-spinner *ngIf="uploading" [diameter]="14" style="display:inline-block;"></mat-spinner>
+        <mat-icon *ngIf="!uploading">upload_file</mat-icon>
+        <span>{{ uploading ? 'Caricamento...' : 'Carica file' }}</span>
+      </button>
+      <input #fileInput type="file" multiple style="display:none" (change)="onFilesSelected($event)">
+    </div>
+    <div class="input-error" *ngIf="uploadError">{{uploadError}}</div>
+    <div class="input-files-list" *ngIf="inputFiles.length">
+      <div *ngFor="let f of inputFiles" class="input-file-row">
+        <mat-icon class="file-icon">description</mat-icon>
+        <span class="file-name" [matTooltip]="'workspace/input/' + f.name">{{f.name}}</span>
+        <span class="file-size">{{formatSize(f.size)}}</span>
+        <button class="del-btn" (click)="deleteInputFile(f.name)" matTooltip="Rimuovi">
+          <mat-icon>delete_outline</mat-icon>
+        </button>
+      </div>
+    </div>
+    <div class="input-empty" *ngIf="!inputFiles.length && !uploading">
+      Nessun file — carica CSS, HTML o SCSS da analizzare
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="dv-loading"><mat-spinner [diameter]="20"></mat-spinner> Caricamento...</div>
+  <div *ngIf="error" class="dv-error">{{error}}</div>
+
+  <table class="dv-table" *ngIf="!loading && !error && items.length > 0">
+    <thead>
+      <tr>
+        <th>ID WORKFLOW</th>
+        <th>OBIETTIVO</th>
+        <th>TASK</th>
+        <th>TAG</th>
+        <th style="width:110px;">ESEGUI</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of items">
+        <td><span class="mono">{{item.id}}</span></td>
+        <td class="td-obj">{{item.objective}}</td>
+        <td><span class="dv-badge ok" [matTooltip]="taskTooltip(item)" matTooltipPosition="right">{{item.tasks?.length || 0}}</span></td>
+        <td class="td-tags">
+          <span *ngFor="let t of item.tags" class="skill-tag">{{t}}</span>
+          <span class="td-none" *ngIf="!item.tags?.length">—</span>
+        </td>
+        <td>
+          <button class="run-btn" (click)="run(item.id)" [disabled]="running[item.id]">
+            <mat-spinner *ngIf="running[item.id]" [diameter]="14" style="display:inline-block;"></mat-spinner>
+            <mat-icon *ngIf="!running[item.id]">play_arrow</mat-icon>
+            <span>{{running[item.id] ? 'Avvio...' : 'Run'}}</span>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="items.length === 0 && !loading" class="dv-empty">
+    <mat-icon>account_tree</mat-icon><p>Nessun workflow trovato</p>
+  </div>
+</div>

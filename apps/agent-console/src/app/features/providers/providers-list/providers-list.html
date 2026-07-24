@@ -1,1 +1,46 @@
-<div class="container-fluid"><h2>Provider</h2><div *ngIf="loading"><mat-spinner diameter="32"></mat-spinner></div><mat-card *ngFor="let p of providers" class="mb-2"><mat-card-header><mat-card-title>{{p.name}}</mat-card-title></mat-card-header><mat-card-content>{{p.model}} - <mat-chip [color]="p.health==='healthy'?'primary':'warn'">{{p.health}}</mat-chip></mat-card-content></mat-card></div>
+<div class="dv-page">
+  <div class="dv-page-bar">
+    <div>
+      <div class="dv-page-title">Provider AI</div>
+      <div class="dv-page-sub">Stato dei provider configurati</div>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="dv-loading"><mat-spinner [diameter]="20"></mat-spinner> Verifica provider in corso...</div>
+  <div *ngIf="error" class="dv-error">{{error}}</div>
+
+  <div class="prov-grid" *ngIf="!loading && !error && items.length > 0">
+    <div *ngFor="let item of items" class="prov-card" [class.healthy]="item.health === 'healthy'" [class.unhealthy]="item.health !== 'healthy'">
+      <div class="prov-header">
+        <div class="prov-name">{{item.name}}</div>
+        <div class="prov-status">
+          <span class="dv-badge ok"   *ngIf="item.health === 'healthy'">healthy</span>
+          <span class="dv-badge warn" *ngIf="item.health === 'degraded'">degraded</span>
+          <span class="dv-badge err"  *ngIf="item.health === 'unavailable'">unavailable</span>
+        </div>
+      </div>
+      <div class="prov-body">
+        <div class="prov-row">
+          <span class="prov-lbl">Model</span>
+          <span class="mono">{{item.model}}</span>
+        </div>
+        <div class="prov-row" *ngIf="item.latencyMs !== undefined">
+          <span class="prov-lbl">Latenza</span>
+          <span class="prov-val">{{item.latencyMs}}ms</span>
+        </div>
+        <div class="prov-row" *ngIf="item.lastCheckedAt">
+          <span class="prov-lbl">Ultimo check</span>
+          <span class="prov-val">{{item.lastCheckedAt | date:'HH:mm:ss'}}</span>
+        </div>
+        <div class="prov-row" *ngIf="item.details">
+          <span class="prov-lbl">Dettagli</span>
+          <span class="prov-val err-text">{{item.details}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="items.length === 0 && !loading" class="dv-empty">
+    <mat-icon>dns</mat-icon><p>Nessun provider trovato</p>
+  </div>
+</div>

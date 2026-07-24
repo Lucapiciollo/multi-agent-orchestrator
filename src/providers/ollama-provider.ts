@@ -1,5 +1,6 @@
 import type { AgentRunRequest, AgentRunResult, ResultError } from "../models.js";
 import type { AgentProvider } from "./provider.js";
+import { CancellationRegistry } from "../cancellation.js";
 
 interface OllamaGenerateResponse {
   model: string;
@@ -20,6 +21,12 @@ export class OllamaProvider implements AgentProvider {
   ): Promise<AgentRunResult> {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), this.timeoutMs);
+
+    // Combine with external cancellation signal (if registered)
+    const execSignal = CancellationRegistry.getSignal(request.task.id.split("-")[0] ?? "");
+    if (execSignal) {
+      execSignal.addEventListener("abort", () => controller.abort(), { once: true });
+    }
 
     let raw: string;
 

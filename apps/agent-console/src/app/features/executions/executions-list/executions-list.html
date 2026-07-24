@@ -1,1 +1,49 @@
-<div class="container-fluid"><h2>Esecuzioni</h2><div *ngIf="loading"><mat-spinner diameter="32"></mat-spinner></div><mat-card *ngFor="let e of executions" class="mb-2"><mat-card-content><b>{{e.workflowId}}</b> - <span>{{e.status}}</span></mat-card-content></mat-card></div>
+<div class="dv-page">
+  <div class="dv-page-bar">
+    <div>
+      <div class="dv-page-title">Esecuzioni</div>
+      <div class="dv-page-sub">{{items.length}} esecuzioni nel registro</div>
+    </div>
+    <button class="refresh-btn" (click)="load()" title="Aggiorna">
+      <mat-icon>refresh</mat-icon>
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="dv-loading"><mat-spinner [diameter]="20"></mat-spinner> Caricamento...</div>
+  <div *ngIf="error" class="dv-error">{{error}}</div>
+
+  <div *ngIf="items.length === 0 && !loading" class="dv-empty">
+    <mat-icon>receipt_long</mat-icon>
+    <p>Nessuna esecuzione trovata</p>
+    <small>Avvia un workflow dalla pagina Workflow</small>
+  </div>
+
+  <table class="dv-table" *ngIf="!loading && !error && items.length > 0">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>WORKFLOW</th>
+        <th>STATO</th>
+        <th>AVVIATO</th>
+        <th style="width:60px;"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of items" class="exec-row" (click)="open(item.id)">
+        <td><span class="mono">{{item.id | slice:0:12}}...</span></td>
+        <td><span class="mono">{{item.workflowId}}</span></td>
+        <td>
+          <span class="exec-status running" *ngIf="item.status === 'running'">
+            <span class="pulse"></span>in esecuzione
+          </span>
+          <span class="dv-badge ok"      *ngIf="item.status === 'completed'">completato</span>
+          <span class="dv-badge err"     *ngIf="item.status === 'failed'">fallito</span>
+          <span class="dv-badge neutral" *ngIf="item.status === 'pending'">in attesa</span>
+          <span class="dv-badge neutral" *ngIf="item.status === 'cancelled'">annullato</span>
+        </td>
+        <td class="td-ts">{{item.startedAt | date:'dd/MM HH:mm:ss'}}</td>
+        <td><mat-icon class="open-icon">chevron_right</mat-icon></td>
+      </tr>
+    </tbody>
+  </table>
+</div>

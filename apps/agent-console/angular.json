@@ -71,10 +71,14 @@
               "buildTarget": "agent-console:build:production"
             },
             "development": {
-              "buildTarget": "agent-console:build:development"
+              "buildTarget": "agent-console:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "development",
+          "options": {
+            "proxyConfig": "proxy.conf.json"
+          }
         },
         "test": {
           "builder": "@angular/build:unit-test"

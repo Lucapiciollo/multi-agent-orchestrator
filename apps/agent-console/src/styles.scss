@@ -5,7 +5,179 @@
 // Learn more about theming and how to use it for your application's
 // custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
-@import 'bootstrap/dist/css/bootstrap-utilities.min.css';
+
+/* ─── Layout utility (sostituisce Bootstrap) ─────────────────────────────── */
+html, body, app-root { height: 100%; display: block; }
+.h-100         { height: 100% !important; }
+.d-flex        { display: flex !important; }
+.flex-column   { flex-direction: column !important; }
+.flex-grow-1   { flex-grow: 1 !important; }
+.overflow-auto { overflow: auto !important; }
+.p-0           { padding: 0 !important; }
+.mat-drawer-container, .mat-sidenav-container { width: 100%; height: 100%; }
+
+/* ─── DevOps Console — Design Tokens ────────────────────────────────────── */
+:root {
+  /* layout */
+  --sidebar-w: 220px;
+  --header-h: 48px;
+  /* palette */
+  --c-bg:          #f0f2f5;
+  --c-surface:     #ffffff;
+  --c-border:      #d9dde8;
+  --c-border-lt:   #eaecf0;
+  --c-text:        #111827;
+  --c-text-2:      #374151;
+  --c-text-muted:  #6b7280;
+  --c-text-mono:   #1e3a5f;
+  /* brand */
+  --c-blue:        #2563eb;
+  --c-blue-dark:   #1d4ed8;
+  --c-blue-bg:     #eff6ff;
+  --c-blue-border: #bfdbfe;
+  /* status */
+  --c-green:       #16a34a;
+  --c-green-bg:    #f0fdf4;
+  --c-green-bd:    #bbf7d0;
+  --c-red:         #dc2626;
+  --c-red-bg:      #fef2f2;
+  --c-red-bd:      #fecaca;
+  --c-yellow:      #d97706;
+  --c-yellow-bg:   #fffbeb;
+  --c-yellow-bd:   #fde68a;
+  --c-gray:        #6b7280;
+  --c-gray-bg:     #f9fafb;
+  --c-gray-bd:     #e5e7eb;
+  /* shadow */
+  --shadow-xs: 0 1px 2px rgba(0,0,0,.05);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.1), 0 1px 2px rgba(0,0,0,.06);
+}
+
+/* ─── Reset ──────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--c-bg); color: var(--c-text); font-size: 14px; }
+
+/* ─── Shared page layout ─────────────────────────────────────────────────── */
+.dv-page { padding: 24px 28px; max-width: 1280px; }
+
+.dv-page-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--c-border-lt);
+}
+.dv-page-title { font-size: 18px; font-weight: 600; color: var(--c-text); margin: 0; }
+.dv-page-sub   { font-size: 12px; color: var(--c-text-muted); margin: 2px 0 0; }
+
+/* ─── Table DevOps ───────────────────────────────────────────────────────── */
+.dv-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 8px;
+  overflow: hidden;
+  th {
+    background: #f8f9fc;
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
+    color: var(--c-text-muted); padding: 10px 14px; text-align: left;
+    border-bottom: 1px solid var(--c-border);
+  }
+  td { padding: 11px 14px; border-bottom: 1px solid var(--c-border-lt); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #fafbfc; }
+}
+
+/* ─── Status badge ───────────────────────────────────────────────────────── */
+.dv-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 4px;
+  &.ok      { background: var(--c-green-bg); color: var(--c-green); border: 1px solid var(--c-green-bd); }
+  &.warn    { background: var(--c-yellow-bg); color: var(--c-yellow); border: 1px solid var(--c-yellow-bd); }
+  &.err     { background: var(--c-red-bg); color: var(--c-red); border: 1px solid var(--c-red-bd); }
+  &.neutral { background: var(--c-gray-bg); color: var(--c-gray); border: 1px solid var(--c-gray-bd); }
+  &.blue    { background: var(--c-blue-bg); color: var(--c-blue); border: 1px solid var(--c-blue-border); }
+  &::before { content:''; width:6px; height:6px; border-radius:50%; background:currentColor; display:inline-block; }
+}
+
+/* ─── Spinner / empty / error ────────────────────────────────────────────── */
+.dv-loading { display: flex; align-items: center; gap: 10px; padding: 32px 0; color: var(--c-text-muted); font-size: 13px; }
+.dv-error   { background: var(--c-red-bg); color: var(--c-red); border: 1px solid var(--c-red-bd); border-radius: 6px; padding: 10px 14px; margin-bottom: 12px; font-size: 13px; }
+.dv-empty   { text-align: center; padding: 56px 24px; color: var(--c-text-muted); mat-icon { font-size: 40px; width:40px; height:40px; display:block; margin:0 auto 12px; opacity:.4; } p { margin:0; font-size:14px; } small { font-size:12px; opacity:.7; } }
+
+/* ─── Card DevOps ────────────────────────────────────────────────────────── */
+.dv-card {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 8px;
+  box-shadow: var(--shadow-xs);
+}
+
+/* ─── Mono text ──────────────────────────────────────────────────────────── */
+.mono { font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace; font-size: 12px; color: var(--c-text-mono); }
+
+
+/* ─── Variabili globali ──────────────────────────────────────────────────── */
+:root {
+  --sidebar-w: 240px;
+  --header-h: 56px;
+  --color-primary: #6366f1;
+  --color-primary-dark: #4f46e5;
+  --color-copilot: #3b82f6;
+  --color-ollama: #22c55e;
+  --color-mock: #94a3b8;
+  --color-surface: #ffffff;
+  --color-bg: #f1f5f9;
+  --color-border: #e2e8f0;
+  --color-text: #0f172a;
+  --color-text-muted: #64748b;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
+  --shadow-md: 0 4px 6px rgba(0,0,0,.07), 0 2px 4px rgba(0,0,0,.06);
+  --shadow-lg: 0 10px 15px rgba(0,0,0,.1), 0 4px 6px rgba(0,0,0,.05);
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+
+/* ─── Reset ──────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; padding: 0; font-family: 'Roboto', sans-serif; background: var(--color-bg); color: var(--color-text); }
+
+/* ─── Card enterprise ────────────────────────────────────────────────────── */
+.ac-card {
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+  transition: box-shadow .2s, transform .2s;
+  &:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+}
+
+/* ─── Badge provider ─────────────────────────────────────────────────────── */
+.badge-copilot { background: #eff6ff; color: var(--color-copilot); border: 1px solid #bfdbfe; font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
+.badge-ollama  { background: #f0fdf4; color: var(--color-ollama);  border: 1px solid #bbf7d0; font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
+.badge-mock    { background: #f8fafc; color: var(--color-mock);    border: 1px solid #e2e8f0; font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
+
+/* ─── Chip skill ─────────────────────────────────────────────────────────── */
+.skill-chip { display: inline-block; background: #f1f5f9; color: #475569; font-size: 11px; padding: 2px 8px; border-radius: 6px; margin: 2px; border: 1px solid #e2e8f0; }
+
+/* ─── Stat card colori ───────────────────────────────────────────────────── */
+.stat-agents    { --stat-color: #6366f1; --stat-bg: #eef2ff; }
+.stat-skills    { --stat-color: #f59e0b; --stat-bg: #fffbeb; }
+.stat-workflows { --stat-color: #10b981; --stat-bg: #ecfdf5; }
+.stat-executions{ --stat-color: #ef4444; --stat-bg: #fef2f2; }
+
+/* ─── Status indicators ──────────────────────────────────────────────────── */
+.status-ok   { color: #22c55e; }
+.status-warn { color: #f59e0b; }
+.status-err  { color: #ef4444; }
+.status-unk  { color: #94a3b8; }
+
+/* ─── Priority badge ─────────────────────────────────────────────────────── */
+.prio-high   { background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5; }
+.prio-medium { background:#fef3c7; color:#92400e; border:1px solid #fcd34d; }
+.prio-low    { background:#f0fdf4; color:#15803d; border:1px solid #86efac; }
+
 
 html { height: 100%;
   @include mat.theme((

@@ -1,1 +1,152 @@
-<div class="container-fluid"><h2>Dettaglio esecuzione</h2><div *ngIf="execution"><p>Stato: {{execution.status}}</p></div></div>
+﻿<div class="pipeline-page">
+
+  <!-- Top bar -->
+  <div class="pipeline-topbar">
+    <button class="back-btn" (click)="back()">
+      <mat-icon>arrow_back</mat-icon> Esecuzioni
+    </button>
+    <button class="cancel-btn" *ngIf="execution?.status === 'running'" (click)="cancel()">
+      <mat-icon>stop</mat-icon> Annulla
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="pipeline-loading">
+    <mat-spinner [diameter]="18"></mat-spinner> Caricamento...
+  </div>
+
+  <ng-container *ngIf="!loading && execution">
+
+    <!-- Run header -->
+    <div class="run-header">
+      <div class="run-header-left">
+        <div class="run-workflow-name">{{execution.workflowId}}</div>
+        <div class="run-id mono">{{execution.id}}</div>
+      </div>
+      <div class="run-header-right">
+        <div class="run-status-pill running" *ngIf="execution.status === 'running'">
+          <span class="pulse-dot"></span> IN ESECUZIONE
+        </div>
+        <div class="run-status-pill ok" *ngIf="execution.status === 'completed'">
+          <mat-icon>check_circle</mat-icon> COMPLETATO
+        </div>
+        <div class="run-status-pill err" *ngIf="execution.status === 'failed'">
+          <mat-icon>cancel</mat-icon> FALLITO
+        </div>
+        <div class="run-status-pill neutral"
+             *ngIf="execution.status === 'cancelled' || execution.status === 'pending'">
+          <mat-icon>block</mat-icon> {{execution.status | uppercase}}
+        </div>
+        <div class="run-meta">
+          <span *ngIf="execution.startedAt">
+            <mat-icon>schedule</mat-icon> {{execution.startedAt | date:'HH:mm:ss'}}
+          </span>
+          <span>
+            <mat-icon>layers</mat-icon>
+            {{execution.completedTasks || 0}} / {{execution.totalTasks || execution.tasks?.length}} stage
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pipeline track -->
+    <div class="pipeline-track-wrap">
+      <div class="pipeline-track">
+        <ng-container *ngFor="let task of execution.tasks; let i = index; let last = last">
+          <div class="stage-node"
+               [class]="'stage-' + task.status"
+               [class.stage-active]="selectedTaskId === task.id"
+               (click)="selectTask(task.id)">
+            <div class="stage-circle">
+              <mat-icon *ngIf="task.status === 'completed'">check</mat-icon>
+              <mat-icon *ngIf="task.status === 'failed'">close</mat-icon>
+              <mat-icon *ngIf="task.status === 'cancelled'">block</mat-icon>
+              <div *ngIf="task.status === 'running'" class="stage-spin"></div>
+              <span *ngIf="task.status === 'pending'" class="stage-idx">{{i + 1}}</span>
+            </div>
+            <div class="stage-title">{{stageLabel(task.title || task.id)}}</div>
+            <div class="stage-status-tag" [class]="task.status">{{task.status}}</div>
+          </div>
+          <div *ngIf="!last" class="stage-arrow" [class.arrow-done]="task.status === 'completed'">
+            <div class="arrow-line"></div>
+            <mat-icon class="arrow-chevron">chevron_right</mat-icon>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+
+    <!-- Stage detail panel -->
+    <div class="stage-detail" *ngIf="selectedTask" [class]="'detail-' + selectedTask.status">
+      <div class="sd-header">
+        <div class="sd-step-num">Stage {{selectedTaskIndex + 1}}</div>
+        <div class="sd-title">{{selectedTask.title || selectedTask.id}}</div>
+        <div class="sd-meta">
+          <span class="sd-agent mono">{{selectedTask.agentId}}</span>
+          <span class="provider-chip"
+                *ngIf="selectedTask.provider && selectedTask.provider !== 'pending'">
+            {{selectedTask.provider}} · {{selectedTask.model}}
+          </span>
+          <span class="sd-status-badge" [class]="selectedTask.status">{{selectedTask.status}}</span>
+        </div>
+      </div>
+
+      <div class="sd-sections">
+        <div class="sd-section" *ngIf="selectedTask.inputPaths?.length">
+          <div class="sd-sec-label"><mat-icon>input</mat-icon> Artefatti di input</div>
+          <div class="sd-chips">
+            <span *ngFor="let f of selectedTask.inputPaths" class="sd-chip read">
+              <mat-icon>description</mat-icon>{{f}}
+            </span>
+          </div>
+        </div>
+
+        <div class="sd-section" *ngIf="selectedTask.changedFiles?.length">
+          <div class="sd-sec-label"><mat-icon>output</mat-icon> Artefatti prodotti</div>
+          <div class="sd-chips">
+            <span *ngFor="let f of selectedTask.changedFiles" class="sd-chip changed">
+              <mat-icon>edit_document</mat-icon>{{f}}
+            </span>
+          </div>
+        </div>
+
+        <div class="sd-section" *ngIf="selectedTask.commandsExecuted?.length">
+          <div class="sd-sec-label"><mat-icon>terminal</mat-icon> Comandi eseguiti</div>
+          <div class="sd-chips">
+            <span *ngFor="let c of selectedTask.commandsExecuted" class="sd-chip cmd">
+              <mat-icon>chevron_right</mat-icon>{{c}}
+            </span>
+          </div>
+        </div>
+
+        <div class="sd-summary" *ngIf="selectedTask.summary">
+          <mat-icon>summarize</mat-icon>
+          <span>{{selectedTask.summary}}</span>
+        </div>
+
+        <div class="sd-errors" *ngIf="selectedTask.errors?.length">
+          <div *ngFor="let e of selectedTask.errors" class="sd-error">
+            <mat-icon>error_outline</mat-icon>{{e?.message || e}}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Log terminal -->
+    <div class="log-panel" *ngIf="logs.length">
+      <div class="log-header"><mat-icon>terminal</mat-icon> Output pipeline</div>
+      <div class="log-body">
+        <div *ngFor="let log of logs" class="log-line" [class]="'log-' + log.type?.replace('.', '-')">
+          <span class="log-ts">{{log.timestamp | date:'HH:mm:ss'}}</span>
+          <span class="log-ev">{{log.type}}</span>
+          <span class="log-msg">{{log.message || log.taskId}}</span>
+        </div>
+      </div>
+    </div>
+
+  </ng-container>
+
+  <div *ngIf="!loading && !execution" class="dv-empty">
+    <mat-icon>error_outline</mat-icon>
+    <p>Esecuzione non trovata</p>
+  </div>
+
+</div>

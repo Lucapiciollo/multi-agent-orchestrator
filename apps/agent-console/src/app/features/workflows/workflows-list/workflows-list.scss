@@ -1,0 +1,89 @@
+.dv-page { padding: 24px 28px; max-width: 1280px; }
+.dv-page-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #eaecf0; }
+.dv-page-title { font-size: 18px; font-weight: 600; color: #111827; margin: 0; }
+.dv-page-sub   { font-size: 12px; color: #6b7280; margin: 2px 0 0; }
+.dv-loading { display: flex; align-items: center; gap: 10px; padding: 32px 0; color: #6b7280; font-size: 13px; }
+.dv-error   { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; border-radius: 6px; padding: 10px 14px; margin-bottom: 12px; font-size: 13px; }
+.dv-empty   { text-align: center; padding: 56px; color: #6b7280; mat-icon { font-size: 40px; width:40px; height:40px; display:block; margin:0 auto 12px; opacity:.4; } p { margin:0; } }
+.dv-table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #d9dde8; border-radius: 8px; overflow: hidden; th { background: #f8f9fc; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #6b7280; padding: 10px 14px; text-align: left; border-bottom: 1px solid #d9dde8; } td { padding: 10px 14px; border-bottom: 1px solid #eaecf0; font-size: 13px; vertical-align: middle; } tr:last-child td { border-bottom: none; } tr:hover td { background: #fafbfc; } }
+.td-obj { color: #374151; max-width: 360px; }
+.td-none  { color: #d1d5db; }
+
+// ── Input panel ───────────────────────────────────────
+.input-panel {
+  background: #fff;
+  border: 1px solid #d9dde8;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+.input-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: #f8f9fc;
+  border-bottom: 1px solid #eaecf0;
+}
+.input-panel-title {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 600; color: #374151; flex: 1;
+  mat-icon { font-size: 18px; width: 18px; height: 18px; color: #6b7280; }
+}
+.input-count {
+  background: #2563eb; color: #fff;
+  font-size: 11px; font-weight: 700;
+  padding: 1px 7px; border-radius: 10px;
+}
+.upload-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: #2563eb; color: #fff; border: none;
+  padding: 7px 14px; border-radius: 6px;
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  transition: background .15s;
+  &:hover:not(:disabled) { background: #1d4ed8; }
+  &:disabled { opacity: .6; cursor: default; }
+  mat-icon { font-size: 16px; width: 16px; height: 16px; }
+}
+.input-error {
+  padding: 8px 16px; font-size: 12px;
+  color: #dc2626; background: #fef2f2;
+  border-bottom: 1px solid #fecaca;
+}
+.input-files-list { padding: 4px 0; }
+.input-file-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 16px; font-size: 13px;
+  transition: background .1s;
+  &:hover { background: #f8f9fc; }
+}
+.file-icon { font-size: 16px; width: 16px; height: 16px; color: #6b7280; flex-shrink: 0; }
+.file-name { flex: 1; color: #111827; font-family: monospace; font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.file-size { font-size: 11px; color: #9ca3af; flex-shrink: 0; }
+.del-btn {
+  background: none; border: none; cursor: pointer;
+  color: #9ca3af; padding: 2px; border-radius: 4px;
+  display: flex; align-items: center;
+  &:hover { color: #dc2626; background: #fef2f2; }
+  mat-icon { font-size: 16px; width: 16px; height: 16px; }
+}
+.input-empty {
+  padding: 16px; font-size: 12px;
+  color: #9ca3af; text-align: center;
+}
+.td-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.mono { font-family: 'SFMono-Regular', Consolas, Menlo, monospace; font-size: 12px; color: #1e3a5f; }
+.dv-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; &::before { content:''; width:5px; height:5px; border-radius:50%; background:currentColor; } &.ok { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; } }
+.skill-tag { display: inline-block; font-size: 11px; padding: 1px 7px; border-radius: 4px; background: #f1f5f9; color: #374151; border: 1px solid #e5e7eb; }
+
+/* Run button */
+.run-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 12px; border-radius: 5px;
+  background: #2563eb; color: #fff;
+  border: none; cursor: pointer; font-size: 12px; font-weight: 600;
+  transition: background .12s, opacity .12s;
+  mat-icon { font-size: 16px; width: 16px; height: 16px; }
+  &:hover:not(:disabled) { background: #1d4ed8; }
+  &:disabled { opacity: .5; cursor: default; }
+}

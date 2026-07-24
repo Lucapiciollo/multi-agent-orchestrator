@@ -1,12 +1,35 @@
-<div class="px-3 py-3 border-bottom border-secondary">
-  <span class="fw-bold text-white fs-6">&#129302; Agent Console</span>
+<div class="sb-logo">
+  <div class="sb-logo-mark"><mat-icon>hub</mat-icon></div>
+  <div class="sb-logo-text">
+    <span class="sb-logo-name">Agent Console</span>
+    <span class="sb-logo-ver">v2.0</span>
+  </div>
 </div>
-<mat-nav-list>
-  <a mat-list-item routerLink="/dashboard" routerLinkActive="active-link"><mat-icon>dashboard</mat-icon> Dashboard</a>
-  <a mat-list-item routerLink="/agents" routerLinkActive="active-link"><mat-icon>psychology</mat-icon> Agenti</a>
-  <a mat-list-item routerLink="/skills" routerLinkActive="active-link"><mat-icon>extension</mat-icon> Skill</a>
-  <a mat-list-item routerLink="/workflows" routerLinkActive="active-link"><mat-icon>account_tree</mat-icon> Workflow</a>
-  <a mat-list-item routerLink="/executions" routerLinkActive="active-link"><mat-icon>play_circle</mat-icon> Esecuzioni</a>
-  <a mat-list-item routerLink="/providers" routerLinkActive="active-link"><mat-icon>cloud</mat-icon> Provider</a>
-  <a mat-list-item routerLink="/projects" routerLinkActive="active-link"><mat-icon>folder</mat-icon> Progetti</a>
-</mat-nav-list>
+
+<nav class="sb-nav">
+  <div class="sb-section">WORKSPACE</div>
+  <a class="sb-item" routerLink="/dashboard" routerLinkActive="active">
+    <mat-icon>dashboard</mat-icon><span>Dashboard</span>
+  </a>
+  <a class="sb-item" routerLink="/agents" routerLinkActive="active">
+    <mat-icon>smart_toy</mat-icon><span>Agenti</span>
+  </a>
+  <a class="sb-item" routerLink="/skills" routerLinkActive="active">
+    <mat-icon>bolt</mat-icon><span>Skill</span>
+  </a>
+  <a class="sb-item" routerLink="/workflows" routerLinkActive="active">
+    <mat-icon>account_tree</mat-icon><span>Workflow</span>
+  </a>
+  <div class="sb-divider"></div>
+  <div class="sb-section">SISTEMA</div>
+  <a class="sb-item" routerLink="/executions" routerLinkActive="active">
+    <mat-icon>receipt_long</mat-icon><span>Esecuzioni</span>
+  </a>
+  <a class="sb-item" routerLink="/providers" routerLinkActive="active">
+    <mat-icon>dns</mat-icon><span>Provider</span>
+  </a>
+  <a class="sb-item" routerLink="/projects" routerLinkActive="active">
+    <mat-icon>folder</mat-icon><span>Progetti</span>
+  </a>
+</nav>
+<div class="sb-spacer"></div>

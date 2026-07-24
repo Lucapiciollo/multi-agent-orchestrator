@@ -1,9 +1,15 @@
-<mat-toolbar color="primary" class="px-3">
-  <span class="fw-medium">{{title}}</span>
-  <span class="flex-grow-1"></span>
-  <span class="me-2 small opacity-75">
-    <span [class]="copilotOk ? 'text-success' : 'text-danger'">&#9679;</span> Copilot
-    <span [class]="ollamaOk ? 'text-success' : 'text-danger'" class="ms-2">&#9679;</span> Ollama
-  </span>
-  <mat-slide-toggle [checked]="isDark" (change)="toggleDark.emit()" matTooltip="Dark mode"></mat-slide-toggle>
-</mat-toolbar>
+<header class="dv-header">
+  <div class="dv-header-left">
+    <span class="dv-header-title">{{title}}</span>
+  </div>
+  <div class="dv-header-right">
+    <div class="dv-provider-chips">
+      <div class="dv-pchip" [class.ok]="copilotOk" [class.ko]="!copilotOk">
+        <span class="dv-pchip-dot"></span>Copilot
+      </div>
+      <div class="dv-pchip" [class.ok]="ollamaOk" [class.ko]="!ollamaOk">
+        <span class="dv-pchip-dot"></span>Ollama
+      </div>
+    </div>
+  </div>
+</header>

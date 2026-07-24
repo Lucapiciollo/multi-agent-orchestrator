@@ -1,4 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
+import { AgentsService } from '../../core/services/agents.service';
+import { SkillsService } from '../../core/services/skills.service';
+import { WorkflowsService } from '../../core/services/workflows.service';
+import { ExecutionsService } from '../../core/services/executions.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -6,6 +10,25 @@ import { Component } from '@angular/core';
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
-export class Dashboard {
+export class Dashboard implements OnInit {
+  stats = { agents: 0, skills: 0, workflows: 0, executions: 0 };
+  loading = true;
 
+  constructor(
+    private agents: AgentsService,
+    private skills: SkillsService,
+    private workflows: WorkflowsService,
+    private executions: ExecutionsService,
+    private cdr: ChangeDetectorRef,
+    private zone: NgZone
+  ) {}
+
+  ngOnInit() {
+    let remaining = 4;
+    const done = () => { if (--remaining === 0) { this.loading = false; this.zone.run(() => this.cdr.detectChanges()); } };
+    this.agents.getAll().subscribe({ next: d => { this.zone.run(() => { this.stats.agents = d.length; done(); }); }, error: () => done() });
+    this.skills.getAll().subscribe({ next: d => { this.zone.run(() => { this.stats.skills = d.length; done(); }); }, error: () => done() });
+    this.workflows.getAll().subscribe({ next: d => { this.zone.run(() => { this.stats.workflows = d.length; done(); }); }, error: () => done() });
+    this.executions.getAll().subscribe({ next: d => { this.zone.run(() => { this.stats.executions = d.length; done(); }); }, error: () => done() });
+  }
 }

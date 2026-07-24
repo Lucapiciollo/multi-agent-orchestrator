@@ -1,4 +1,5 @@
 import { EventEmitter } from "node:events";
+import { CancellationRegistry } from "../../../src/cancellation.js";
 
 export type ExecutionStatus = 'queued' | 'running' | 'completed' | 'failed' | 'cancelled';
 export type TaskStatus = 'pending' | 'running' | 'completed' | 'failed' | 'blocked' | 'skipped';
@@ -23,6 +24,9 @@ export interface TaskResult {
   attempts: number;
   summary?: string;
   errors: string[];
+  inputPaths?: string[];
+  changedFiles?: string[];
+  commandsExecuted?: string[];
 }
 
 export interface ExecutionDetail {
@@ -43,6 +47,7 @@ export interface ExecutionDetail {
 
 class ExecutionStore extends EventEmitter {
   private readonly executions = new Map<string, ExecutionDetail>();
+  private readonly abortControllers = new Map<string, AbortController>();
   private nextId = 1;
 
   create(req: StartExecutionRequest, workflowObjective: string, taskCount: number): ExecutionDetail {
@@ -119,7 +124,20 @@ class ExecutionStore extends EventEmitter {
       timestamp: new Date().toISOString(),
       message: "Esecuzione annullata dall'utente"
     });
+    // Abort the running orchestrator process
+    const ctrl = this.abortControllers.get(execId);
+    if (ctrl) { ctrl.abort(); this.abortControllers.delete(execId); }
+    // Abort Ollama/Copilot provider requests
+    CancellationRegistry.abort(execId);
     return true;
+  }
+
+  registerAbort(execId: string, ctrl: AbortController): void {
+    this.abortControllers.set(execId, ctrl);
+  }
+
+  deregisterAbort(execId: string): void {
+    this.abortControllers.delete(execId);
   }
 }
 

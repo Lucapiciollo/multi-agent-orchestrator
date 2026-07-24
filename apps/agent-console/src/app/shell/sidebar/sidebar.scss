@@ -1,4 +1,36 @@
-:host { display:block; }
-mat-nav-list a { color:#94a3b8; }
-.active-link { background:rgba(255,255,255,.1) !important; color:#fff !important; border-left:3px solid #6366f1; }
-mat-icon { margin-right:8px; font-size:20px; vertical-align:middle; }
+:host { display: flex; flex-direction: column; height: 100%; background: #0f172a; }
+
+.sb-logo {
+  display: flex; align-items: center; gap: 10px; padding: 13px 14px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  .sb-logo-mark {
+    width: 30px; height: 30px; border-radius: 6px; flex-shrink: 0;
+    background: #2563eb; display: flex; align-items: center; justify-content: center;
+    mat-icon { color: #fff; font-size: 17px; width: 17px; height: 17px; }
+  }
+  .sb-logo-text { display: flex; flex-direction: column; }
+  .sb-logo-name { font-size: 13px; font-weight: 600; color: #f1f5f9; line-height: 1.25; }
+  .sb-logo-ver  { font-size: 10px; color: #475569; }
+}
+
+.sb-nav { padding: 8px 8px 0; }
+
+.sb-section {
+  font-size: 10px; font-weight: 700; letter-spacing: .1em; color: #334155;
+  padding: 14px 8px 4px; text-transform: uppercase;
+}
+
+.sb-divider { height: 1px; background: rgba(255,255,255,.05); margin: 6px 0; }
+
+.sb-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 10px; border-radius: 5px; margin-bottom: 1px;
+  color: #94a3b8; text-decoration: none; font-size: 13px; font-weight: 500;
+  transition: background .1s, color .1s;
+  mat-icon { font-size: 17px; width: 17px; height: 17px; flex-shrink: 0; opacity: .7; }
+  &:hover { background: rgba(255,255,255,.07); color: #e2e8f0; mat-icon { opacity: 1; } }
+  &.active { background: rgba(37,99,235,.2); color: #93c5fd; mat-icon { opacity: 1; color: #60a5fa; } }
+}
+
+.sb-spacer { flex: 1; }
+

@@ -1,1 +1,67 @@
-<div class="container-fluid py-3"><h2>Dashboard</h2><div class="row g-3"><div class="col-md-3"><mat-card><mat-card-content><div class="d-flex align-items-center gap-2"><mat-icon>psychology</mat-icon><div><div class="fs-2 fw-bold">{{stats.agents}}</div><div class="text-muted">Agenti</div></div></div></mat-card-content></mat-card></div><div class="col-md-3"><mat-card><mat-card-content><div class="d-flex align-items-center gap-2"><mat-icon>extension</mat-icon><div><div class="fs-2 fw-bold">{{stats.skills}}</div><div class="text-muted">Skill</div></div></div></mat-card-content></mat-card></div><div class="col-md-3"><mat-card><mat-card-content><div class="d-flex align-items-center gap-2"><mat-icon>account_tree</mat-icon><div><div class="fs-2 fw-bold">{{stats.workflows}}</div><div class="text-muted">Workflow</div></div></div></mat-card-content></mat-card></div><div class="col-md-3"><mat-card><mat-card-content><div class="d-flex align-items-center gap-2"><mat-icon>play_circle</mat-icon><div><div class="fs-2 fw-bold">{{stats.executions}}</div><div class="text-muted">Esecuzioni</div></div></div></mat-card-content></mat-card></div></div></div>
+<div class="dv-page">
+  <!-- KPI bar -->
+  <div class="kpi-bar">
+    <a class="kpi-card" routerLink="/agents">
+      <div class="kpi-icon agents"><mat-icon>smart_toy</mat-icon></div>
+      <div class="kpi-body">
+        <div class="kpi-val">{{stats.agents}}</div>
+        <div class="kpi-lbl">Agenti</div>
+      </div>
+    </a>
+    <div class="kpi-sep"></div>
+    <a class="kpi-card" routerLink="/skills">
+      <div class="kpi-icon skills"><mat-icon>bolt</mat-icon></div>
+      <div class="kpi-body">
+        <div class="kpi-val">{{stats.skills}}</div>
+        <div class="kpi-lbl">Skill</div>
+      </div>
+    </a>
+    <div class="kpi-sep"></div>
+    <a class="kpi-card" routerLink="/workflows">
+      <div class="kpi-icon wf"><mat-icon>account_tree</mat-icon></div>
+      <div class="kpi-body">
+        <div class="kpi-val">{{stats.workflows}}</div>
+        <div class="kpi-lbl">Workflow</div>
+      </div>
+    </a>
+    <div class="kpi-sep"></div>
+    <a class="kpi-card" routerLink="/executions">
+      <div class="kpi-icon exec"><mat-icon>receipt_long</mat-icon></div>
+      <div class="kpi-body">
+        <div class="kpi-val">{{stats.executions}}</div>
+        <div class="kpi-lbl">Esecuzioni</div>
+      </div>
+    </a>
+  </div>
+
+  <!-- Quick access -->
+  <div class="dv-section">
+    <div class="dv-section-title">Azioni rapide</div>
+    <div class="quick-grid">
+      <a class="quick-btn" routerLink="/agents">
+        <mat-icon>smart_toy</mat-icon>
+        <span>Agenti</span>
+      </a>
+      <a class="quick-btn" routerLink="/workflows">
+        <mat-icon>account_tree</mat-icon>
+        <span>Workflow</span>
+      </a>
+      <a class="quick-btn" routerLink="/providers">
+        <mat-icon>dns</mat-icon>
+        <span>Provider</span>
+      </a>
+      <a class="quick-btn" routerLink="/skills">
+        <mat-icon>bolt</mat-icon>
+        <span>Skill</span>
+      </a>
+      <a class="quick-btn" routerLink="/executions">
+        <mat-icon>receipt_long</mat-icon>
+        <span>Esecuzioni</span>
+      </a>
+      <a class="quick-btn" routerLink="/projects">
+        <mat-icon>folder</mat-icon>
+        <span>Progetti</span>
+      </a>
+    </div>
+  </div>
+</div>

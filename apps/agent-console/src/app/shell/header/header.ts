@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { ProvidersService } from '../../core/services/providers.service';
@@ -10,19 +10,26 @@ export class Header implements OnInit {
   title = 'Dashboard';
   copilotOk = false; ollamaOk = false;
 
-  constructor(private router: Router, private providers: ProvidersService) {}
+  constructor(private router: Router, private providers: ProvidersService, private cdr: ChangeDetectorRef, private zone: NgZone) {}
 
   ngOnInit() {
     this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe(() => {
       const seg = this.router.url.split('/')[1] ?? 'dashboard';
       const m: Record<string,string> = {dashboard:'Dashboard',agents:'Agenti',skills:'Skill',workflows:'Workflow',executions:'Esecuzioni',providers:'Provider',projects:'Progetti'};
-      this.title = m[seg] ?? seg;
+      this.zone.run(() => { this.title = m[seg] ?? seg; this.cdr.detectChanges(); });
     });
-    this.checkProviders();
+    setTimeout(() => this.checkProviders(), 0);
     setInterval(() => this.checkProviders(), 30_000);
   }
 
   checkProviders() {
-    this.providers.getStatus().subscribe({ next: s => { this.copilotOk = s.some(p => p.id==='copilot' && p.health==='healthy'); this.ollamaOk = s.some(p => p.id==='ollama' && p.health==='healthy'); }, error: () => {} });
+    this.providers.getStatus().subscribe({
+      next: s => this.zone.run(() => {
+        this.copilotOk = s.some(p => p.id==='copilot' && p.health==='healthy');
+        this.ollamaOk = s.some(p => p.id==='ollama' && p.health==='healthy');
+        this.cdr.detectChanges();
+      }),
+      error: () => {}
+    });
   }
 }

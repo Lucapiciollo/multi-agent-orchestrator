@@ -5,16 +5,41 @@ import { ROOT_DIR } from "../config.js";
 
 export const projectsRouter = Router();
 
-const PROJECTS_FILE = path.join(ROOT_DIR, "workspace", "projects.json");
+const PROJECTS_FILE   = path.join(ROOT_DIR, "workspace", "projects.json");
+const CONTEXT_FILE    = path.join(ROOT_DIR, "workspace", "context", "project.json");
 
 async function loadProjects(): Promise<ProjectDefinition[]> {
+  const results: ProjectDefinition[] = [];
+
+  // 1. Legge workspace/projects.json (formato nativo)
   try {
     await access(PROJECTS_FILE);
-    const content = await readFile(PROJECTS_FILE, "utf8");
-    return JSON.parse(content) as ProjectDefinition[];
-  } catch {
-    return [];
-  }
+    const raw = JSON.parse(await readFile(PROJECTS_FILE, "utf8")) as ProjectDefinition[];
+    results.push(...raw);
+  } catch { /* file non esiste */ }
+
+  // 2. Legge workspace/context/project.json (formato contesto orchestratore)
+  try {
+    await access(CONTEXT_FILE);
+    const ctx = JSON.parse(await readFile(CONTEXT_FILE, "utf8")) as {
+      projects?: Array<{ name: string; sourceRoot?: string; description?: string; realPath?: string; }>;
+    };
+    const existingIds = new Set(results.map(p => p.id));
+    for (const p of ctx.projects ?? []) {
+      if (!existingIds.has(p.name)) {
+        results.push({
+          id:          p.name,
+          name:        p.name,
+          rootPath:    p.realPath ?? p.sourceRoot ?? p.name,
+          type:        "angular",
+          enabled:     true,
+          description: p.description,
+        });
+      }
+    }
+  } catch { /* file non leggibile */ }
+
+  return results;
 }
 
 async function saveProjects(projects: ProjectDefinition[]): Promise<void> {

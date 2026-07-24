@@ -11,9 +11,10 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @NgModule({
   declarations: [WorkflowsList],
-  imports: [CommonModule, WorkflowsRoutingModule, MatTableModule, MatCardModule, MatIconModule, MatProgressSpinnerModule, MatButtonModule, MatChipsModule, MatExpansionModule, MatDialogModule, MatSelectModule]
+  imports: [CommonModule, WorkflowsRoutingModule, MatTableModule, MatCardModule, MatIconModule, MatProgressSpinnerModule, MatButtonModule, MatChipsModule, MatExpansionModule, MatDialogModule, MatSelectModule, MatTooltipModule]
 })
 export class WorkflowsModule {}

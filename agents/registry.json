@@ -1,155 +1,38 @@
 [
   {
-    "id": "devops-watcher-agent",
-    "name": "DevOps Watcher Agent",
-    "description": "Legge i work item scaricati da Azure DevOps e produce report e workflow task.",
-    "skills": ["devops-work-items"],
-    "tags": ["devops", "azure", "work-items"],
-    "capabilities": ["read-files", "write-json", "create-workflow", "create-report"],
-    "allowedPaths": ["workspace/**", "projects/**"],
-    "forbiddenPaths": [".git/**", "node_modules/**", "src/**"],
-    "priority": 150,
-    "provider": {
-      "type": "copilot",
-      "model": "claude-sonnet-5",
-      "fallbackProvider": "ollama",
-      "fallbackModel": "qwen3-coder:30b"
-    }
-  },
-  {
-  "id": "copilot-health-agent",
-  "name": "Copilot Health Agent",
-  "description": "Verifica esclusivamente la comunicazione tra orchestratore e provider Copilot.",
-  "skills": [],
-  "tags": ["health-check", "copilot"],
-  "capabilities": [],
-  "allowedPaths": ["workspace/**"],
-  "forbiddenPaths": [".git/**", "node_modules/**", "projects/**"],
-  "priority": 200,
-  "provider": {
-    "type": "copilot",
-    "model": "claude-sonnet-5"
-  }
-},
-  {
-  "id": "ollama-health-agent",
-  "name": "Ollama Health Agent",
-  "description": "Verifica esclusivamente la comunicazione tra orchestratore e provider Ollama.",
-  "skills": [],
-  "tags": ["health-check", "ollama"],
-  "capabilities": [],
-  "allowedPaths": ["workspace/**"],
-  "forbiddenPaths": [".git/**", "node_modules/**", "projects/**"],
-  "priority": 200,
-  "provider": {
-    "type": "ollama",
-    "model": "qwen3-coder:30b"
-  }
-},
-  {
-    "id": "orchestrator-planner",
-    "name": "Orchestrator Planner",
-    "description": "Scompone obiettivi complessi in task atomici, dipendenze e criteri di approvazione.",
-    "skills": ["multi-agent-orchestrator"],
-    "tags": ["planning", "routing", "coordination"],
-    "capabilities": ["read-files", "write-json", "create-workflow", "create-report"],
-    "allowedPaths": ["workflows/**", "workspace/**"],
-    "forbiddenPaths": ["node_modules/**", ".git/**"],
-    "priority": 120,
-    "provider": {
-      "type": "copilot",
-      "model": "claude-sonnet-5",
-      "fallbackProvider": "mock"
-    }
-  },
-  {
-    "id": "angular-architecture-agent",
-    "name": "Angular Architecture Agent",
-    "description": "Progetta librerie Angular modulari non-standalone, routing, moduli e componenti.",
-    "skills": ["pl-prototype-angular-library-agent", "pl-angular-architecture"],
-    "tags": ["angular", "architecture", "library"],
-    "capabilities": ["read-files", "write-files", "run-commands", "run-tests"],
-    "allowedPaths": ["projects/**", "workspace/**"],
-    "forbiddenPaths": [".git/**", "node_modules/**"],
+    "id": "scss-extractor-agent",
+    "name": "SCSS Extractor Agent",
+    "description": "Analizza pagine web o file CSS/SCSS esistenti e genera un sistema di design tokens completo in stile Bootstrap: variabili, colori, tipografia, spaziatura.",
+    "skills": [
+      "scss-bootstrap-vars"
+    ],
+    "tags": [
+      "scss",
+      "design-tokens",
+      "bootstrap",
+      "typography",
+      "colors"
+    ],
+    "capabilities": [
+      "read-files",
+      "write-files",
+      "run-browser"
+    ],
+    "allowedPaths": [
+      "projects/**",
+      "workspace/**"
+    ],
+    "forbiddenPaths": [
+      ".git/**",
+      "node_modules/**"
+    ],
     "priority": 100,
     "provider": {
       "type": "copilot",
       "model": "claude-sonnet-5",
       "fallbackProvider": "ollama",
       "fallbackModel": "qwen3-coder:30b",
-      "timeoutMs": 300000
-    }
-  },
-  {
-    "id": "ngrx-agent",
-    "name": "NgRx Agent",
-    "description": "Implementa feature state, actions, reducer, effects, selectors e facade.",
-    "skills": ["pl-ngrx-store"],
-    "tags": ["angular", "ngrx", "state"],
-    "capabilities": ["read-files", "write-files", "run-commands", "run-tests"],
-    "allowedPaths": ["projects/**", "workspace/**"],
-    "forbiddenPaths": [".git/**", "node_modules/**"],
-    "priority": 90,
-    "provider": {
-      "type": "ollama",
-      "model": "qwen3-coder:30b",
-      "fallbackProvider": "copilot",
-      "fallbackModel": "claude-sonnet-5",
-      "timeoutMs": 600000
-    }
-  },
-  {
-    "id": "responsive-agent",
-    "name": "Responsive Agent",
-    "description": "Corregge il responsive componente per componente senza alterare il desktop.",
-    "skills": ["pl-responsive-layout-agent", "pl-visual-scss-compare-skill"],
-    "tags": ["scss", "responsive", "playwright"],
-    "capabilities": ["read-files", "write-files", "run-browser", "create-screenshots"],
-    "allowedPaths": ["projects/**", "workspace/screenshots/**", "workspace/reports/**"],
-    "forbiddenPaths": [".git/**", "node_modules/**"],
-    "priority": 80,
-    "provider": {
-      "type": "ollama",
-      "model": "qwen3-coder:30b",
-      "fallbackProvider": "copilot",
-      "fallbackModel": "claude-sonnet-5",
-      "timeoutMs": 600000
-    }
-  },
-  {
-    "id": "dark-mode-agent",
-    "name": "Dark Mode Agent",
-    "description": "Implementa temi dark isolati tramite token, mixin e override locali.",
-    "skills": ["pl-enterprise-dark-mode-theme-agent"],
-    "tags": ["scss", "theme", "dark-mode"],
-    "capabilities": ["read-files", "write-files", "run-tests"],
-    "allowedPaths": ["projects/**", "workspace/**"],
-    "forbiddenPaths": [".git/**", "node_modules/**"],
-    "priority": 75,
-    "provider": {
-      "type": "ollama",
-      "model": "qwen3-coder:30b",
-      "fallbackProvider": "copilot",
-      "fallbackModel": "claude-sonnet-5",
-      "timeoutMs": 600000
-    }
-  },
-  {
-    "id": "quality-review-agent",
-    "name": "Quality Review Agent",
-    "description": "Valida build, test, scope, architettura e regressioni prima dell'approvazione.",
-    "skills": ["code-review", "pl-visual-scss-compare-skill"],
-    "tags": ["review", "quality", "validation"],
-    "capabilities": ["read-files", "run-commands", "run-tests", "run-browser", "create-report"],
-    "allowedPaths": ["projects/**", "workspace/**"],
-    "forbiddenPaths": [".git/**", "node_modules/**"],
-    "priority": 110,
-    "provider": {
-      "type": "copilot",
-      "model": "claude-sonnet-5",
-      "fallbackProvider": "ollama",
-      "fallbackModel": "qwen3-coder:30b",
-      "timeoutMs": 300000
+      "timeoutMs": 900000
     }
   }
 ]
