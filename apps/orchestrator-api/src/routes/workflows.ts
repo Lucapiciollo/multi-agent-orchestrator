@@ -2,7 +2,7 @@ import { Router } from "express";
 import path from "node:path";
 import { readdir } from "node:fs/promises";
 import { readJson } from "../utils.js";
-import { ROOT_DIR } from "../index.js";
+import { ROOT_DIR } from "../config.js";
 
 export const workflowsRouter = Router();
 

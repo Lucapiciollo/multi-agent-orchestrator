@@ -1,7 +1,7 @@
 import { Router } from "express";
 import path from "node:path";
 import { readFile, writeFile, access } from "node:fs/promises";
-import { ROOT_DIR } from "../index.js";
+import { ROOT_DIR } from "../config.js";
 
 export const projectsRouter = Router();
 

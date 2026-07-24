@@ -1,1 +1,11 @@
-<p>layout works!</p>
+<mat-sidenav-container class="h-100" [class.dark-theme]="isDarkMode">
+  <mat-sidenav mode="side" opened class="sidenav p-0">
+    <app-sidebar></app-sidebar>
+  </mat-sidenav>
+  <mat-sidenav-content class="d-flex flex-column">
+    <app-header (toggleDark)="isDarkMode=!isDarkMode" [isDark]="isDarkMode"></app-header>
+    <main class="flex-grow-1 overflow-auto p-3 bg-light">
+      <router-outlet></router-outlet>
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

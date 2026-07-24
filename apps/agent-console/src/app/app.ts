@@ -1,11 +1,8 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.html',
-  standalone: false,
-  styleUrl: './app.scss'
+  template: '<app-layout></app-layout>',
+  standalone: false
 })
-export class App {
-  protected readonly title = signal('agent-console');
-}
+export class App {}

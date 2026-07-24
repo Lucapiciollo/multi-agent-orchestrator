@@ -2,7 +2,7 @@ import { Router } from "express";
 import path from "node:path";
 import { readdir } from "node:fs/promises";
 import { readJson, initSseHeaders, sendSse } from "../utils.js";
-import { ROOT_DIR } from "../index.js";
+import { ROOT_DIR } from "../config.js";
 import { executionStore, type ExecutionEvent, type TaskResult } from "../execution-store.js";
 
 export const executionsRouter = Router();

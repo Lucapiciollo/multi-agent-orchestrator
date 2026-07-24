@@ -1,8 +1,6 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { agentsRouter } from "./routes/agents.js";
 import { skillsRouter } from "./routes/skills.js";
 import { workflowsRouter } from "./routes/workflows.js";
@@ -10,16 +8,21 @@ import { executionsRouter } from "./routes/executions.js";
 import { providersRouter } from "./routes/providers.js";
 import { healthRouter } from "./routes/health.js";
 import { projectsRouter } from "./routes/projects.js";
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-export const ROOT_DIR = path.resolve(__dirname, "..", "..", "..");
+import { ROOT_DIR } from "./config.js";
 
 const app = express();
 const PORT = process.env["API_PORT"] ?? 3001;
 
 // ── Middleware ────────────────────────────────────────────────────────────
 app.use(cors({
-  origin: process.env["CONSOLE_ORIGIN"] ?? "http://localhost:4200",
+  origin: (origin, callback) => {
+    // Consenti qualsiasi origine localhost (sviluppo) o richieste senza origin (curl, Postman)
+    if (!origin || origin.startsWith("http://localhost") || origin.startsWith("http://127.0.0.1")) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   methods: ["GET", "POST", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
 }));

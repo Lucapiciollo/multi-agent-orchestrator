@@ -1,6 +1,6 @@
 import path from "node:path";
 import { readFile } from "node:fs/promises";
-import { ROOT_DIR } from "./index.js";
+import { ROOT_DIR } from "./config.js";
 
 export async function readJson<T>(relativePath: string): Promise<T> {
   const abs = path.join(ROOT_DIR, relativePath);
