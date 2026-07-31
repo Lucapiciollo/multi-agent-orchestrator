@@ -1,21 +1,13 @@
-<mat-toolbar color="primary" class="header-toolbar">
-  <button mat-icon-button (click)="toggleSidenav.emit()">
-    <mat-icon>menu</mat-icon>
-  </button>
-  <span class="ms-2 breadcrumb-text">{{ title }}</span>
-  <span class="flex-grow-1"></span>
-
-  <!-- Provider indicators -->
-  <div class="d-flex align-items-center gap-2 me-2">
-    <mat-icon [class]="copilotClass" [matTooltip]="'Copilot: ' + copilotStatus">circle</mat-icon>
-    <mat-icon [class]="ollamaClass" [matTooltip]="'Ollama: ' + ollamaStatus">circle</mat-icon>
+<div class="dv-header">
+  <div class="dv-header-left">
+    <span class="dv-header-title">{{ title }}</span>
   </div>
-
-  <!-- Dark mode toggle -->
-  <mat-slide-toggle [checked]="isDark" (change)="toggleDark.emit()" matTooltip="Dark mode" class="me-2">
-  </mat-slide-toggle>
-
-  <button mat-icon-button matTooltip="Impostazioni">
-    <mat-icon>settings</mat-icon>
-  </button>
-</mat-toolbar>
+  <div class="dv-header-right">
+    <div class="dv-pchip" [class.ok]="copilotClass === 'status-ok'" [class.ko]="copilotClass === 'status-err'" [matTooltip]="'Copilot: ' + copilotStatus">
+      <span class="dv-pchip-dot"></span><span>Copilot</span>
+    </div>
+    <div class="dv-pchip" [class.ok]="ollamaClass === 'status-ok'" [class.ko]="ollamaClass === 'status-err'" [matTooltip]="'Ollama: ' + ollamaStatus">
+      <span class="dv-pchip-dot"></span><span>Ollama</span>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,147 @@
+// storico-table.component.scss — tabella storico 1:1 originale
+
+.storico-table-wrap {
+  border: 1px solid var(--neutral-200, #e0e0e0);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--neutral-0, #fff);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  margin-bottom: 12px;
+  overflow-x: auto;
+}
+
+.storico-table {
+  width: 100%;
+  font-size: 12px;
+  font-family: var(--font, 'Open Sans', sans-serif);
+
+  // Override header esatto
+  ::ng-deep .mat-mdc-header-row,
+  ::ng-deep tr.mat-mdc-header-row {
+    height: 40px !important;
+    background: var(--neutral-50, #f5f5f5) !important;
+  }
+
+  ::ng-deep .mat-mdc-header-cell,
+  ::ng-deep th.mat-mdc-header-cell {
+    background: var(--neutral-50, #f5f5f5) !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.07em !important;
+    color: var(--neutral-600, #777) !important;
+    padding: 0 14px !important;
+    border-bottom: 1px solid var(--neutral-200, #e0e0e0) !important;
+  }
+
+  // Override celle
+  ::ng-deep .mat-mdc-row,
+  ::ng-deep tr.mat-mdc-row {
+    height: auto !important;
+  }
+
+  ::ng-deep .mat-mdc-cell,
+  ::ng-deep td.mat-mdc-cell {
+    font-size: 12px !important;
+    color: var(--neutral-800, #444) !important;
+    padding: 11px 14px !important;
+    border-bottom: 1px solid var(--neutral-100, #f0f0f0) !important;
+    vertical-align: middle !important;
+    white-space: nowrap;           // evita wrapping nelle celle compatte
+  }
+
+  // Colonne con larghezze come nel sorgente (nessuno scroll orizzontale)
+  ::ng-deep [mat-header-cell].mat-column-dataRichiesta,
+  ::ng-deep [mat-cell].mat-column-dataRichiesta { width: 110px; }
+  ::ng-deep [mat-header-cell].mat-column-template,
+  ::ng-deep [mat-cell].mat-column-template {
+    min-width: 160px;
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  ::ng-deep [mat-header-cell].mat-column-nomeFile,
+  ::ng-deep [mat-cell].mat-column-nomeFile {
+    max-width: 260px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  ::ng-deep [mat-header-cell].mat-column-versione,
+  ::ng-deep [mat-cell].mat-column-versione { width: 45px; }
+  ::ng-deep [mat-header-cell].mat-column-dimensione,
+  ::ng-deep [mat-cell].mat-column-dimensione { width: 85px; }
+  ::ng-deep [mat-header-cell].mat-column-formato,
+  ::ng-deep [mat-cell].mat-column-formato { width: 65px; }
+  ::ng-deep [mat-header-cell].mat-column-stato,
+  ::ng-deep [mat-cell].mat-column-stato { width: 110px; }
+  ::ng-deep [mat-header-cell].mat-column-azioni,
+  ::ng-deep [mat-cell].mat-column-azioni { width: 75px; }
+
+  ::ng-deep tr:last-child td.mat-mdc-cell {
+    border-bottom: none !important;
+  }
+
+  ::ng-deep .mat-mdc-row:hover td {
+    background: var(--neutral-50, #f5f5f5) !important;
+    cursor: pointer;
+  }
+
+  &__row { cursor: pointer; }
+  &__empty { padding: 40px 16px; color: var(--neutral-500, #888); font-size: 12px; text-align: center; }
+}
+
+// Nome file: monospace compatto
+.storico-filename {
+  font-size: 11px;
+  color: var(--neutral-700, #555);
+  font-family: 'Roboto Mono', 'Courier New', monospace;
+}
+
+// Chip formato — colori 1:1 dall'originale
+.storico-fmt {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 5px;
+  display: inline-block;
+  white-space: nowrap;
+
+  &.fmt-xlsx { background: #DCFCE7; color: #166534; }  // verde (XLSX)
+  &.fmt-csv  { background: #EFF6FF; color: #1E40AF; }  // blu   (CSV)
+}
+
+// Azioni — flex row unica (identico all'originale .storico-actions)
+.storico-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+// Bottoni 28×28px
+.storico-act-btn {
+  width: 28px; height: 28px;
+  border-radius: 5px;
+  border: 1px solid var(--neutral-200, #e0e0e0);
+  background: var(--neutral-0, #fff);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: border-color 150ms, background 150ms;
+  color: var(--neutral-600, #777);
+
+  &:hover:not(:disabled) { border-color: var(--neutral-400, #9e9e9e); background: var(--neutral-50, #f5f5f5); }
+  &:disabled { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
+
+  svg { stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; width: 13px; height: 13px; }
+
+  &.dl-btn {
+    border-color: #C8E6C9; color: #2E7D32;
+    &:hover:not(:disabled) { background: #F0FDF4; border-color: #4CAF50; }
+  }
+}
+

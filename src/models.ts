@@ -86,6 +86,8 @@ export interface AgentRunRequest {
   /** Skill aggiuntive del task non già presenti in agentSkills */
   taskSkills: LoadedSkill[];
   feedback?: string[] | undefined;
+  /** Callback per lo streaming dell'output LLM chunk-by-chunk */
+  onChunk?: (chunk: string) => void;
 }
 export interface AgentRunResult {
   agentId: string;

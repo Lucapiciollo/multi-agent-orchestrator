@@ -30,7 +30,7 @@ export class CopilotProvider implements AgentProvider {
 
     let output: ProcessOutput;
     try {
-      output = await this.execute(commandArgs, cwd, prompt);
+      output = await this.execute(commandArgs, cwd, prompt, request.onChunk);
     } catch (err) {
       // Timeout throws — allow FallbackProvider to catch
       throw err;
@@ -57,7 +57,8 @@ export class CopilotProvider implements AgentProvider {
   private execute(
     args: string[],
     cwd: string,
-    stdinData: string
+    stdinData: string,
+    onChunk?: (chunk: string) => void
   ): Promise<ProcessOutput> {
     return new Promise((resolve, reject) => {
       const child = spawn(this.command, args, {
@@ -103,8 +104,21 @@ export class CopilotProvider implements AgentProvider {
         reject(new Error(`CopilotProvider: timeout dopo ${this.timeoutMs}ms`));
       }, this.timeoutMs);
 
-      child.stdout.on("data", (chunk: Buffer) => { stdout += chunk.toString(); });
-      child.stderr.on("data", (chunk: Buffer) => { stderr += chunk.toString(); });
+      child.stdout.on("data", (chunk: Buffer) => {
+        const text = chunk.toString();
+        stdout += text;
+        onChunk?.(text);
+      });
+      child.stderr.on("data", (chunk: Buffer) => {
+        const text = chunk.toString();
+        stderr += text;
+        // Copilot scrive il pensiero/progresso su stderr — streammiamo anche quello
+        if (onChunk) {
+          // Filtra righe di spinner (contengono \r o sono solo whitespace)
+          const lines = text.split(/\n/).filter(l => l.trim() && !l.includes("\r"));
+          if (lines.length) onChunk("[stderr] " + lines.join("\n"));
+        }
+      });
 
       child.on("error", err => {
         if (settled) return;

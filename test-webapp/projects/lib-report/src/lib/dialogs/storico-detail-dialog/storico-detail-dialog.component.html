@@ -1,0 +1,95 @@
+@if (record$ | async; as record) {
+  <div class="storico-modal">
+    <!-- Header identico all'originale -->
+    <div class="modal-header">
+      <div class="modal-title-area">
+        <div class="modal-title-icon">
+          <svg viewBox="0 0 24 24" width="18" height="18">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M14 2v6h6M12 18v-6M9 15l3 3 3-3" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="modal-title-text">
+          <h2 class="modal-title">{{ record.template }}</h2>
+          <p class="modal-subtitle">
+            <lib-report-storico-status-badge [stato]="record.stato"></lib-report-storico-status-badge>
+            &ensp;Richiesta del {{ record.dataRichiesta }}
+          </p>
+        </div>
+      </div>
+      <button type="button" class="modal-close-btn" (click)="close()" aria-label="Chiudi">
+        <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" fill="none" stroke-width="2.2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="modal-body">
+
+      <!-- Sezione 1: Dettagli richiesta -->
+      <div class="detail-section">
+        <div class="storico-section-ttl">Dettagli richiesta</div>
+        <div class="detail-grid">
+          <span class="detail-lbl">Data richiesta</span>
+          <span class="detail-val">{{ record.dataRichiesta }}</span>
+
+          <span class="detail-lbl">Nome file</span>
+          <span class="detail-val mono">{{ record.nomeFile }}</span>
+
+          <span class="detail-lbl">Formato</span>
+          <span class="detail-val">
+            <span class="storico-fmt" [class.fmt-xlsx]="record.formato === 'xlsx'" [class.fmt-csv]="record.formato === 'csv'">{{ record.formato | uppercase }}</span>
+          </span>
+
+          <span class="detail-lbl">Stato</span>
+          <span class="detail-val"><lib-report-storico-status-badge [stato]="record.stato"></lib-report-storico-status-badge></span>
+
+          <span class="detail-lbl">Versione</span>
+          <span class="detail-val">{{ record.versione }}</span>
+
+          <span class="detail-lbl">Dimensione</span>
+          <span class="detail-val" [class.dash]="record.dimensione === '—'">{{ record.dimensione }}</span>
+
+          @if (record.dataDownload) {
+            <span class="detail-lbl">Data download</span>
+            <span class="detail-val">{{ record.dataDownload }}</span>
+          }
+
+          @if (record.dataFallimento) {
+            <span class="detail-lbl">Data fallimento</span>
+            <span class="detail-val">{{ record.dataFallimento }}</span>
+          }
+        </div>
+      </div>
+
+      <!-- Sezione 2: Filtri applicati -->
+      <div class="detail-section detail-section--bordered">
+        <div class="storico-section-ttl">Filtri applicati</div>
+        @if (filtriEntries(record).length === 0) {
+          <p class="storico-empty">Nessun filtro applicato.</p>
+        } @else {
+          <div class="detail-grid">
+            @for (entry of filtriEntries(record); track entry.key) {
+              <span class="detail-lbl">{{ entry.key }}</span>
+              <span class="detail-val">{{ entry.value }}</span>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Sezione 3: Colonne incluse -->
+      <div class="detail-section detail-section--bordered">
+        <div class="storico-section-ttl">Colonne incluse</div>
+        @if (record.colonneIncluse.length === 0) {
+          <p class="storico-empty">Nessuna colonna inclusa.</p>
+        } @else {
+          <div class="storico-chips">
+            @for (col of record.colonneIncluse; track col) {
+              <span class="storico-chip">{{ col }}</span>
+            }
+          </div>
+        }
+      </div>
+
+    </div>
+  </div>
+}

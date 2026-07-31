@@ -1,0 +1,47 @@
+<div class="period-half-picker">
+  <button
+    #origin="cdkOverlayOrigin"
+    cdkOverlayOrigin
+    mat-stroked-button
+    type="button"
+    class="period-half-picker__trigger"
+    [disabled]="disabled"
+    (click)="togglePicker()"
+  >
+    <mat-icon>date_range</mat-icon>
+    <span>{{ value ?? 'Seleziona periodo' }}</span>
+  </button>
+
+  <ng-template
+    cdkConnectedOverlay
+    [cdkConnectedOverlayOrigin]="origin"
+    [cdkConnectedOverlayOpen]="open"
+    [cdkConnectedOverlayHasBackdrop]="true"
+    cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+    (backdropClick)="closePicker()"
+    (detach)="closePicker()"
+  >
+    <div class="period-popup">
+      <div class="period-popup__nav">
+        <button mat-icon-button type="button" (click)="changeMonth(-1)" aria-label="Mese precedente">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        <span class="period-popup__month">{{ monthLabel }}</span>
+        <button mat-icon-button type="button" (click)="changeMonth(1)" aria-label="Mese successivo">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
+
+      <div class="period-popup__halves">
+        <button mat-stroked-button type="button" (click)="selectHalf('first')">1 - 15</button>
+        <button mat-stroked-button type="button" (click)="selectHalf('second')">16 - fine mese</button>
+      </div>
+
+      @if (value) {
+        <button mat-button type="button" class="period-popup__clear" (click)="clear()">
+          Rimuovi selezione
+        </button>
+      }
+    </div>
+  </ng-template>
+</div>

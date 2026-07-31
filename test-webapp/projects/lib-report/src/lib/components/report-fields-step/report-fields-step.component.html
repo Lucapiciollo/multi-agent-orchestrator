@@ -1,0 +1,58 @@
+<div class="report-fields-step">
+
+  <div class="fields-header">
+    <span class="fields-header-label">Seleziona le colonne da esportare</span>
+    <span class="fields-count-badge">{{ selectedCount }} selezionati</span>
+  </div>
+
+  <div class="fields-groups">
+    @for (group of fieldGroups; track group.key) {
+      <div class="field-group">
+
+        <!-- Header nativo: chevron + nome + badge count + "Tutti" -->
+        <button type="button" class="field-group-header" (click)="toggleCollapse(group.key)">
+          <div class="field-group-header-left">
+            <span class="field-group-chevron" [class.open]="isOpen(group.key)">
+              <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+            </span>
+            <span class="field-group-name">{{ group.label }}</span>
+            @if ((groupCounts[group.key] ?? 0) > 0) {
+              <span class="fg-count-badge">
+                {{ groupCounts[group.key] }}/{{ group.fields.length }}
+              </span>
+            }
+          </div>
+          <label class="field-group-select-all"
+                 (click)="$event.stopPropagation(); toggleGroupAll(group)">
+            <span class="chk" [class.checked]="isGroupFullySelected(group)">
+              <svg viewBox="0 0 9 7"><path d="M1 3l2.5 2.5L8 1"/></svg>
+            </span>
+            Tutti
+          </label>
+        </button>
+
+        <!-- Corpo: un dynamic-form per gruppo -->
+        @if (isOpen(group.key)) {
+          <div class="fields-list">
+            <dynamic-form
+              [config]="groupConfigs[group.key]"
+              (completionChange)="onGroupCompletion(group.key, $event)">
+            </dynamic-form>
+          </div>
+        }
+
+      </div>
+    }
+  </div>
+
+  <div class="fields-footer">
+    <button type="button" class="btn btn-outline" (click)="onBack()">
+      Indietro
+    </button>
+    <button type="button" class="btn btn-primary" [disabled]="!hasSelection" (click)="onNext()">
+      Avanti
+      <svg viewBox="0 0 24 24" style="width:11px;height:11px"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+  </div>
+
+</div>

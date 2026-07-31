@@ -1,0 +1,93 @@
+<div class="wizard-dialog">
+  <!-- Header identico all'originale: gradiente + icona + titolo/sottotitolo -->
+  <div class="modal-header">
+    <div class="modal-title-area">
+      <div class="modal-title-icon">
+        <!-- bar chart icon — identico all'originale (modal-title-icon del report-modal-overlay) -->
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="white">
+          <rect x="1" y="10" width="4" height="9" rx="1"/>
+          <rect x="8" y="5" width="4" height="14" rx="1"/>
+          <rect x="15" y="1" width="4" height="18" rx="1"/>
+        </svg>
+      </div>
+      <div class="modal-title-text">
+        <!-- Preset mode: titolo = preset label, sottotitolo = sub-section -->
+        <!-- Custom mode: titolo = "Report personalizzato", sottotitolo = sub-section -->
+        @if (data.mode === 'preset') {
+          <h2 class="modal-title">{{ data.presetLabel }}</h2>
+          <p class="modal-subtitle">{{ (catLabel$ | async) }} &mdash; {{ subSection?.label }}</p>
+        } @else {
+          <h2 class="modal-title">Report personalizzato</h2>
+          <p class="modal-subtitle">{{ (catLabel$ | async) }} &mdash; {{ subSection?.label }}</p>
+        }
+      </div>
+    </div>
+    <button type="button" class="modal-close-btn" (click)="close()" aria-label="Chiudi">
+      <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" fill="none" stroke-width="2.2" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+
+  <!-- Stepper bar: visibile solo per custom mode (nascosto per preset) -->
+  @if (!hideStepperHeader) {
+    <div class="modal-stepper-wrap">
+      <div class="step-bar">
+        @for (step of wizardSteps; track step.index) {
+          <div class="step-item">
+            <span class="step-num"
+              [class.done]="currentStepIndex > step.index"
+              [class.active]="currentStepIndex === step.index"
+              [class.pending]="currentStepIndex < step.index">
+              @if (currentStepIndex > step.index) {
+                <svg viewBox="0 0 9 7" width="9" height="7" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 3l2.5 2.5L8 1"/></svg>
+              } @else {
+                {{ step.index + 1 }}
+              }
+            </span>
+            <span class="step-label"
+              [class.active]="currentStepIndex === step.index"
+              [class.done]="currentStepIndex > step.index"
+              [class.pending]="currentStepIndex < step.index">{{ step.label }}</span>
+            @if (!$last) {
+              <span class="step-connector" [class.done]="currentStepIndex > step.index"></span>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Body -->
+  <div class="modal-body">
+    @if (subSection && filtersForm && fieldsForm && saveForm) {
+      @if (currentStepIndex === 0) {
+        <lib-report-filters-step
+          [filters]="subSection.filters"
+          [form]="filtersForm"
+          [cascadingData]="(cascadingData$ | async) ?? []"
+          (next)="goToStep(1)"
+        ></lib-report-filters-step>
+      }
+      @if (currentStepIndex === 1) {
+        <lib-report-fields-step
+          [fieldGroups]="subSection.fieldGroups"
+          [form]="fieldsForm"
+          (back)="goToStep(0)"
+          (next)="goToStep(2)"
+        ></lib-report-fields-step>
+      }
+      @if (currentStepIndex === 2) {
+        <lib-report-preview-step
+          [mode]="data.mode"
+          [hasEdited]="hasEdited"
+          [columnsCount]="selectedFieldIds.length"          [columnLabels]="selectedFieldLabels"          [filename]="filename"
+          [saveForm]="saveForm"
+          (back)="goToStep(1)"
+          (edit)="onEdit()"
+          (save)="onSave()"
+          (update)="onUpdate()"
+          (exportRequested)="onExport($event)"
+        ></lib-report-preview-step>
+      }
+    }
+  </div>
+</div>

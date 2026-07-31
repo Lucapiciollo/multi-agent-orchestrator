@@ -1,0 +1,8 @@
+// Il layout (#app, #main-col, #content) e' interamente fornito dal sistema SCSS
+// generato dallo skill css-material-agent (workspace/output/scss/_layout.scss)
+// e importato globalmente in src/styles.scss. Nessun override locale necessario:
+// duplicare qui le regole introdurrebbe una cascata in conflitto con la
+// dichiarazione unica presente in _layout.scss (fedeltà 1:1 al sorgente).
+:host {
+   display: contents;
+}

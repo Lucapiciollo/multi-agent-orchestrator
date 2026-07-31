@@ -1,0 +1,11 @@
+agent ok html-angular-architect-agent
+C:\Users\LucaPiciollo\OneDrive - AGIC\Desktop\multi-agent-orchestrator\src\provider-factory.ts:37
+          throw new Error(
+                ^
+
+Error: Provider 'copilot' richiede COPILOT_COMMAND nel file .env
+    at ProviderFactory.build (C:\Users\LucaPiciollo\OneDrive - AGIC\Desktop\multi-agent-orchestrator\src\provider-factory.ts:37:17)
+    at ProviderFactory.createForAgent (C:\Users\LucaPiciollo\OneDrive - AGIC\Desktop\multi-agent-orchestrator\src\provider-factory.ts:19:26)
+    at <anonymous> (C:\Users\LucaPiciollo\OneDrive - AGIC\Desktop\multi-agent-orchestrator\diag.mts:11:21)
+
+Node.js v24.13.1

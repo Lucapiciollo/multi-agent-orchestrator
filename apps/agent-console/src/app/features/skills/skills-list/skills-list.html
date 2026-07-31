@@ -13,13 +13,25 @@
     <thead>
       <tr>
         <th>ID SKILL</th>
+        <th>NOME</th>
         <th>DESCRIZIONE</th>
+        <th>AGENTI</th>
+        <th>WORKFLOW</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let item of items">
-        <td><span class="mono">{{item.id || item.name}}</span></td>
+        <td><span class="mono">{{item.id}}</span></td>
+        <td class="td-name">{{item.name}}</td>
         <td class="td-desc">{{item.description}}</td>
+        <td class="td-agents">
+          <span *ngFor="let a of item.usedByAgents" class="agent-tag">{{a}}</span>
+          <span class="td-none" *ngIf="!item.usedByAgents?.length">—</span>
+        </td>
+        <td class="td-workflows">
+          <span *ngFor="let w of item.usedByWorkflows" class="workflow-tag">{{w}}</span>
+          <span class="td-none" *ngIf="!item.usedByWorkflows?.length">—</span>
+        </td>
       </tr>
     </tbody>
   </table>

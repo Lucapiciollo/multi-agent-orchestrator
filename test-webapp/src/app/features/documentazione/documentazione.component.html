@@ -1,0 +1,9 @@
+<div class="feature-placeholder">
+   <h2>Documentazione</h2>
+   <p *ngIf="isLoading$ | async">Caricamento…</p>
+   <p *ngIf="!(isLoading$ | async)">
+      Sezione "Documentazione" pronta ad ospitare <code>lib-documentazione</code>.
+      Importa il modulo della libreria generata in <code>documentazione.module.ts</code>
+      e sostituisci questo placeholder con <code>&lt;lib-documentazione&gt;&lt;/lib-documentazione&gt;</code>.
+   </p>
+</div>

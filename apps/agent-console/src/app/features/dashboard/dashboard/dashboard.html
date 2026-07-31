@@ -1,67 +1,187 @@
-<div class="dv-page">
-  <!-- KPI bar -->
-  <div class="kpi-bar">
-    <a class="kpi-card" routerLink="/agents">
-      <div class="kpi-icon agents"><mat-icon>smart_toy</mat-icon></div>
-      <div class="kpi-body">
-        <div class="kpi-val">{{stats.agents}}</div>
-        <div class="kpi-lbl">Agenti</div>
+﻿<div class="db-page">
+
+  <!-- ── KPI Bar ─────────────────────────────────────────────────── -->
+  <div class="db-kpi-row">
+    <div class="db-kpi db-kpi--primary">
+      <mat-icon>smart_toy</mat-icon>
+      <div class="db-kpi-body">
+        <span class="db-kpi-num">{{stats.agents}}</span>
+        <span class="db-kpi-label">Agenti</span>
       </div>
-    </a>
-    <div class="kpi-sep"></div>
-    <a class="kpi-card" routerLink="/skills">
-      <div class="kpi-icon skills"><mat-icon>bolt</mat-icon></div>
-      <div class="kpi-body">
-        <div class="kpi-val">{{stats.skills}}</div>
-        <div class="kpi-lbl">Skill</div>
+    </div>
+    <div class="db-kpi db-kpi--accent">
+      <mat-icon>bolt</mat-icon>
+      <div class="db-kpi-body">
+        <span class="db-kpi-num">{{stats.skills}}</span>
+        <span class="db-kpi-label">Skill</span>
       </div>
-    </a>
-    <div class="kpi-sep"></div>
-    <a class="kpi-card" routerLink="/workflows">
-      <div class="kpi-icon wf"><mat-icon>account_tree</mat-icon></div>
-      <div class="kpi-body">
-        <div class="kpi-val">{{stats.workflows}}</div>
-        <div class="kpi-lbl">Workflow</div>
+    </div>
+    <div class="db-kpi db-kpi--violet">
+      <mat-icon>account_tree</mat-icon>
+      <div class="db-kpi-body">
+        <span class="db-kpi-num">{{stats.workflows}}</span>
+        <span class="db-kpi-label">Workflow</span>
       </div>
-    </a>
-    <div class="kpi-sep"></div>
-    <a class="kpi-card" routerLink="/executions">
-      <div class="kpi-icon exec"><mat-icon>receipt_long</mat-icon></div>
-      <div class="kpi-body">
-        <div class="kpi-val">{{stats.executions}}</div>
-        <div class="kpi-lbl">Esecuzioni</div>
+    </div>
+    <div class="db-kpi db-kpi--green" *ngIf="stats.running > 0">
+      <mat-icon class="pulse-icon">radio_button_checked</mat-icon>
+      <div class="db-kpi-body">
+        <span class="db-kpi-num">{{stats.running}}</span>
+        <span class="db-kpi-label">In esecuzione</span>
       </div>
-    </a>
+    </div>
+    <div class="db-kpi db-kpi--neutral" *ngIf="stats.running === 0">
+      <mat-icon>receipt_long</mat-icon>
+      <div class="db-kpi-body">
+        <span class="db-kpi-num">{{stats.executions}}</span>
+        <span class="db-kpi-label">Esecuzioni</span>
+      </div>
+    </div>
+    <div class="db-kpi db-kpi--red" *ngIf="stats.failed > 0">
+      <mat-icon>cancel</mat-icon>
+      <div class="db-kpi-body">
+        <span class="db-kpi-num">{{stats.failed}}</span>
+        <span class="db-kpi-label">Falliti</span>
+      </div>
+    </div>
   </div>
 
-  <!-- Quick access -->
-  <div class="dv-section">
-    <div class="dv-section-title">Azioni rapide</div>
-    <div class="quick-grid">
-      <a class="quick-btn" routerLink="/agents">
-        <mat-icon>smart_toy</mat-icon>
-        <span>Agenti</span>
-      </a>
-      <a class="quick-btn" routerLink="/workflows">
-        <mat-icon>account_tree</mat-icon>
-        <span>Workflow</span>
-      </a>
-      <a class="quick-btn" routerLink="/providers">
-        <mat-icon>dns</mat-icon>
-        <span>Provider</span>
-      </a>
-      <a class="quick-btn" routerLink="/skills">
-        <mat-icon>bolt</mat-icon>
-        <span>Skill</span>
-      </a>
-      <a class="quick-btn" routerLink="/executions">
-        <mat-icon>receipt_long</mat-icon>
-        <span>Esecuzioni</span>
-      </a>
-      <a class="quick-btn" routerLink="/projects">
-        <mat-icon>folder</mat-icon>
-        <span>Progetti</span>
-      </a>
+  <!-- ── Live Executions ──────────────────────────────────────────── -->
+  <div class="db-section" *ngIf="runningExecs().length > 0">
+    <div class="db-section-header">
+      <mat-icon class="db-section-icon pulse-icon" style="color:var(--c-green)">radio_button_checked</mat-icon>
+      <h2 class="db-section-title">Live — In Esecuzione</h2>
+      <span class="db-live-badge">{{runningExecs().length}} attivi</span>
     </div>
+    <div class="db-live-grid">
+      <div class="db-live-card" *ngFor="let ex of runningExecs()" (click)="viewExec(ex.id)">
+        <div class="db-live-header">
+          <div class="semaphore semaphore--amber">
+            <span class="sem-dot sem-dot--red"></span>
+            <span class="sem-dot sem-dot--amber sem-dot--on pulse-dot"></span>
+            <span class="sem-dot sem-dot--green"></span>
+          </div>
+          <div class="db-live-info">
+            <span class="db-live-name">{{ex.workflowId}}</span>
+            <span class="db-live-id">{{ex.id}}</span>
+          </div>
+          <span class="db-live-elapsed">{{elapsedLabel(ex)}}</span>
+        </div>
+        <div class="db-live-progress">
+          <div class="db-live-bar" [style.width.%]="progressPct(ex)"></div>
+        </div>
+        <div class="db-live-footer">
+          <span class="db-task-count">{{ex.completedTasks ?? 0}} / {{ex.totalTasks}} step</span>
+          <button mat-icon-button class="db-cancel-btn" (click)="$event.stopPropagation(); cancelExec(ex.id)"
+                  matTooltip="Annulla">
+            <mat-icon>stop</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Main Grid ────────────────────────────────────────────────── -->
+  <div class="db-main-grid">
+
+    <!-- Quick Launch -->
+    <div class="db-panel db-panel--launch">
+      <div class="db-section-header">
+        <mat-icon class="db-section-icon" style="color:var(--c-primary)">rocket_launch</mat-icon>
+        <h2 class="db-section-title">Lancia Workflow</h2>
+      </div>
+      <div *ngIf="loading" class="db-loading">
+        <mat-spinner diameter="24"></mat-spinner> Caricamento...
+      </div>
+      <div class="db-launch-list" *ngIf="!loading">
+        <div class="db-launch-item" *ngFor="let wf of workflows"
+             [class.db-launch-item--busy]="launching[wf.id]">
+          <div class="db-launch-meta">
+            <mat-icon class="db-launch-icon">account_tree</mat-icon>
+            <div>
+              <span class="db-launch-name">{{wf.id}}</span>
+              <span class="db-launch-tasks">{{(wf.tasks?.length ?? 0)}} task</span>
+            </div>
+          </div>
+          <button mat-stroked-button class="db-run-btn"
+                  [disabled]="launching[wf.id]"
+                  (click)="launch(wf.id)">
+            <mat-icon>{{launching[wf.id] ? 'hourglass_empty' : 'play_arrow'}}</mat-icon>
+            {{launching[wf.id] ? 'Avvio...' : 'Avvia'}}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Executions -->
+    <div class="db-panel db-panel--history">
+      <div class="db-section-header">
+        <mat-icon class="db-section-icon" style="color:var(--c-text-muted)">history</mat-icon>
+        <h2 class="db-section-title">Esecuzioni Recenti</h2>
+        <a routerLink="/executions" class="db-see-all">Vedi tutte</a>
+      </div>
+      <div class="db-history-list">
+        <div *ngFor="let ex of recentExecs()" class="db-history-row" (click)="viewExec(ex.id)">
+          <!-- Semaphore -->
+          <div class="semaphore semaphore--mini" [class]="'semaphore--' + statusColor(ex.status)">
+            <span class="sem-dot sem-dot--red"   [class.sem-dot--on]="ex.status==='failed'||ex.status==='cancelled'"></span>
+            <span class="sem-dot sem-dot--amber" [class.sem-dot--on]="ex.status==='running'||ex.status==='queued'"
+                  [class.pulse-dot]="ex.status==='running'"></span>
+            <span class="sem-dot sem-dot--green" [class.sem-dot--on]="ex.status==='completed'"></span>
+          </div>
+          <div class="db-history-info">
+            <span class="db-history-name">{{ex.workflowId}}</span>
+            <span class="db-history-id">{{ex.id}}</span>
+          </div>
+          <div class="db-history-right">
+            <span class="db-status-pill" [class]="'db-status-pill--' + statusColor(ex.status)">
+              <mat-icon>{{statusIcon(ex.status)}}</mat-icon>
+              {{ex.status}}
+            </span>
+            <span class="db-progress-mini" *ngIf="ex.totalTasks">
+              {{ex.completedTasks ?? 0}}/{{ex.totalTasks}}
+            </span>
+          </div>
+        </div>
+        <div *ngIf="!recentExecs().length" class="db-empty">
+          <mat-icon>receipt_long</mat-icon>
+          <p>Nessuna esecuzione trovata</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Agents -->
+    <div class="db-panel db-panel--agents">
+      <div class="db-section-header">
+        <mat-icon class="db-section-icon" style="color:var(--c-primary)">smart_toy</mat-icon>
+        <h2 class="db-section-title">Agenti</h2>
+        <a routerLink="/agents" class="db-see-all">Gestisci</a>
+      </div>
+      <div class="db-agent-list">
+        <div class="db-agent-chip" *ngFor="let ag of agents">
+          <mat-icon>smart_toy</mat-icon>
+          <span>{{ag.name || ag.id}}</span>
+          <span class="db-agent-skills" *ngIf="ag.skills?.length">
+            {{ag.skills.length}} skill
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Skills -->
+    <div class="db-panel db-panel--skills">
+      <div class="db-section-header">
+        <mat-icon class="db-section-icon" style="color:#8b5cf6">bolt</mat-icon>
+        <h2 class="db-section-title">Skill</h2>
+        <a routerLink="/skills" class="db-see-all">Gestisci</a>
+      </div>
+      <div class="db-skill-list">
+        <div class="db-skill-chip" *ngFor="let sk of skills">
+          <mat-icon>bolt</mat-icon>
+          <span>{{sk.name || sk.id}}</span>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>

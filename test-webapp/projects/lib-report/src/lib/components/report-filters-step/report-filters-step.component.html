@@ -1,0 +1,11 @@
+<div class="report-filters-step">
+
+  <dynamic-form [config]="filterConfig" (completionChange)="onCompletion($event)"></dynamic-form>
+
+  <div class="report-filters-step__footer">
+    <button type="button" class="btn btn-primary" (click)="onNext()">
+      Avanti
+      <svg viewBox="0 0 24 24" style="width:11px;height:11px"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+  </div>
+</div>

@@ -1,0 +1,9 @@
+<div class="feature-placeholder">
+   <h2>Download</h2>
+   <p *ngIf="isLoading$ | async">Caricamento…</p>
+   <p *ngIf="!(isLoading$ | async)">
+      Sezione "Download" pronta ad ospitare <code>lib-download</code>.
+      Importa il modulo della libreria generata in <code>download.module.ts</code>
+      e sostituisci questo placeholder con <code>&lt;lib-download&gt;&lt;/lib-download&gt;</code>.
+   </p>
+</div>

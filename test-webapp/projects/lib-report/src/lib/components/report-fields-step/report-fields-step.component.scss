@@ -1,0 +1,129 @@
+// report-fields-step.component.scss
+// Struttura: header accordion nativo + <dynamic-form> per gruppo (pl-dynamicform).
+// NOTA: pl-dynamicform non applica class[] su app-checkbox — layout 2-colonne
+// e stile checkbox sono gestiti via ::ng-deep sul .fields-list.
+
+.report-fields-step {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  --df-primary: #EB5E2D;
+}
+
+// Header "N selezionati"
+.fields-header {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;
+}
+.fields-header-label { font-size: 11px; font-weight: 600; color: var(--neutral-700, #555); }
+.fields-count-badge {
+  font-size: 10px; padding: 2px 8px; border-radius: 3px;
+  background: var(--primary-bg, #FFF3EE); color: var(--primary, #EB5E2D);
+}
+
+// Gruppi
+.fields-groups { display: flex; flex-direction: column; gap: 0; margin-bottom: 16px; }
+.field-group { margin-bottom: 20px; }
+
+// Header gruppo — identico al sorgente: .field-group-header
+.field-group-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-bottom: 6px; border: none; border-bottom: 1px solid var(--neutral-200, #e8e8e8);
+  margin-bottom: 8px; cursor: pointer; background: none; width: 100%;
+}
+.field-group-header-left { display: flex; align-items: center; gap: 6px; }
+.field-group-chevron svg {
+  stroke: var(--neutral-400, #999); fill: none; stroke-width: 2;
+  stroke-linecap: round; stroke-linejoin: round; width: 11px; height: 11px; transition: transform 200ms;
+}
+.field-group-chevron.open svg  { transform: rotate(0deg); }
+.field-group-chevron:not(.open) svg { transform: rotate(-90deg); }
+.field-group-name { font-size: 11px; font-weight: 700; color: var(--neutral-700, #444); }
+.fg-count-badge {
+  font-size: 9px; padding: 1px 6px; border-radius: 3px;
+  background: var(--primary-bg, #FFF3EE); color: var(--primary, #EB5E2D);
+  border: 1px solid var(--primary-border, #fcd5c3);
+}
+
+// "Tutti" — identico al sorgente: .field-group-select-all
+.field-group-select-all { display: flex; align-items: center; gap: 6px; font-size: 10px; color: var(--neutral-500, #888); cursor: pointer; }
+
+// Checkbox nativa .chk — identico al sorgente
+.chk {
+  width: 16px; height: 16px; border-radius: 4px; border: 1.5px solid #D0D5DD;
+  background: var(--neutral-0, white); display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; cursor: pointer; transition: 120ms;
+  svg { display: none; stroke: white; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; width: 9px; height: 9px; }
+}
+.chk:hover { border-color: var(--primary, #EB5E2D); }
+.chk.checked {
+  background: var(--primary, #EB5E2D); border-color: var(--primary, #EB5E2D);
+  box-shadow: rgba(235, 94, 45, 0.3) 0 1px 3px;
+  svg { display: block; }
+}
+
+// ── Corpo gruppo: dynamic-form con checkbox Material override → stile .chk ──────
+.fields-list {
+  // NOTA: pl-dynamicform NON applica class[] (es. 'col-6') ai componenti app-checkbox.
+  // Si usa CSS per forzare il comportamento Bootstrap col-6 (50% larghezza, 2 per riga).
+  // Selettore 3-livelli corretto per il container dei checkbox nel DOM pl-dynamicform:
+  //   .df-form > .row.g-0 > .g-0.row(GROUP) > .row.g-0(FIELDS) > [app-checkbox]
+  ::ng-deep dynamic-form .df-form > .row > .row > .row {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 0 !important;
+    padding-left: 0;
+  }
+  // app-checkbox = col-6: 50% larghezza, padding destra per gap (equivalente Bootstrap col-6)
+  ::ng-deep app-checkbox {
+    width: 50% !important;
+    min-width: 0;
+    padding-right: 12px;
+    box-sizing: border-box;
+    margin-bottom: 3px;
+  }
+  ::ng-deep app-checkbox .mdc-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  ::ng-deep dynamic-form .form-title { display: none !important; }
+  ::ng-deep dynamic-form .df-actions-group { display: none !important; }
+
+  // Override mat-checkbox → stile .field-row del sorgente
+  ::ng-deep app-checkbox { cursor: pointer; }
+  ::ng-deep mat-checkbox .mdc-checkbox {
+    width: 16px !important; height: 16px !important; padding: 0 !important; flex-shrink: 0 !important;
+  }
+  ::ng-deep mat-checkbox .mat-mdc-checkbox-touch-target { display: none !important; }
+  ::ng-deep mat-checkbox .mdc-checkbox__ripple,
+  ::ng-deep mat-checkbox .mat-ripple { display: none !important; }
+  ::ng-deep mat-checkbox .mdc-checkbox__background {
+    width: 16px !important; height: 16px !important; border-radius: 4px !important;
+    border-width: 1.5px !important; border-color: #D0D5DD !important; top: 0 !important; left: 0 !important;
+  }
+  ::ng-deep mat-checkbox.mat-mdc-checkbox-checked .mdc-checkbox__background {
+    background-color: var(--primary, #EB5E2D) !important;
+    border-color: var(--primary, #EB5E2D) !important;
+    box-shadow: rgba(235, 94, 45, 0.3) 0 1px 3px !important;
+  }
+  ::ng-deep mat-checkbox .mdc-label {
+    font-size: 12px !important; color: var(--neutral-800, #333) !important;
+    font-family: var(--font, 'Open Sans', sans-serif) !important; padding-left: 8px !important;
+    cursor: pointer;
+  }
+  ::ng-deep mat-checkbox .mdc-form-field { align-items: center !important; }
+  ::ng-deep mat-checkbox .customMY { margin: 0 !important; }
+}
+
+// Footer
+.fields-footer {
+  display: flex; justify-content: flex-end; gap: 8px;
+  padding-top: 16px; border-top: 1px solid var(--neutral-150, #ebebeb);
+}
+
+.btn {
+  padding: 8px 16px; border-radius: 7px; font-size: 12px; font-weight: 600;
+  font-family: var(--font, 'Open Sans', sans-serif); cursor: pointer;
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 1.5px solid transparent; transition: background 150ms;
+  svg { stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+  &[disabled] { opacity: 0.45; cursor: not-allowed; }
+}
+.btn-primary { background: var(--primary, #EB5E2D); color: white; border-color: var(--primary, #EB5E2D); &:hover:not([disabled]) { background: var(--primary-dark, #BA3D12); } }
+.btn-outline  { background: white; color: var(--neutral-700, #444); border-color: var(--neutral-200, #e2e6ea); &:hover { background: #f7f8fa; } }

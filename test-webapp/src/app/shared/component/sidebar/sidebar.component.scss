@@ -1,0 +1,16 @@
+// Il layout/aspetto (.sb-root, .sb-voce, ecc.) e' fornito dal sistema SCSS
+// generato dallo skill css-material-agent (workspace/output/scss) e importato
+// globalmente in src/styles.scss. Qui restano solo eventuali override locali.
+:host {
+   display: block;
+   height: 100%;
+}
+
+// Reset nativo necessario SOLO perche' .sb-voce e' un <a routerLink> (per il
+// routing reale) invece del <div onclick> del sorgente: senza questo reset
+// il browser applicherebbe sottolineatura/colore di default del link, assenti
+// nel sorgente. Nessuna regola di aspetto/layout viene duplicata qui.
+a.sb-voce {
+   text-decoration: none;
+   color: inherit;
+}

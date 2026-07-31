@@ -6,7 +6,62 @@
     </div>
   </div>
 
-  <!-- ── File di input ─────────────────────────────── -->
+  <!-- ── Smart Drop Zone: carica soltanto, nessun run automatico ────────── -->
+  <div class="smart-drop-zone"
+       [class.drag-over]="isDragOver"
+       [class.uploading]="smartUploading"
+       (dragover)="onDragOver($event)"
+       (dragleave)="onDragLeave()"
+       (drop)="onDrop($event)"
+       (click)="openSmartPicker()">
+    <input #smartFileInput type="file" style="display:none"
+           accept=".html,.htm,.css,.scss,.sass"
+           (change)="onSmartFileSelected($event)">
+
+    <div class="sdz-inner" *ngIf="!smartUploading && !smartUploadedName">
+      <mat-icon class="sdz-icon">cloud_upload</mat-icon>
+      <div class="sdz-title">Trascina un file qui oppure clicca per selezionarlo</div>
+      <div class="sdz-rules">
+        <span *ngFor="let r of routingRules" class="sdz-rule-chip">
+          <mat-icon>{{r.icon}}</mat-icon>
+          <span class="sdz-rule-ext">{{r.match.extensions.join(', ')}}</span>
+          <span class="sdz-rule-arrow">→</span>
+          <span class="sdz-rule-label">{{r.label}}</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="sdz-inner sdz-loading" *ngIf="smartUploading">
+      <mat-spinner [diameter]="36"></mat-spinner>
+      <div class="sdz-title">Caricamento file in corso...</div>
+    </div>
+
+    <div class="sdz-inner sdz-success" *ngIf="smartUploadedName && !smartUploading" (click)="$event.stopPropagation()">
+      <mat-icon class="sdz-ok-icon">check_circle</mat-icon>
+      <div class="sdz-result-info">
+        <div class="sdz-result-file">
+          <mat-icon>description</mat-icon>
+          <strong>{{smartUploadedName}}</strong>
+        </div>
+        <div class="sdz-result-route">
+          File caricato. Scegli il workflow e premi <strong>Esegui</strong> nell'elenco "File di input" qui sotto.
+        </div>
+      </div>
+      <button class="sdz-reset-btn" (click)="smartUploadedName = null; smartError = ''" matTooltip="Carica un altro file">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
+
+    <div class="sdz-inner sdz-error" *ngIf="smartError && !smartUploading" (click)="$event.stopPropagation()">
+      <mat-icon class="sdz-err-icon">error_outline</mat-icon>
+      <div>{{smartError}}</div>
+      <button class="sdz-reset-btn" (click)="smartError = ''" matTooltip="Riprova">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── File di input ─────────────────────────────────────────────── -->
   <div class="input-panel">
     <div class="input-panel-header">
       <div class="input-panel-title">
@@ -27,6 +82,28 @@
         <mat-icon class="file-icon">description</mat-icon>
         <span class="file-name" [matTooltip]="'workspace/input/' + f.name">{{f.name}}</span>
         <span class="file-size">{{formatSize(f.size)}}</span>
+
+        <!-- Scelta del workflow per QUESTO file, prima di premere Esegui -->
+        <mat-form-field appearance="outline" class="file-workflow-select" subscriptSizing="dynamic"
+                         (click)="$event.stopPropagation()">
+          <mat-select [(ngModel)]="fileWorkflowSelection[f.name]"
+                      [matTooltip]="detectRule(f) ? 'Automatico rileva: ' + detectRule(f)!.label : 'Nessun rilevamento automatico per questo file'">
+            <mat-option value="">
+              Automatico{{ detectRule(f) ? ' (' + detectRule(f)!.label + ')' : '' }}
+            </mat-option>
+            <mat-option *ngFor="let w of items" [value]="w.id">{{w.objective || w.id}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <button class="file-run-btn"
+                [disabled]="fileRunning[f.name] || !canRunFile(f)"
+                (click)="runInputFile(f)"
+                [matTooltip]="canRunFile(f) ? 'Avvia: ' + resolvedWorkflowId(f) : 'Nessun workflow disponibile per questo file'">
+          <mat-spinner *ngIf="fileRunning[f.name]" [diameter]="12" style="display:inline-block"></mat-spinner>
+          <mat-icon *ngIf="!fileRunning[f.name]">play_arrow</mat-icon>
+          <span>Esegui</span>
+        </button>
+
         <button class="del-btn" (click)="deleteInputFile(f.name)" matTooltip="Rimuovi">
           <mat-icon>delete_outline</mat-icon>
         </button>
@@ -37,36 +114,157 @@
     </div>
   </div>
 
+  <!-- ── Configurazione esecuzione ─────────────────────────────────── -->
+  <div class="run-config-panel">
+    <!-- Provider -->
+    <div class="run-config-row">
+      <span class="run-config-label"><mat-icon>dns</mat-icon> Provider</span>
+      <mat-button-toggle-group [(ngModel)]="selectedProvider" class="config-toggle">
+        <mat-button-toggle value="copilot">
+          <mat-icon>smart_toy</mat-icon> Copilot
+        </mat-button-toggle>
+        <mat-button-toggle value="ollama">
+          <mat-icon>storage</mat-icon> Ollama
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+      <span class="provider-status-dot"
+            [class.ok]="isProviderHealthy(selectedProvider)"
+            [matTooltip]="selectedProvider + ': ' + (isProviderHealthy(selectedProvider) ? 'healthy' : 'down')">
+      </span>
+    </div>
+
+    <!-- Modalità -->
+    <div class="run-config-row">
+      <span class="run-config-label"><mat-icon>tune</mat-icon> Modalità</span>
+      <mat-button-toggle-group [(ngModel)]="runMode" class="config-toggle">
+        <mat-button-toggle value="single" matTooltip="Avvia una singola esecuzione">
+          <mat-icon>play_arrow</mat-icon> Singolo
+        </mat-button-toggle>
+        <mat-button-toggle value="parallel" matTooltip="Avvia N esecuzioni in parallelo">
+          <mat-icon>call_split</mat-icon> Parallelo
+        </mat-button-toggle>
+        <mat-button-toggle value="sequential" matTooltip="Avvia N esecuzioni in sequenza — attende la fine di ciascuna">
+          <mat-icon>format_list_numbered</mat-icon> Sequenziale
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+
+    <!-- Numero run (solo per parallel/sequential) -->
+    <div class="run-config-row" *ngIf="runMode !== 'single'">
+      <span class="run-config-label">
+        <mat-icon>repeat</mat-icon>
+        {{ runMode === 'parallel' ? 'Run in parallelo' : 'Run in sequenza' }}
+      </span>
+      <div class="count-control">
+        <button class="count-btn" (click)="runCount = runCount > 1 ? runCount - 1 : 1">
+          <mat-icon>remove</mat-icon>
+        </button>
+        <span class="count-value">{{runCount}}</span>
+        <button class="count-btn" (click)="runCount = runCount + 1">
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+      <span class="run-mode-desc" *ngIf="runMode === 'sequential'">
+        <mat-icon>info_outline</mat-icon>
+        Ogni run parte automaticamente al completamento del precedente
+      </span>
+    </div>
+  </div>
+
   <div *ngIf="loading" class="dv-loading"><mat-spinner [diameter]="20"></mat-spinner> Caricamento...</div>
   <div *ngIf="error" class="dv-error">{{error}}</div>
 
   <table class="dv-table" *ngIf="!loading && !error && items.length > 0">
     <thead>
       <tr>
+        <th style="width:28px;"></th>
         <th>ID WORKFLOW</th>
         <th>OBIETTIVO</th>
         <th>TASK</th>
-        <th>TAG</th>
-        <th style="width:110px;">ESEGUI</th>
+        <th style="width:140px;">ESEGUI</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let item of items">
-        <td><span class="mono">{{item.id}}</span></td>
-        <td class="td-obj">{{item.objective}}</td>
-        <td><span class="dv-badge ok" [matTooltip]="taskTooltip(item)" matTooltipPosition="right">{{item.tasks?.length || 0}}</span></td>
-        <td class="td-tags">
-          <span *ngFor="let t of item.tags" class="skill-tag">{{t}}</span>
-          <span class="td-none" *ngIf="!item.tags?.length">—</span>
-        </td>
-        <td>
-          <button class="run-btn" (click)="run(item.id)" [disabled]="running[item.id]">
-            <mat-spinner *ngIf="running[item.id]" [diameter]="14" style="display:inline-block;"></mat-spinner>
-            <mat-icon *ngIf="!running[item.id]">play_arrow</mat-icon>
-            <span>{{running[item.id] ? 'Avvio...' : 'Run'}}</span>
-          </button>
-        </td>
-      </tr>
+      <ng-container *ngFor="let item of items">
+        <!-- ── Riga workflow ──────────────────────────────────────── -->
+        <tr class="wf-row" [class.wf-row--expanded]="expandedWorkflows.has(item.id)">
+          <td class="td-expand" (click)="toggleExpand(item.id)">
+            <mat-icon class="expand-icon">{{expandedWorkflows.has(item.id) ? 'expand_less' : 'expand_more'}}</mat-icon>
+          </td>
+          <td><span class="mono">{{item.id}}</span></td>
+          <td class="td-obj">{{item.objective}}</td>
+          <td>
+            <span class="dv-badge ok" [matTooltip]="taskTooltip(item)" matTooltipPosition="right">
+              {{item.tasks?.length || 0}}
+            </span>
+          </td>
+          <td>
+            <div class="seq-progress" *ngIf="runMode === 'sequential' && seqState[item.id] && !seqState[item.id]?.done">
+              <div class="seq-progress-bar" [style.width.%]="(seqState[item.id]!.step / seqState[item.id]!.total) * 100"></div>
+              <span class="seq-progress-label">{{seqState[item.id]!.step}}/{{seqState[item.id]!.total}}</span>
+            </div>
+            <button class="run-btn" (click)="run(item.id)" [disabled]="isRunning(item.id)">
+              <mat-spinner *ngIf="isRunning(item.id)" [diameter]="14" style="display:inline-block;"></mat-spinner>
+              <mat-icon *ngIf="!isRunning(item.id)">play_arrow</mat-icon>
+              <span>{{runLabel(item.id)}}</span>
+            </button>
+          </td>
+        </tr>
+
+        <!-- ── Sub-rows task (espansi) ──────────────────────────── -->
+        <ng-container *ngIf="expandedWorkflows.has(item.id) && item.tasks?.length">
+          <tr *ngFor="let task of item.tasks; let ti = index" class="task-row">
+            <td class="td-expand"></td>
+            <td colspan="3">
+              <div class="task-row-inner">
+                <span class="task-indent">
+                  <span class="task-tree-line">{{ti < item.tasks.length - 1 ? '├' : '└'}}</span>
+                </span>
+                <span class="task-num">{{ti + 1}}</span>
+                <div class="task-info">
+                  <span class="task-id mono">{{task.id}}</span>
+                  <span class="task-title">{{task.title}}</span>
+                  <button type="button" class="task-desc-toggle" *ngIf="task.description"
+                          [matTooltip]="taskDescTooltip(task)" matTooltipPosition="above" matTooltipClass="task-desc-tooltip"
+                          (click)="toggleTaskDesc(item.id, task.id)">
+                    <mat-icon>{{isTaskDescExpanded(item.id, task.id) ? 'expand_less' : 'info_outline'}}</mat-icon>
+                  </button>
+                  <span class="task-agent">
+                    <mat-icon>smart_toy</mat-icon>{{task.agentId}}
+                  </span>
+                  <span class="task-deps" *ngIf="task.dependencies?.length" matTooltip="Dipende da: {{depLabel(task.dependencies)}}">
+                    <mat-icon>link</mat-icon>{{task.dependencies.length}} dep
+                  </span>
+                  <span class="task-skills" *ngIf="task.skillIds?.length">
+                    <mat-icon>bolt</mat-icon>{{task.skillIds.join(', ')}}
+                  </span>
+                </div>
+                <div class="task-description" *ngIf="isTaskDescExpanded(item.id, task.id)">
+                  {{task.description}}
+                  <div class="task-description-meta" *ngIf="task.outputPaths?.length">
+                    <mat-icon>folder</mat-icon>
+                    <span>Output: {{task.outputPaths.join(', ')}}</span>
+                  </div>
+                  <div class="task-description-meta" *ngIf="task.validationCriteria?.length">
+                    <mat-icon>fact_check</mat-icon>
+                    <span>Validazione: {{task.validationCriteria.join(' · ')}}</span>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <button class="step-run-btn"
+                      [disabled]="stepRunning[item.id + '::' + task.id]"
+                      (click)="runStep(item.id, task.id)"
+                      matTooltip="Esegui solo questo step">
+                <mat-spinner *ngIf="stepRunning[item.id + '::' + task.id]" [diameter]="12" style="display:inline-block;"></mat-spinner>
+                <mat-icon *ngIf="!stepRunning[item.id + '::' + task.id]">play_circle</mat-icon>
+                <span>Run step</span>
+              </button>
+            </td>
+          </tr>
+        </ng-container>
+      </ng-container>
     </tbody>
   </table>
 

@@ -1,5 +1,8 @@
 import { Router } from "express";
+import path from "node:path";
+import { readdir } from "node:fs/promises";
 import { readJson } from "../utils.js";
+import { ROOT_DIR } from "../config.js";
 
 export const agentsRouter = Router();
 
@@ -21,10 +24,31 @@ interface RawAgent {
     timeoutMs?: number;
   };
 }
+interface RawTask     { agentId?: string; }
+interface RawWorkflow { id: string; tasks: RawTask[]; }
 
 agentsRouter.get("/", async (_req, res) => {
   try {
     const agents = await readJson<RawAgent[]>("agents/registry.json");
+
+    // Build reverse map: agentId → workflowIds
+    const agentWorkflowMap = new Map<string, string[]>();
+    try {
+      const wfDir = path.join(ROOT_DIR, "workflows");
+      const wfFiles = (await readdir(wfDir)).filter(f => f.endsWith(".workflow.json"));
+      for (const file of wfFiles) {
+        try {
+          const wf = await readJson<RawWorkflow>(`workflows/${file}`);
+          for (const task of wf.tasks ?? []) {
+            if (!task.agentId) continue;
+            const existing = agentWorkflowMap.get(task.agentId) ?? [];
+            if (!existing.includes(wf.id)) existing.push(wf.id);
+            agentWorkflowMap.set(task.agentId, existing);
+          }
+        } catch { /* skip malformed */ }
+      }
+    } catch { /* workflows dir not accessible */ }
+
     const data: AgentDefinition[] = agents.map(a => ({
       id: a.id,
       name: a.name,
@@ -35,7 +59,8 @@ agentsRouter.get("/", async (_req, res) => {
       allowedPaths: a.allowedPaths ?? [],
       forbiddenPaths: a.forbiddenPaths ?? [],
       priority: a.priority ?? 0,
-      provider: a.provider as AgentDefinition["provider"]
+      provider: a.provider as AgentDefinition["provider"],
+      usedByWorkflows: agentWorkflowMap.get(a.id) ?? []
     }));
     res.json({ data, meta: { total: data.length } });
   } catch (err) {

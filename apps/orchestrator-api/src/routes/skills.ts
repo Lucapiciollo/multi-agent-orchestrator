@@ -1,13 +1,25 @@
 import { Router } from "express";
 import path from "node:path";
-import { readFile } from "node:fs/promises";
+import { readFile, readdir } from "node:fs/promises";
 import { readJson } from "../utils.js";
 import { ROOT_DIR } from "../config.js";
 
 export const skillsRouter = Router();
 
-interface RawSkill { id: string; name: string; description: string; file: string; }
-interface RawAgent { id: string; skills: string[]; }
+interface RawSkill    { id: string; name: string; description: string; file: string; }
+interface RawAgent    { id: string; skills: string[]; }
+interface RawTask     { skillIds?: string[]; }
+interface RawWorkflow { id: string; tasks: RawTask[]; }
+
+interface SkillDefinition {
+  id: string;
+  name: string;
+  description: string;
+  file: string;
+  usedByAgents: string[];
+  usedByWorkflows: string[];
+  content?: string;
+}
 
 skillsRouter.get("/", async (_req, res) => {
   try {
@@ -26,12 +38,32 @@ skillsRouter.get("/", async (_req, res) => {
       }
     }
 
+    // Build reverse map: skillId → workflowIds (scanning all workflow files)
+    const skillWorkflowMap = new Map<string, string[]>();
+    try {
+      const wfDir = path.join(ROOT_DIR, "workflows");
+      const wfFiles = (await readdir(wfDir)).filter(f => f.endsWith(".workflow.json"));
+      for (const file of wfFiles) {
+        try {
+          const wf = await readJson<RawWorkflow>(`workflows/${file}`);
+          for (const task of wf.tasks ?? []) {
+            for (const skillId of task.skillIds ?? []) {
+              const existing = skillWorkflowMap.get(skillId) ?? [];
+              if (!existing.includes(wf.id)) existing.push(wf.id);
+              skillWorkflowMap.set(skillId, existing);
+            }
+          }
+        } catch { /* skip malformed */ }
+      }
+    } catch { /* workflows dir not accessible */ }
+
     const data: SkillDefinition[] = rawSkills.map(s => ({
       id: s.id,
       name: s.name,
       description: s.description,
       file: s.file,
-      usedByAgents: skillAgentMap.get(s.id) ?? []
+      usedByAgents: skillAgentMap.get(s.id) ?? [],
+      usedByWorkflows: skillWorkflowMap.get(s.id) ?? []
     }));
     res.json({ data, meta: { total: data.length } });
   } catch (err) {

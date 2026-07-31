@@ -5,6 +5,21 @@ import { map } from 'rxjs/operators';
 
 export interface InputFile { name: string; size: number; uploadedAt: string; }
 
+export interface RoutingRule {
+  id: string;
+  label: string;
+  description: string;
+  match: { extensions: string[]; mimeTypes: string[] };
+  workflowId: string;
+  icon: string;
+}
+
+export interface UploadAndRunResult {
+  file: { name: string; size: number };
+  matched: { ruleId: string; label: string; workflowId: string };
+  execution: { id: string; status: string };
+}
+
 @Injectable({ providedIn: 'root' })
 export class WorkspaceService {
   constructor(private http: HttpClient) {}
@@ -24,6 +39,23 @@ export class WorkspaceService {
 
   deleteFile(name: string): Observable<void> {
     return this.http.delete<any>(`/api/workspace/input/${encodeURIComponent(name)}`).pipe(map(() => undefined));
+  }
+
+  getRoutingRules(): Observable<{ rules: RoutingRule[] }> {
+    return this.http.get<any>('/api/workspace/routing').pipe(map(r => r.data));
+  }
+
+  uploadAndRun(file: File, workflowId?: string): Observable<UploadAndRunResult> {
+    return from(this.readAsBase64(file)).pipe(
+      switchMap(b64 =>
+        this.http.post<any>('/api/workspace/upload-and-run', {
+          name: file.name,
+          content: b64,
+          mimeType: file.type,
+          ...(workflowId ? { workflowId } : {})
+        }).pipe(map(r => r.data))
+      )
+    );
   }
 
   private readAsBase64(file: File): Promise<string> {

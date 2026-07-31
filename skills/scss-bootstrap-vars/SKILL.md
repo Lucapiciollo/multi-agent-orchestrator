@@ -329,6 +329,189 @@ After generating all files, print this card:
 
 ---
 
+### STEP 9 — Component SCSS Extraction (MANDATORY — pixel-perfect replication)
+
+> **Goal**: produce SCSS files whose compiled output is **visually identical** to the original source CSS.
+> The token system from Steps 1-8 is the backbone. This step uses those tokens to re-express EVERY CSS rule as nested, typed SCSS.
+
+---
+
+#### 9.1 — Parse and catalogue ALL CSS rules from the source
+
+Read the full inline `<style>` block (or external CSS). Create an inventory:
+
+```
+Rule count:      N
+Properties used: N distinct properties
+Selectors:       all unique root selectors
+```
+
+**CRITICAL: Do not skip, summarise, or omit any rule.** If a rule cannot be mapped to a token, keep the raw value with `// TODO: add to design system` comment.
+
+---
+
+#### 9.2 — Group rules by component
+
+Identify component boundaries by analysing selector patterns:
+
+| Selector prefix(es) | Component name |
+|---|---|
+| `#sidebar`, `.sb-*` | `sidebar` |
+| `.topbar`, `.tb-*` | `topbar` |
+| `.report-card`, `.card-*` | `report-card` |
+| `.report-category` | `report-category` |
+| `.view-switcher` | `view-switcher` |
+| `#app`, `.content` | `layout` (global) |
+| `:root`, `body`, `*` | `base` (global reset) |
+
+For each group, create `_component-name.scss`.
+
+---
+
+#### 9.3 — Convert flat CSS to nested SCSS
+
+Transform every flat rule into the deepest valid nesting supported by SCSS:
+
+**Before (flat CSS):**
+```css
+.report-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; }
+.report-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,.1); }
+.report-card .card-title { font-size: 14px; font-weight: 600; color: #1e293b; }
+.report-card .card-badge { background: #EB5E2D; color: #fff; }
+```
+
+**After (nested SCSS with tokens):**
+```scss
+@use '../main' as ds;
+
+.report-card {
+  background: ds.$color-surface-raised;     // was: #fff
+  border: 1px solid ds.$color-border-default; // was: #e2e8f0
+  border-radius: ds.$radius-md;             // was: 8px
+  transition: ds.$transition-base;
+
+  &:hover {
+    box-shadow: ds.$shadow-md;              // was: 0 2px 8px rgba(0,0,0,.1)
+  }
+
+  .card-title {
+    font-size: ds.$font-size-label;         // was: 14px
+    font-weight: ds.$font-weight-semibold;  // was: 600
+    color: ds.$color-text-primary;         // was: #1e293b
+  }
+
+  .card-badge {
+    background: ds.$color-action-default;  // was: #EB5E2D
+    color: #fff;
+  }
+}
+```
+
+---
+
+#### 9.4 — Token substitution rules
+
+Apply this substitution matrix. Every occurrence MUST be replaced:
+
+| Original pattern | SCSS token | Tier |
+|---|---|---|
+| Primary brand color (most common chromatic) | `ds.$color-action-default` | T2 |
+| Primary dark/hover | `ds.$color-action-hover` | T2 |
+| Primary surface/tint | `ds.$color-action-surface` | T2 |
+| White `#ffffff` / `white` | `ds.$color-surface-raised` | T2 |
+| Page bg (light gray) | `ds.$color-surface-default` | T2 |
+| Dark text | `ds.$color-text-primary` | T2 |
+| Secondary text / muted | `ds.$color-text-secondary` | T2 |
+| Border colors (light) | `ds.$color-border-default` | T2 |
+| Font family | `ds.$font-family-base` | T2 |
+| Base font size | `ds.$font-size-body` | T2 |
+| Bold / semibold | `ds.$font-weight-semibold` or `ds.$font-weight-bold` | T2 |
+| Standard padding/margin | `ds.$space-inset-md` etc. | T2 |
+| Border-radius 4px | `ds.$radius-sm` | T2 |
+| Border-radius 8px | `ds.$radius-md` | T2 |
+| Shadows | `ds.$shadow-sm/md/lg` | T2 |
+| Transition `0.2s ease` | `ds.$transition-base` | T2 |
+
+**If NO token matches**: keep the raw value + comment `// no-token: [reason]`.
+
+---
+
+#### 9.5 — Preserve media queries and pseudo-selectors exactly
+
+```scss
+// Wrap @media exactly as found — do not alter breakpoints
+@media (max-width: 768px) {         // or: @include ds.respond-to(md)
+  .sidebar {
+    transform: translateX(-100%);
+  }
+}
+
+// Pseudo-selectors → SCSS & shorthand
+.button {
+  &:hover { background: ds.$color-action-hover; }
+  &:focus { outline: 2px solid ds.$color-action-default; }
+  &:disabled { opacity: .5; cursor: not-allowed; }
+  &.active { background: ds.$color-action-default; color: #fff; }
+}
+```
+
+---
+
+#### 9.6 — Package structure (extended with component SCSS)
+
+```
+design-system/
+├── main.scss                    ← ENTRY POINT (already from Step 8)
+├── _primitives.scss             ← Tier 1
+├── _semantic.scss               ← Tier 2
+├── _components.scss             ← Tier 3 tokens
+├── _theme.scss                  ← :root CSS vars
+├── _typography.scss             ← type system
+├── _spacing.scss                ← utilities
+├── _breakpoints.scss            ← respond-to() mixin
+├── _reset.scss                  ← minimal reset
+└── components/                  ← NEW: per-component SCSS ←←←
+    ├── _layout.scss             ← #app, .content, body layout rules
+    ├── _sidebar.scss            ← all .sb-* and #sidebar rules
+    ├── _topbar.scss             ← .topbar rules
+    ├── _report-card.scss        ← .report-card rules
+    ├── _report-category.scss    ← .report-category rules
+    ├── _view-switcher.scss      ← .view-switcher / nav tab rules
+    ├── _forms.scss              ← inputs, selects, checkboxes
+    └── _index.scss              ← @forward all component partials
+```
+
+Add to `main.scss`:
+```scss
+@forward 'components/index';     // component-level rules
+```
+
+Each `_component.scss` MUST begin with:
+```scss
+// [ComponentName] — Source: [filename.html] — Lines: [from]-[to]
+// Rules: [N] CSS rules migrated | Tokens used: [N] | Raw values kept: [N]
+@use '../main' as ds;
+```
+
+---
+
+#### 9.7 — Verification checklist (self-audit before delivery)
+
+Before writing the final file, verify:
+
+- [ ] Rule count in SCSS ≥ original rule count in CSS (no omissions)
+- [ ] Every `#hexcolor` or `rgb()` that matches a token has been replaced
+- [ ] Every raw `px` spacing that matches a token has been replaced
+- [ ] All pseudo-classes and pseudo-elements preserved (`::before`, `:hover`, etc.)
+- [ ] All `@media` breakpoints preserved verbatim
+- [ ] All `@keyframes` blocks preserved
+- [ ] Every component file starts with the header comment
+- [ ] `components/_index.scss` forwards all component partials
+- [ ] `main.scss` forwards `components/index`
+- [ ] Running `sass main.scss` produces zero errors
+
+---
+
 ## Non-negotiable rules
 
 1. **Every token is traceable** to a real extracted value. If not traceable → flag it.
@@ -339,3 +522,7 @@ After generating all files, print this card:
 6. **Flag but do not auto-fix** spacing/typography debt — report it, let the user decide.
 7. **If Bootstrap/Tailwind already used** → map their existing tokens to Tier 1, do not duplicate.
 8. **Never name by value** — always by role: `$color-action-default` not `$blue`, `$font-size-body` not `$16px`.
+9. **STEP 9 is MANDATORY** — the component SCSS files are part of the deliverable, not optional.
+10. **Zero omissions in Step 9** — every CSS rule from the source MUST appear in a SCSS file. No exceptions.
+11. **Pixel-perfect**: the compiled CSS from the SCSS package must produce the SAME visual output as the original HTML. Test mentally before writing.
+

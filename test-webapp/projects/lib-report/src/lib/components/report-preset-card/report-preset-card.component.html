@@ -1,0 +1,16 @@
+<div class="report-card" (click)="onClick()">
+  <div class="card-top-row">
+    <span class="card-icon">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+    </span>
+    <span class="card-preset-badge">Preimpostato</span>
+  </div>
+  <span class="card-title">{{ preset.label }}</span>
+  <span class="card-desc">{{ preset.description }}</span>
+  <div class="card-action">
+    <button type="button" class="card-dl-btn" (click)="$event.stopPropagation(); onClick()">
+      <svg viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+      Gestisci report
+    </button>
+  </div>
+</div>

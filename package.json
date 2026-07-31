@@ -12,7 +12,7 @@
     "build:console": "cd apps/agent-console && npm run build",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "start:api": "tsx apps/orchestrator-api/src/index.ts",
-    "start:console": "cd apps/agent-console && ng serve --open",
+    "start:console": "cd apps/agent-console && ng serve --host 0.0.0.0 --port 60375",
     "start:all": "concurrently \"npm run start:api\" \"npm run start:console\"",
     "demo": "tsx src/cli.ts run workflows/demo.workflow.json --all",
     "test:copilot": "tsx src/cli.ts run workflows/copilot-test.workflow.json --all",

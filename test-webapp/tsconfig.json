@@ -1,0 +1,67 @@
+/* To learn more about this file see: https://angular.io/config/tsconfig. */
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "outDir": "./dist/out-tsc",
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "paths": {
+      "lib-admin": [
+        "./dist/lib-admin"
+      ],
+      "lib-commesse": [
+        "./dist/lib-commesse"
+      ],
+      "lib-configurazioni": [
+        "./dist/lib-configurazioni"
+      ],
+      "lib-deleghe": [
+        "./dist/lib-deleghe"
+      ],
+      "lib-documentazione": [
+        "./dist/lib-documentazione"
+      ],
+      "lib-download": [
+        "./dist/lib-download"
+      ],
+      "lib-ferie-permessi": [
+        "./dist/lib-ferie-permessi"
+      ],
+      "lib-gestione-periodo": [
+        "./dist/lib-gestione-periodo"
+      ],
+      "lib-homepage": [
+        "./dist/lib-homepage"
+      ],
+      "lib-periodo": [
+        "./dist/lib-periodo"
+      ],
+      "lib-report": [
+        "./dist/lib-report"
+      ]
+    },
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "declaration": false,
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "target": "ES2022",
+    "module": "ES2022",
+    "useDefineForClassFields": false,
+    "lib": [
+      "ES2022",
+      "dom"
+    ]
+  },
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true
+  }
+}

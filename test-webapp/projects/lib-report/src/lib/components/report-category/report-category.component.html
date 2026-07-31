@@ -1,0 +1,24 @@
+<div class="cat-card" [class.cat-card--open]="expanded">
+  <button type="button" class="cat-header" [class.is-open]="expanded" (click)="expanded = !expanded">
+    <div class="cat-header-left">
+      <span class="cat-header-chevron" [class.open]="expanded" [class.closed]="!expanded">
+        <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+      </span>
+      <span class="cat-icon"><mat-icon>{{ category.icon }}</mat-icon></span>
+      <span class="cat-label">{{ category.label }}</span>
+      <span class="cat-badge">{{ totalPresets }} report preimpostati</span>
+    </div>
+  </button>
+  <div class="cat-body" [class.open]="expanded">
+    @for (sub of category.subSections; track sub.subId) {
+      <lib-report-sub-section
+        [subSection]="sub"
+        [myReports]="myReportsFor(sub.subId)"
+        (openPreset)="openPreset.emit($event)"
+        (openCustom)="openCustom.emit($event)"
+        (openSavedReport)="openSavedReport.emit($event)"
+        (deleteSavedReport)="deleteSavedReport.emit($event)"
+      ></lib-report-sub-section>
+    }
+  </div>
+</div>

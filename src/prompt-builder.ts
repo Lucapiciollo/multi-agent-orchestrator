@@ -11,8 +11,8 @@ export class PromptBuilder {
   constructor(private readonly rootDir: string) {}
 
   async build(request: AgentRunRequest): Promise<string> {
-    const context     = await this.loadContext(request.plan.contextFiles);
-    const inputFiles  = await this.loadInputContent(request.task.inputPaths);
+    const context     = await this.loadContext(request.plan.contextFiles ?? []);
+    const inputFiles  = await this.loadInputContent(request.task.inputPaths ?? []);
 
     return [
       `# Identità`,

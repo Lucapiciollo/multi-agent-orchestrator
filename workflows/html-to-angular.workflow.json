@@ -1,0 +1,137 @@
+{
+  "id": "html-to-angular",
+  "objective": "Convertire un prototipo HTML in una libreria Angular NgModule production-ready con test-webapp integrata.",
+  "projectRoot": ".",
+  "contextFiles": [
+    "workspace/context/project.json",
+    "workspace/context/constraints.json"
+  ],
+  "createGitCheckpoints": false,
+  "tasks": [
+    {
+      "id": "scan-html",
+      "title": "Scansione navigazione HTML",
+      "description": "Analizza il file HTML in workspace/input/ e produce il contratto di navigazione: routing-map.json, sections-map.json, app-config.json.",
+      "agentId": "html-scanner-agent",
+      "skillIds": ["html-scanner"],
+      "dependencies": [],
+      "inputPaths": ["workspace/input/**"],
+      "outputPaths": [
+        "workspace/context/routing-map.json",
+        "workspace/context/sections-map.json",
+        "workspace/context/app-config.json"
+      ],
+      "validationCriteria": [
+        "workspace/context/routing-map.json esiste ed è JSON valido",
+        "workspace/context/sections-map.json esiste ed è JSON valido",
+        "Almeno una route identificata"
+      ],
+      "continueOnError": false,
+      "maxAttempts": 2,
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "extract-scss",
+      "title": "Estrazione design system SCSS",
+      "description": "Estrae il sistema di design dal file HTML producendo token SCSS a 3 livelli (primitivi/semantici/componenti) e verifica equivalenza visiva con Playwright.",
+      "agentId": "scss-extractor-agent",
+      "skillIds": ["scss-bootstrap-vars", "css-to-material"],
+      "dependencies": [],
+      "inputPaths": ["workspace/input/**"],
+      "outputPaths": [
+        "workspace/output/scss/main.scss",
+        "workspace/output/scss/_variables.scss",
+        "workspace/output/scss/_components.scss",
+        "workspace/output/scss/source-original.html",
+        "workspace/output/scss/screenshots/baseline/**"
+      ],
+      "validationCriteria": [
+        "workspace/output/scss/main.scss esiste ed è importabile",
+        "workspace/output/scss/_variables.scss contiene variabili CSS estratte dal sorgente",
+        "Screenshot baseline prodotti"
+      ],
+      "continueOnError": false,
+      "maxAttempts": 2,
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "generate-lib",
+      "title": "Generazione libreria Angular",
+      "description": "Genera la libreria Angular NgModule completa per la sezione selezionata: componenti, NgRx store, Material 19, pl-dynamicform, dialog con overlay. Fidelità visiva al 100% vs sorgente HTML.",
+      "agentId": "angular-lib-agent",
+      "skillIds": ["angular-component-extractor"],
+      "dependencies": ["scan-html", "extract-scss"],
+      "inputPaths": [
+        "workspace/input/**",
+        "workspace/context/routing-map.json",
+        "workspace/context/sections-map.json",
+        "workspace/output/scss/**"
+      ],
+      "outputPaths": [
+        "test-webapp/projects/lib-{featureName}/**"
+      ],
+      "validationCriteria": [
+        "ng build lib-{featureName} senza errori",
+        "NgModule con StoreModule.forFeature e EffectsModule.forFeature",
+        "Guard e Service nei providers del NgModule",
+        "Mock data con dati reali dal sorgente"
+      ],
+      "continueOnError": false,
+      "maxAttempts": 3,
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "scaffold-webapp",
+      "title": "Scaffolding test-webapp",
+      "description": "Crea la shell Angular test-webapp con sidebar/topbar replicati 1:1 dal sorgente HTML e integrazione del tema SCSS.",
+      "agentId": "test-webapp-agent",
+      "skillIds": ["test-webapp-scaffolder"],
+      "dependencies": ["extract-scss"],
+      "inputPaths": [
+        "workspace/input/**",
+        "workspace/output/scss/**"
+      ],
+      "outputPaths": [
+        "test-webapp/src/**"
+      ],
+      "validationCriteria": [
+        "test-webapp/src/app/layout/ presente con sidebar e topbar",
+        "Sidebar replica 1:1 la navigazione del sorgente HTML",
+        "Tema SCSS integrato in angular.json styles[]"
+      ],
+      "continueOnError": false,
+      "maxAttempts": 2,
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "integrate-and-validate",
+      "title": "Integrazione e validazione build",
+      "description": "Integra la lib nella test-app (routing lazy-load, app.module, stili globali), esegue ng build e corregge automaticamente gli errori fino a build pulita.",
+      "agentId": "app-integrator-agent",
+      "skillIds": ["app-integrator", "build-validator"],
+      "dependencies": ["generate-lib", "scaffold-webapp"],
+      "inputPaths": [
+        "test-webapp/**",
+        "test-webapp/projects/**"
+      ],
+      "outputPaths": [
+        "test-webapp/src/app/app-routing.module.ts",
+        "test-webapp/src/app/app.module.ts",
+        "workspace/context/build-report.json"
+      ],
+      "validationCriteria": [
+        "ng build test-webapp senza errori TypeScript",
+        "ng serve avvia senza errori runtime",
+        "Routing lazy-loading funzionante per la lib generata"
+      ],
+      "continueOnError": false,
+      "maxAttempts": 3,
+      "status": "pending",
+      "attempts": 0
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+// _lib-report.theme.scss
+//
+// Stili globali necessari per lib-report — da importare nel styles.scss del progetto consumer:
+//   @use 'projects/lib-report/src/lib/lib-report.theme';
+//
+// Questi stili DEVONO essere globali perché il CDK overlay di Angular Material
+// inietta .cdk-overlay-pane e i backdrop direttamente nel <body>,
+// fuori dall'albero dei componenti Angular (e quindi non raggiungibili
+// da selettori con view-encapsulation o ::ng-deep dai component SCSS).
+
+// ── Backdrop ──────────────────────────────────────────────────────────────
+// Default per dialog su pagine neutre (tabelle, sfondi bianchi)
+.cdk-overlay-dark-backdrop.cdk-overlay-backdrop-showing {
+  background: rgba(0, 0, 0, 0.5) !important;
+}
+
+// Backdrop intenso per il wizard aperto su pagine con sfondo colorato.
+// Usa backdropClass: 'wizard-overlay' nel MatDialog.open() per attivarlo.
+.wizard-overlay.cdk-overlay-backdrop-showing {
+  background: rgba(0, 0, 0, 0.72) !important;
+}
+
+// ── Dialog panels (panelClass = .cdk-overlay-pane) ─────────────────────────
+// NOTA: panelClass viene applicato direttamente al .cdk-overlay-pane.
+// Di default .cdk-overlay-pane ha: border:1px solid #E0E0E0 + background:#FAFAFA
+// → questo produce il bordo grigio visibile intorno al dialog.
+.wizard-panel,
+.storico-detail-panel {
+  // Rimuove bordo grigio e background del cdk-overlay-pane
+  border: none !important;
+  background: transparent !important;
+  outline: none !important;
+
+  // Rimuove padding MDC default e imposta il corretto border-radius + shadow
+  .mat-mdc-dialog-container .mdc-dialog__container .mdc-dialog__surface {
+    padding: 0 !important;
+    overflow: hidden !important;
+    border-radius: 12px !important;
+    border: none !important;
+    outline: none !important;
+    // Shadow contenuta — shadow > 20px crea visivamente un "secondo dialog"
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.24), 0 2px 8px rgba(0, 0, 0, 0.12) !important;
+  }
+
+  .mat-mdc-dialog-container {
+    padding: 0 !important;
+    border: none !important;
+    outline: none !important;
+    background: transparent !important;
+  }
+}

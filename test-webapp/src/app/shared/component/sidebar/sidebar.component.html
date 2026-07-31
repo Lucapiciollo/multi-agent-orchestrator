@@ -1,0 +1,69 @@
+<!--
+  Sidebar — replica 1:1 della struttura del sorgente
+  (workspace/input/timevision-report-v128 1.html, righe 519-761):
+  #sidebar > .sb-header (logo) + .sb-nav-top (hamburger + Homepage)
+           + .sb-nav (sezioni ad accordion con sottomenu)
+           + .sb-bottom (Documentazione, sempre visibile).
+-->
+<div id="sidebar" [class.expanded]="expanded">
+
+   <!-- Header: logo + nome prodotto -->
+   <div class="sb-header">
+      <span [innerHTML]="logoMark"></span>
+      <span class="sb-logo-text">TimeVision</span>
+   </div>
+
+   <!-- Fixed top: hamburger toggle + Homepage -->
+   <div class="sb-nav-top">
+      <div class="sb-hamburger" (click)="toggle()" title="Espandi/Comprimi menu">
+         <span [innerHTML]="hamburgerIcon"></span>
+      </div>
+      <div class="sb-divider-line"></div>
+
+      <a class="sb-voce" [routerLink]="['/', 'homepage']" routerLinkActive="active" title="Homepage">
+         <span class="sb-voce-icon" [innerHTML]="homepageItem.icon"></span>
+         <span class="sb-voce-label">{{ homepageItem.label }}</span>
+      </a>
+   </div>
+
+   <!-- Scrollable sections -->
+   <div class="sb-nav">
+      <ng-container *ngFor="let item of sectionItems">
+         <div class="sb-section">
+            <a
+               class="sb-voce"
+               [class.section-open]="isOpen(item.path)"
+               [routerLink]="['/', item.path]"
+               routerLinkActive="active"
+               (click)="toggleSection(item.path)"
+               [title]="item.label"
+            >
+               <span class="sb-voce-icon" [innerHTML]="item.icon"></span>
+               <span class="sb-voce-label">{{ item.label }}</span>
+               <span class="sb-voce-chevron" [innerHTML]="chevronIcon"></span>
+            </a>
+            <div class="sb-submenu" [class.open]="isOpen(item.path)">
+               <ng-container *ngFor="let sub of item.submenu">
+                  <a *ngIf="sub.path; else plainSub"
+                     class="sb-subitem"
+                     [routerLink]="['/', item.path, sub.path]"
+                     routerLinkActive="active"
+                  >{{ sub.label }}</a>
+                  <ng-template #plainSub>
+                     <div class="sb-subitem">{{ sub.label }}</div>
+                  </ng-template>
+               </ng-container>
+            </div>
+         </div>
+         <div class="sb-divider-line" *ngIf="dividerAfter.has(item.path)"></div>
+      </ng-container>
+   </div>
+
+   <!-- Bottom: Documentazione -->
+   <div class="sb-bottom">
+      <a class="sb-voce" [routerLink]="['/', bottomItem.path]" routerLinkActive="active" [title]="bottomItem.label">
+         <span class="sb-voce-icon" [innerHTML]="bottomItem.icon"></span>
+         <span class="sb-voce-label">{{ bottomItem.label }}</span>
+      </a>
+   </div>
+</div>

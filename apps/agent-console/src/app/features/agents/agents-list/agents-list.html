@@ -16,28 +16,39 @@
       <tr>
         <th>ID AGENTE</th>
         <th>DESCRIZIONE</th>
+        <th>PRIORITÀ</th>
         <th>PROVIDER</th>
-        <th>FALLBACK</th>
         <th>SKILL</th>
+        <th>WORKFLOW</th>
+        <th>TAG</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let item of items">
-        <td><span class="mono">{{item.id || item.name}}</span></td>
+        <td><span class="mono">{{item.id}}</span></td>
         <td class="td-desc">{{item.description}}</td>
-        <td>
-          <span class="dv-badge blue" *ngIf="item.provider?.type === 'copilot'">copilot</span>
-          <span class="dv-badge ok"   *ngIf="item.provider?.type === 'ollama'">ollama</span>
-          <span class="dv-badge neutral" *ngIf="item.provider?.type === 'mock'">mock</span>
-          <span class="dv-badge neutral" *ngIf="!item.provider?.type">N/A</span>
+        <td class="td-priority">
+          <span class="priority-badge" [class.p-high]="item.priority >= 90" [class.p-mid]="item.priority >= 60 && item.priority < 90" [class.p-low]="item.priority < 60">
+            {{item.priority}}
+          </span>
         </td>
         <td>
-          <span class="dv-badge neutral" *ngIf="item.provider?.fallback">{{item.provider.fallback}}</span>
-          <span class="td-none" *ngIf="!item.provider?.fallback">—</span>
+          <span class="dv-badge blue"    *ngIf="item.provider?.type === 'copilot'">copilot</span>
+          <span class="dv-badge ok"      *ngIf="item.provider?.type === 'ollama'">ollama</span>
+          <span class="dv-badge neutral" *ngIf="item.provider?.type === 'mock'">mock</span>
+          <span class="dv-badge neutral" *ngIf="!item.provider?.type">N/A</span>
         </td>
         <td class="td-skills">
           <span *ngFor="let s of item.skills" class="skill-tag">{{s}}</span>
           <span class="td-none" *ngIf="!item.skills?.length">—</span>
+        </td>
+        <td class="td-workflows">
+          <span *ngFor="let w of item.usedByWorkflows" class="workflow-tag">{{w}}</span>
+          <span class="td-none" *ngIf="!item.usedByWorkflows?.length">—</span>
+        </td>
+        <td class="td-tags">
+          <span *ngFor="let t of item.tags" class="tag-chip">{{t}}</span>
+          <span class="td-none" *ngIf="!item.tags?.length">—</span>
         </td>
       </tr>
     </tbody>

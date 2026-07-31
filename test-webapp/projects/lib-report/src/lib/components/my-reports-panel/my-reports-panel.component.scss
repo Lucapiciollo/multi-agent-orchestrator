@@ -1,0 +1,14 @@
+// my-reports-panel.component.scss
+@use '../../../../../../scss/variables' as tokens;
+
+.my-reports-panel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px 0;
+
+  &__empty {
+    color: rgba(0, 0, 0, 0.54);
+    font-size: 0.875rem;
+  }
+}

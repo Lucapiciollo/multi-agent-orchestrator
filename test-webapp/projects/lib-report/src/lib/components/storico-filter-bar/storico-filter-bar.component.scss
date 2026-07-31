@@ -1,0 +1,107 @@
+// storico-filter-bar.component.scss
+
+.storico-filter-bar {
+  padding: 0 32px 20px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0;
+
+  // ── Override MDC token per matchare .field-input del sorgente (36px compact) ──
+  --df-primary: #EB5E2D;
+
+  ::ng-deep .mat-mdc-form-field {
+    --mdc-outlined-text-field-container-shape: 6px;
+    --mdc-outlined-text-field-outline-color: #E2E6EA;
+    --mdc-outlined-text-field-hover-outline-color: #C8CDD2;
+    --mdc-outlined-text-field-focus-outline-color: var(--primary, #EB5E2D);
+    --mdc-outlined-text-field-label-text-size: 10px;
+    --mdc-outlined-text-field-label-text-weight: 500;
+    --mdc-outlined-text-field-label-text-color: var(--neutral-500, #888);
+    --mdc-outlined-text-field-input-text-size: 12px;
+
+    .mat-mdc-form-field-infix {
+      padding-top: 6px !important;
+      padding-bottom: 6px !important;
+      min-height: 36px !important;
+    }
+    .mat-mdc-text-field-wrapper { padding-bottom: 0 !important; }
+    .mdc-floating-label { letter-spacing: 0.03em !important; }
+    input.mat-mdc-input-element, .mat-mdc-select-value {
+      font-size: 12px !important;
+      font-family: var(--font, 'Open Sans', sans-serif) !important;
+    }
+    .mat-mdc-select-placeholder { color: #AAAAAA !important; }
+  }
+
+  // ── Layout orizzontale (flex row) ──────────────────────────────────────────────
+  // Struttura DOM pl-dynamicform:
+  //   .df-form > .row.g-0(wrapper) > .g-0.row(GROUP) > [.row.g-0(FIELDS) + .df-actions-group(ACTIONS)]
+  //
+  // Per mettere FIELDS e ACTIONS sulla stessa riga:
+  // Il GROUP (.g-0.row) diventa flex row → FIELDS e ACTIONS affiancati
+  ::ng-deep dynamic-form .df-form > .row > .row {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: flex-end !important;
+    gap: 0 !important;
+  }
+
+  // Il contenitore dei campi (FIELDS) espandibile e in flex row
+  ::ng-deep dynamic-form .df-form > .row > .row > .row {
+    display: flex !important;
+    flex: 1 1 auto;
+    flex-wrap: nowrap !important;
+    gap: 12px !important;
+    align-items: flex-end !important;
+  }
+
+  // Larghezze campi nel filtro orizzontale
+  ::ng-deep dynamic-form app-date       { width: 160px !important; flex-shrink: 0; }
+  ::ng-deep dynamic-form app-combo      { width: 150px !important; flex-shrink: 0; }
+  ::ng-deep dynamic-form app-input-text { width: 180px !important; flex-shrink: 0; }
+
+  // ── Fix datepicker-toggle: il mat-icon-button MDC ha default 40-44px → forza campo più alto ──
+  // Applica a app-date (single) e app-date-range (range) — stessa struttura MDC
+  ::ng-deep dynamic-form app-date,
+  ::ng-deep dynamic-form app-date-range {
+    .mat-mdc-form-field-icon-suffix {
+      padding: 0 2px 0 0 !important;
+      align-self: center !important;
+    }
+    .mat-mdc-icon-button.mat-mdc-button-base {
+      width: 28px !important;
+      height: 28px !important;
+      padding: 0 !important;
+      line-height: 28px !important;
+    }
+    .mat-mdc-icon-button .mat-mdc-button-touch-target {
+      width: 28px !important;
+      height: 28px !important;
+    }
+    .mat-icon { font-size: 16px !important; width: 16px !important; height: 16px !important; }
+  }
+
+  // Bottone Reset nativo (fuori dynamic-form, allineato dal flex wrapper)
+  ::ng-deep dynamic-form .df-actions-group { display: none !important; }
+
+  // Nasconde il titolo del gruppo (vuoto)
+  ::ng-deep dynamic-form .form-title { display: none !important; }
+}
+
+// Bottone Reset nativo — same style as original .reset-btn del sorgente
+.sf-reset-btn {
+  background: none;
+  border: none;
+  font-size: 12px;
+  font-family: var(--font, 'Open Sans', sans-serif);
+  color: var(--neutral-500, #777);
+  cursor: pointer;
+  padding: 8px 4px;
+  font-weight: 500;
+  align-self: flex-end;
+  margin-bottom: 2px;
+  &:hover { color: var(--primary, #EB5E2D); text-decoration: underline; }
+}
+

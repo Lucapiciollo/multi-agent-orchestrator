@@ -1,0 +1,15 @@
+<!-- Cascade filter senza mat-form-field — stile .field-input nativo -->
+<div class="cascade-select-wrap" [class.cascade-disabled]="!options.length">
+  <mat-select class="cascade-mat-select"
+    [formControl]="control"
+    [disabled]="!options.length"
+    [placeholder]="options.length ? 'Seleziona...' : 'Seleziona prima...'"
+    panelClass="filter-dd-panel">
+    @for (option of options; track option.id) {
+      <mat-option [value]="option.id">{{ option.label }}</mat-option>
+    }
+  </mat-select>
+  <span class="cascade-chevron">
+    <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+  </span>
+</div>

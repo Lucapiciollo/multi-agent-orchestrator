@@ -1,0 +1,103 @@
+<div class="report-preview-step">
+
+  <!-- Meta bar: colonne + filename (identico all'originale) -->
+  <div class="preview-meta-bar">
+    <div class="preview-meta-chip">
+      <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      {{ columnsCount }} colonne selezionate
+    </div>
+    <div class="preview-meta-divider"></div>
+    <div class="preview-meta-chip">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>
+      <span class="preview-filename">{{ filename }}</span>
+    </div>
+  </div>
+
+  <!-- Preview table (con header colonne reali se disponibili) -->
+  <div class="preview-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          @if (columnLabels.length > 0) {
+            @for (col of columnLabels; track col) { <th>{{ col }}</th> }
+          } @else {
+            <th>Risorsa</th><th>Periodo</th><th>Stato</th><th>Commessa</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of [1,2,3]; track row) {
+          <tr>
+            @for (w of [80,120,60,100]; track w) {
+              <td><span class="preview-skel" [style.width.px]="w"></span></td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+    <div class="preview-caption">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+      I dati reali saranno inclusi nel file esportato
+    </div>
+  </div>
+
+  <!-- Save accordion (solo per custom/edited mode) -->
+  @if (showSaveForm) {
+    <div class="save-accordion">
+      <div class="save-acc-header" [class.open]="saveAccordionExpanded"
+           (click)="saveAccordionExpanded = !saveAccordionExpanded">
+        <span class="save-acc-title">
+          <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v14a2 2 0 01-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>
+          {{ isUpdateMode ? 'Aggiorna il report salvato' : 'Vuoi salvare questo report?' }}
+        </span>
+        <span class="save-acc-chevron" [class.open]="saveAccordionExpanded">
+          <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+        </span>
+      </div>
+      @if (saveAccordionExpanded) {
+        <div class="save-acc-body open" [formGroup]="saveForm">
+          <div class="save-acc-fields">
+            <div class="field-wrap">
+              <span class="field-label">Titolo <span style="color:#DC2626">*</span></span>
+              <input type="text" class="field-input" formControlName="title" placeholder="Es. Timesheet luglio — team sviluppo">
+            </div>
+            <div class="field-wrap">
+              <span class="field-label">Descrizione</span>
+              <input type="text" class="field-input" formControlName="description" placeholder="Descrizione opzionale">
+            </div>
+          </div>
+          <button type="button" class="btn btn-save" (click)="onSaveOrUpdate()">
+            <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v14a2 2 0 01-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>
+            {{ isUpdateMode ? 'Salva modifiche' : 'Salva nei miei report' }}
+          </button>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Footer buttons -->
+  <div class="btn-row">
+    @if (showEditButton) {
+      <button type="button" class="btn btn-outline" (click)="edit.emit()">
+        <svg viewBox="0 0 24 24" style="width:11px;height:11px"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Modifica
+      </button>
+    } @else {
+      <button type="button" class="btn btn-outline" (click)="back.emit()">
+        <svg viewBox="0 0 24 24" style="width:11px;height:11px"><path d="M15 18l-6-6 6-6"/></svg>
+        Indietro
+      </button>
+    }
+    <div class="btn-group">
+      <button type="button" class="btn btn-outline-success" (click)="onExport('csv')">
+        <svg viewBox="0 0 24 24" style="width:12px;height:12px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        Richiedi download .csv
+      </button>
+      <button type="button" class="btn btn-success" (click)="onExport('xlsx')">
+        <svg viewBox="0 0 24 24" style="width:12px;height:12px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        Richiedi download .xlsx
+      </button>
+    </div>
+  </div>
+
+</div>

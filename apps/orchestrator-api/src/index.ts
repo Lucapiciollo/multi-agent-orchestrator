@@ -17,8 +17,13 @@ const PORT = process.env["API_PORT"] ?? 3001;
 // ── Middleware ────────────────────────────────────────────────────────────
 app.use(cors({
   origin: (origin, callback) => {
-    // Consenti qualsiasi origine localhost (sviluppo) o richieste senza origin (curl, Postman)
-    if (!origin || origin.startsWith("http://localhost") || origin.startsWith("http://127.0.0.1")) {
+    // Consenti: no-origin (curl/Postman), localhost, 127.x, 192.168.x, 10.x, 172.16-31.x
+    if (
+      !origin ||
+      origin.startsWith("http://localhost") ||
+      origin.startsWith("http://127.") ||
+      origin.match(/^https?:\/\/(192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[01])\.)/))
+    {
       callback(null, true);
     } else {
       callback(new Error("Not allowed by CORS"));

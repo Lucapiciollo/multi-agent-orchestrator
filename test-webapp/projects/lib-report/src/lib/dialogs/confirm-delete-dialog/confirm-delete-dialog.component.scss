@@ -1,0 +1,13 @@
+// confirm-delete-dialog.component.scss — reuses legacy .confirm-box
+@use '../../../../../../scss/variables' as tokens;
+
+.confirm-box__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #b3261e;
+}
+
+.confirm-box__message {
+  font-size: 0.9rem;
+}

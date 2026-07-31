@@ -1,0 +1,125 @@
+// report-wizard-dialog.component.scss — struttura 1:1 originale
+
+.wizard-dialog {
+  width: 100%;          /* il container mat-dialog è già 860px — non usare px fissi */
+  max-height: calc(100vh - 48px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #fff;
+  border-radius: 12px;
+}
+
+// ── Header con gradiente (identico a .modal-header originale) ─────────────
+.modal-header {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--neutral-200, #e0e0e0);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #FFF3EE 0%, #FFFFFF 55%);
+}
+
+.modal-title-area {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.modal-title-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: var(--primary, #EB5E2D);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(235,94,45,0.28);
+}
+
+.modal-title-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.modal-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--neutral-900, #333);
+  line-height: 1.3;
+  margin: 0;
+}
+
+.modal-subtitle {
+  font-size: 11px;
+  color: var(--neutral-500, #888);
+  margin: 0;
+}
+
+.modal-close-btn {
+  background: var(--neutral-100, #f0f0f0);
+  border: none;
+  cursor: pointer;
+  color: var(--neutral-500, #888);
+  padding: 0;
+  border-radius: 6px;
+  width: 28px; height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 150ms, color 150ms;
+
+  &:hover { background: var(--neutral-200, #e0e0e0); color: var(--neutral-800, #444); }
+  svg { stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; width: 14px; height: 14px; }
+}
+
+// ── Step bar (visibile solo per custom mode) ──────────────────────────────
+.modal-stepper-wrap {
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--neutral-150, #ebebeb);
+  background: #FAFAFA;
+  flex-shrink: 0;
+}
+
+.step-bar { display: flex; align-items: center; gap: 0; }
+.step-item { display: flex; align-items: center; gap: 6px; }
+
+.step-num {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700;
+  flex-shrink: 0;
+
+  &.done    { background: var(--success, #4CAF50); color: white; }
+  &.active  { background: var(--primary, #EB5E2D); color: white; }
+  &.pending { background: #DDDDDD; color: var(--neutral-500, #888); }
+}
+
+.step-label {
+  font-size: 11px; font-weight: 600; white-space: nowrap;
+  &.active  { color: var(--primary, #EB5E2D); }
+  &.done    { color: var(--neutral-700, #555); }
+  &.pending { color: #AAAAAA; }
+}
+
+.step-connector {
+  width: 20px; height: 1px;
+  background: #DDDDDD;
+  margin: 0 8px;
+  flex-shrink: 0;
+  &.done { background: var(--success, #4CAF50); }
+}
+
+// ── Body ──────────────────────────────────────────────────────────────────
+.modal-body {
+  padding: 20px 24px 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+

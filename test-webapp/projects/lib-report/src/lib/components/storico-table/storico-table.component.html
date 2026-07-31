@@ -1,0 +1,84 @@
+<div class="storico-table-wrap">
+<table mat-table [dataSource]="dataSource" class="storico-table">
+  <ng-container matColumnDef="dataRichiesta">
+    <th mat-header-cell *matHeaderCellDef>Data richiesta</th>
+    <td mat-cell *matCellDef="let row">{{ row.dataRichiesta }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="template">
+    <th mat-header-cell *matHeaderCellDef>Template</th>
+    <td mat-cell *matCellDef="let row">{{ row.template }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="nomeFile">
+    <th mat-header-cell *matHeaderCellDef>Nome file</th>
+    <td mat-cell *matCellDef="let row" class="storico-filename">{{ row.nomeFile }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="versione">
+    <th mat-header-cell *matHeaderCellDef>Ver.</th>
+    <td mat-cell *matCellDef="let row">{{ row.versione }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="dimensione">
+    <th mat-header-cell *matHeaderCellDef>Dimensione</th>
+    <td mat-cell *matCellDef="let row">{{ row.dimensione }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="formato">
+    <th mat-header-cell *matHeaderCellDef>Formato</th>
+    <td mat-cell *matCellDef="let row">
+      <!-- chip colore: XLSX=verde, CSV=blu (identico all'originale) -->
+      <span class="storico-fmt"
+        [class.fmt-xlsx]="row.formato === 'xlsx'"
+        [class.fmt-csv]="row.formato === 'csv'"
+      >{{ row.formato | uppercase }}</span>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="stato">
+    <th mat-header-cell *matHeaderCellDef>Stato</th>
+    <td mat-cell *matCellDef="let row">
+      <lib-report-storico-status-badge [stato]="row.stato"></lib-report-storico-status-badge>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="azioni">
+    <th mat-header-cell *matHeaderCellDef>Azioni</th>
+    <td mat-cell *matCellDef="let row">
+      <!-- Bottoni in riga unica con .storico-actions (identico all'originale) -->
+      <div class="storico-actions">
+        <button type="button" class="storico-act-btn" title="Dettaglio"
+          (click)="onRowClick(row); $event.stopPropagation()">
+          <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+        <button type="button" class="storico-act-btn dl-btn" title="Scarica"
+          [disabled]="isDownloadDisabled(row)"
+          (click)="onDownloadClick($event, row)">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        </button>
+      </div>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr
+    mat-row
+    *matRowDef="let row; columns: displayedColumns"
+    class="storico-table__row"
+    (click)="onRowClick(row)"
+  ></tr>
+</table>
+</div>
+
+@if (dataSource.length === 0) {
+  <p class="storico-table__empty">Nessun risultato per i filtri selezionati.</p>
+}
+
+<mat-paginator
+  [length]="total"
+  [pageIndex]="pageIndex"
+  [pageSize]="pageSize"
+  [pageSizeOptions]="[10, 25, 50]"
+  (page)="onPage($event)"
+></mat-paginator>

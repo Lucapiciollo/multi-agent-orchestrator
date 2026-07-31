@@ -1,0 +1,14 @@
+<div class="my-reports-panel">
+  @if (reports.length === 0) {
+    <p class="my-reports-panel__empty">Nessun report salvato</p>
+  } @else {
+    @for (report of reports; track report.title; let i = $index) {
+      <lib-report-my-report-card
+        [report]="report"
+        [index]="i"
+        (open)="open.emit($event)"
+        (delete)="delete.emit($event)"
+      ></lib-report-my-report-card>
+    }
+  }
+</div>

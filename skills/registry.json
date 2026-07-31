@@ -1,8 +1,62 @@
 [
   {
+    "id": "html-scanner",
+    "name": "HTML Scanner — Navigazione e sezioni",
+    "description": "Analizza un file HTML enterprise e produce routing-map.json, sections-map.json e app-config.json. Lavora senza dipendenze — parte subito appena l'HTML è disponibile.",
+    "file": "skills/html-scanner/SKILL.md"
+  },
+  {
     "id": "scss-bootstrap-vars",
-    "name": "SCSS Bootstrap-Style Variables from Web Page",
-    "description": "Analizza una pagina web ed estrae design tokens per generare un sistema SCSS completo: _variables.scss, _colors.scss, _typography.scss, _spacing.scss, index.scss.",
+    "name": "SCSS Design System Extractor",
+    "description": "Audita il design language di una pagina HTML/CSS esistente ed estrae un pacchetto SCSS completo a 3 livelli di token (primitivi, semantici, componenti) con un unico main.scss importabile.",
     "file": "skills/scss-bootstrap-vars/SKILL.md"
+  },
+  {
+    "id": "css-to-material",
+    "name": "HTML → SCSS Equivalence Agent",
+    "description": "Estrae tutto lo styling da un prototipo HTML, lo ricostruisce in SCSS manutenibile e dimostra con Playwright l'equivalenza visiva su 5 viewport tra HTML originale e HTML ripulito.",
+    "file": "skills/css-to-material/SKILL.md"
+  },
+  {
+    "id": "angular-component-extractor",
+    "name": "Angular Component Extractor — Generazione lib Angular",
+    "description": "Reverse-engineering di HTML sorgente verso architettura Angular 17-19+ NgModule production-ready. Include NgRx, pl-dynamicform, Angular Material 19, dialog overrides, pl-dynamicform DOM knowledge e regole ferree di fidelità visiva.",
+    "file": "skills/angular-component-extractor/SKILL.md"
+  },
+  {
+    "id": "angular-lib-builder",
+    "name": "Angular Lib Builder — Scaffolding route-by-route",
+    "description": "Genera una libreria Angular completa per una singola route partendo dal contratto routing-map.json e dagli SCSS. Dipende da html-scanner e scss-bootstrap-vars.",
+    "file": "skills/angular-lib-builder/SKILL.md"
+  },
+  {
+    "id": "test-webapp-scaffolder",
+    "name": "Test WebApp Shell — Scaffolding applicazione Angular",
+    "description": "Crea e mantiene la shell Angular test-webapp con sidebar/topbar, lazy-loading delle lib generate e integrazione del tema SCSS.",
+    "file": "skills/test-webapp-scaffolder/SKILL.md"
+  },
+  {
+    "id": "app-integrator",
+    "name": "App Integrator — Wiring multi-lib Angular",
+    "description": "Integra tutte le lib generate nella test-app: routing lazy-load, app.module, stili globali. Dipende dalle lib generate da angular-component-extractor o angular-lib-builder.",
+    "file": "skills/app-integrator/SKILL.md"
+  },
+  {
+    "id": "build-validator",
+    "name": "Build Validator — Diagnostica e fix Angular build",
+    "description": "Esegue ng build, analizza ogni errore e lo corregge sistematicamente garantendo che la test-app compili senza errori. Dipende da app-integrator.",
+    "file": "skills/build-validator/SKILL.md"
+  },
+  {
+    "id": "devops-work-items",
+    "name": "DevOps Work Items — Azure DevOps integration",
+    "description": "Connessione a Azure DevOps per recuperare bug e task. Produce report strutturati e può generare workflow task per ogni elemento trovato.",
+    "file": "skills/devops-work-items/SKILL.md"
+  },
+  {
+    "id": "responsive",
+    "name": "Responsive Design Expert — Angular Library",
+    "description": "Senior Responsive UI/UX Architect specializzato in Angular, Angular Material, Bootstrap, SCSS, CSS Grid e Flexbox. Analizza ogni componente componente per componente, sceglie la strategia ottimale (flex-wrap, grid, container query, scroll), testa con Playwright su 13+ viewport e garantisce zero overflow, zero sovrapposizioni, zero regressioni desktop.",
+    "file": "skills/responsive/SKILL.md"
   }
 ]

@@ -1,0 +1,53 @@
+// index.component.scss — Report feature layout
+
+.report-page {
+  display: flex;
+  flex-direction: column;
+
+  &__switch { display: block; }
+
+  &__view {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__status {
+    margin: 0;
+    padding: 8px 32px;
+    font-size: 0.9rem;
+    color: rgba(0, 0, 0, 0.6);
+    &--error { color: #b3261e; }
+  }
+}
+
+// Sub-header: titolo e sottotitolo della sezione (dall'originale)
+:host ::ng-deep .sub-header {
+  padding: 28px 32px 20px;
+  border-bottom: 1px solid var(--neutral-150, #ebebeb);
+  margin-bottom: 24px;
+
+  h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--neutral-900, #333);
+    letter-spacing: -0.015em;
+    line-height: 1.2;
+    margin: 0;
+  }
+
+  p {
+    font-size: 13px;
+    color: var(--neutral-500, #888);
+    margin-top: 6px;
+    line-height: 1.5;
+    margin-bottom: 0;
+  }
+}
+
+.categories-container {
+  padding: 0 32px 32px;
+}
+
+.storico-container {
+  padding: 0 32px 32px;
+}

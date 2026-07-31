@@ -1,0 +1,77 @@
+// ═══════════════════════════════════════════════════
+// TIMEVISION DESIGN TOKENS — _variables.scss
+// Estratto 1:1 dal blocco :root in
+// workspace/input/timevision-report-v128 1.html (righe 12-34, unico <style> del documento).
+// Ogni valore replica esattamente la custom property CSS originale — nessuna approssimazione,
+// nessun valore interpolato o dedotto non presente nel sorgente.
+// ═══════════════════════════════════════════════════
+
+// ── Colori — Primary (sorgente: righe 13-17) ──
+$color-primary:         #EB5E2D; // --primary
+$color-primary-dark:    #BA3D12; // --primary-dark
+$color-primary-light:   #C44013; // --primary-light
+$color-primary-bg:      #FFF3EE; // --primary-bg
+$color-primary-border:  #F5C9B8; // --primary-border
+
+// ── Colori — Neutral scale (sorgente: righe 19-30) ──
+$color-neutral-0:    #FFFFFF; // --neutral-0
+$color-neutral-50:   #F5F5F5; // --neutral-50
+$color-neutral-100:  #F0F0F0; // --neutral-100
+$color-neutral-150:  #EBEBEB; // --neutral-150
+$color-neutral-200:  #E0E0E0; // --neutral-200
+$color-neutral-300:  #BDBDBD; // --neutral-300
+$color-neutral-400:  #9E9E9E; // --neutral-400
+$color-neutral-500:  #888888; // --neutral-500
+$color-neutral-600:  #777777; // --neutral-600
+$color-neutral-700:  #555555; // --neutral-700
+$color-neutral-800:  #444444; // --neutral-800
+$color-neutral-900:  #333333; // --neutral-900
+
+// ── Colori — Status (sorgente: riga 32) ──
+$color-success: #4CAF50; // --success
+
+// ── Tipografia (sorgente: riga 33 e riga 37) ──
+$font-family-base: 'Open Sans', sans-serif; // --font
+$font-size-base:   13px; // html, body { font-size: 13px; } — unico font-size definito a livello globale/root
+
+// ═══════════════════════════════════════════════════
+// FIX Phase 7 (step-16): missing CSS custom property
+// Il sorgente definisce questi token sia come valori SCSS di compile-time
+// (sopra) sia come CSS custom properties native su :root, referenziate a
+// runtime da var(--primary), var(--font), ecc. in _base.scss, _layout.scss e
+// _components.scss. La build precedente emetteva solo le variabili SCSS,
+// senza mai ri-dichiarare il blocco :root nel CSS compilato: ogni var(--x)
+// risolveva quindi al valore iniziale/vuoto (fallback), causando differenze
+// di colore, background e font-family su tutti i viewport.
+// Fix minimo: riemettere qui, 1:1, lo stesso blocco :root del sorgente
+// (righe 12-34 di workspace/input/timevision-report-v128 1.html), come
+// prima regola CSS effettivamente generata dalla cascata (_variables.scss è
+// il primo partial @use'd da main.scss), cosi' da precedere il reset
+// `*{...}` esattamente come nell'originale.
+// ═══════════════════════════════════════════════════
+:root {
+  --primary: #{$color-primary};
+  --primary-dark: #{$color-primary-dark};
+  --primary-light: #{$color-primary-light};
+  --primary-bg: #{$color-primary-bg};
+  --primary-border: #{$color-primary-border};
+
+  --neutral-0: #{$color-neutral-0};
+  --neutral-50: #{$color-neutral-50};
+  --neutral-100: #{$color-neutral-100};
+  --neutral-150: #{$color-neutral-150};
+  --neutral-200: #{$color-neutral-200};
+  --neutral-300: #{$color-neutral-300};
+  --neutral-400: #{$color-neutral-400};
+  --neutral-500: #{$color-neutral-500};
+  --neutral-600: #{$color-neutral-600};
+  --neutral-700: #{$color-neutral-700};
+  --neutral-800: #{$color-neutral-800};
+  --neutral-900: #{$color-neutral-900};
+
+  --success: #{$color-success};
+  // Nota: valore letterale (non interpolato da $font-family-base) per
+  // preservare esattamente le virgolette attorno a 'Open Sans' come nel
+  // sorgente; l'interpolazione #{} rimuoverebbe le quote della stringa Sass.
+  --font: 'Open Sans', sans-serif;
+}

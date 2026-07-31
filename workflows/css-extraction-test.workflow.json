@@ -1,0 +1,358 @@
+{
+  "id": "css-extraction-test",
+  "objective": "HTML → SCSS Equivalence — 16 step atomici eseguibili singolarmente (taskId): (0) baseline/inventory, (1) screenshot originale, (2-10) estrazione SCSS partial-by-partial, (11) main.scss, (12) compilazione CSS, (13) HTML cleaned, (14) test visivo Playwright, (15) fix differenze, (16) report finale.",
+  "projectRoot": ".",
+  "contextFiles": [],
+  "createGitCheckpoints": false,
+  "tasks": [
+    {
+      "id": "step-01-baseline-inventory",
+      "title": "Phase 0 — Baseline copy + inventario stili (nessuna modifica al sorgente)",
+      "description": "Esegui SOLO la Phase 0 della skill css-to-material sul file HTML in workspace/input/:\n1. Copia byte-per-byte il file HTML sorgente in workspace/output/scss/source-original.html (NON modificarlo in alcun modo).\n2. Calcola un hash (es. SHA-256) del sorgente e della copia e verifica che coincidano; riporta l'hash nel summary.\n3. Crea workspace/output/scss/reports/inventory.md con l'inventario completo, in ordine DOM: blocchi <style> (numerati), <link rel=\"stylesheet\"> (locali vs vendor/esterni), attributi style=\"\" inline (conta occorrenze per pattern), custom properties CSS (:root), media/container/supports query, @keyframes, selettori usati da script.\nNON creare altri file. NON toccare workspace/output/scss/*.scss in questo step.",
+      "agentId": "scss-extractor-agent",
+      "skillIds": ["css-to-material"],
+      "dependencies": [],
+      "inputPaths": ["workspace/input/**"],
+      "outputPaths": [
+        "workspace/output/scss/source-original.html",
+        "workspace/output/scss/reports/inventory.md"
+      ],
+      "validationCriteria": [
+        "workspace/output/scss/source-original.html esiste ed è identico byte-per-byte al file in workspace/input/",
+        "workspace/output/scss/reports/inventory.md esiste e lista almeno: numero blocchi <style>, numero <link> stylesheet, numero style=\"\" inline"
+      ],
+      "continueOnError": false,
+      "maxAttempts": 2,
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "step-02-baseline-screenshots",
+      "title": "Phase 1 — Screenshot baseline dell'originale (Playwright, 5 viewport)",
+      "description": "Servi workspace/output/scss/source-original.html via HTTP (non file://). Con Playwright, per ciascuno di questi 5 viewport: 375x812, 768x1024, 1366x768, 1440x900, 1920x1080:\n- attendi document.fonts.ready e network idle\n- cattura screenshot full-page in workspace/output/scss/screenshots/baseline/<viewport>.png\n- salva bounding box delle regioni principali (header/nav/main/sidebar/footer se presenti) in workspace/output/scss/screenshots/baseline/geometry.json\n- registra eventuali console error in workspace/output/scss/screenshots/baseline/console-errors.json (array vuoto se nessuno)\nNon modificare alcun file SCSS o HTML in questo step.",
+      "agentId": "scss-extractor-agent",
+      "skillIds": [],
+      "dependencies": ["step-01-baseline-inventory"],
+      "inputPaths": ["workspace/output/scss/source-original.html"],
+      "outputPaths": ["workspace/output/scss/screenshots/baseline/**"],
+      "validationCriteria": [
+        "esistono 5 file .png in workspace/output/scss/screenshots/baseline/ (uno per viewport)",
+        "workspace/output/scss/screenshots/baseline/geometry.json esiste ed è JSON valido",
+        "workspace/output/scss/screenshots/baseline/console-errors.json esiste ed è JSON valido"
+      ],
+      "continueOnError": true,
+      "maxAttempts": 2,
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "step-03-variables",
+      "title": "Estrazione _variables.scss (design tokens Tailwind-style)",
+      "description": "Analizza SOLO il CSS del file in workspace/input/ (blocchi <style>, :root, link locali) e genera workspace/output/scss/_variables.scss contenente ESCLUSIVAMENTE variabili SCSS ($var: value;): colori (incluse tutte le custom properties --* trovate in :root, rinominate $color-*), tipografia ($font-*), spaziatura ($space-*), radius/shadow/z-index se presenti. Non scrivere regole CSS, mixin o selettori in questo file. Ogni valore deve corrispondere esattamente al valore originale (nessuna approssimazione).\n\nAMBITO ISOLATO (indipendenza dei task): questo step NON dipende dal contenuto di nessun altro partial. Valida solo che il TUO file sia sintassi SCSS valida in isolamento (es. `npx sass --stdin` sul solo contenuto di _variables.scss). NON compilare main.scss né l'intero progetto: quella verifica è responsabilità esclusiva di step-13-compile-css. Se un altro partial dovesse referenziare una variabile che qui non esiste, NON è un errore di questo step: qui produci solo i token realmente presenti nel sorgente.",
+      "agentId": "scss-extractor-agent",
+      "skillIds": [],
+      "dependencies": ["step-01-baseline-inventory"],
+      "inputPaths": ["workspace/input/**"],
+      "outputPaths": ["workspace/output/scss/_variables.scss"],
+      "validationCriteria": [
+        "workspace/output/scss/_variables.scss esiste",
+        "contiene solo dichiarazioni $nome: valore; (nessuna regola con selettore { })",
+        "ogni custom property --xxx trovata in :root nel sorgente ha una corrispondente $xxx nel file"
+      ],
+      "continueOnError": false,
+      "maxAttempts": 2,
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "step-04-functions",
+      "title": "Estrazione _functions.scss (SCSS functions)",
+      "description": "Genera workspace/output/scss/_functions.scss con eventuali funzioni SCSS necessarie a riprodurre calcoli presenti nel CSS originale (es. clamp/calc ricorrenti, conversioni px-to-rem se il sorgente le usa). Se il sorgente non richiede funzioni custom, crea comunque il file con un commento esplicito \"// nessuna function custom richiesta\" — non lasciarlo assente.\n\nAMBITO ISOLATO (indipendenza dei task): valida SOLO il tuo file (_functions.scss) in isolamento, eventualmente insieme a _variables.scss se una function referenzia un token. NON compilare main.scss né l'intero progetto — non è compito tuo e non deve influenzare l'esito di questo step. Se durante un controllo incidentale trovi un problema in un ALTRO partial (es. _base.scss, _layout.scss), NON farlo fallire questo task: annotalo nel summary come osservazione fuori scope, mantieni lo status di QUESTO step basato solo sui suoi validationCriteria.",
+      "agentId": "scss-extractor-agent",
+      "skillIds": [],
+      "dependencies": ["step-03-variables"],
+      "inputPaths": ["workspace/input/**", "workspace/output/scss/_variables.scss"],
+      "outputPaths": ["workspace/output/scss/_functions.scss"],
+      "validationCriteria": [
+        "workspace/output/scss/_functions.scss esiste"
+      ],
+      "continueOnError": false,
+      "maxAttempts": 2,
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "step-05-mixins",
+      "title": "Estrazione _mixins.scss (mixin riusabili)",
+      "description": "Genera workspace/output/scss/_mixins.scss con i mixin SCSS per i pattern ripetuti individuati nel CSS originale (es. flex-center, card-shadow, truncate-text, scrollbar custom). Deve includere ALMENO un mixin @mixin flex(...) se il layout usa display:flex in 3+ punti. Ogni mixin deve produrre CSS equivalente a quello sostituito, non un'approssimazione stilistica.\n\nAMBITO ISOLATO (indipendenza dei task): valida SOLO il tuo file (_mixins.scss) compilando un test standalone che include solo _variables.scss + _mixins.scss. NON compilare main.scss né l'intero progetto. Un errore in un ALTRO partial (_base.scss, _layout.scss, ecc.) non riguarda questo step e non deve farlo fallire: segnalalo solo come nota nel summary.",
+      "agentId": "scss-extractor-agent",
+      "skillIds": [],
+      "dependencies": ["step-03-variables"],
+      "inputPaths": ["workspace/input/**", "workspace/output/scss/_variables.scss"],
+      "outputPaths": ["workspace/output/scss/_mixins.scss"],
+      "validationCriteria": [
+        "workspace/output/scss/_mixins.scss esiste e contiene @mixin flex"
+      ],
+      "continueOnError": false,
+      "maxAttempts": 2,
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "step-06-breakpoints",
+      "title": "Estrazione _breakpoints.scss (mappa breakpoint + mixin respond-to)",
+      "description": "Analizza tutte le @media query nel sorgente ed estrai i valori soglia (min-width/max-width) in workspace/output/scss/_breakpoints.scss. Deve contenere: una SCSS map $breakpoints con chiave/valore per ogni soglia distinta trovata nel sorgente, e un @mixin respond-to($name) che generi la corrispondente @media query. Non alterare le soglie originali (nessun arrotondamento).\n\nAMBITO ISOLATO (indipendenza dei task): valida SOLO il tuo file in isolamento. NON compilare main.scss né l'intero progetto: quella verifica spetta a step-13-compile-css.",
+      "agentId": "scss-extractor-agent",
+      "skillIds": [],
+      "dependencies": ["step-01-baseline-inventory"],
+      "inputPaths": ["workspace/input/**"],
+      "outputPaths": ["workspace/output/scss/_breakpoints.scss"],
+      "validationCriteria": [
+        "workspace/output/scss/_breakpoints.scss esiste e contiene $breakpoints",
+        "contiene @mixin respond-to",
+        "ogni soglia numerica (px) presente nelle @media del sorgente compare nella mappa"
+      ],
+      "continueOnError": false,
+      "maxAttempts": 2,
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "step-07-base",
+      "title": "Estrazione _base.scss (reset + stili tag HTML)",
+      "description": "Genera workspace/output/scss/_base.scss con le regole CSS del sorgente che si applicano a selettori di tag semplice o globali (html, body, *, box-sizing, reset margini/padding, stili default di h1-h6/p/a/ul/li/img, ecc.). Copia le regole ESATTAMENTE come nel sorgente (stesso ordine, stessa specificità), sostituendo solo valori letterali duplicati con le variabili di _variables.scss quando il valore combacia esattamente e la variabile ESISTE GIÀ in _variables.scss (non inventare/presupporre variabili non presenti; se nessuna variabile combacia esattamente, lascia il valore letterale originale).\n\nAMBITO ISOLATO (indipendenza dei task): valida SOLO il tuo file compilando un test standalone (_variables.scss + _base.scss). NON compilare main.scss né l'intero progetto. Se una variabile che vorresti usare non esiste in _variables.scss, NON referenziarla comunque: usa il valore letterale originale — referenziare variabili inesistenti romperebbe la compilazione di altri step senza che sia loro responsabilità.",
+      "agentId": "scss-extractor-agent",
+      "skillIds": [],
+      "dependencies": ["step-03-variables"],
+      "inputPaths": ["workspace/input/**", "workspace/output/scss/_variables.scss"],
+      "outputPaths": ["workspace/output/scss/_base.scss"],
+      "validationCriteria": [
+        "workspace/output/scss/_base.scss esiste",
+        "contiene regole per almeno html e body se presenti nel sorgente"
+      ],
+      "continueOnError": false,
+      "maxAttempts": 2,
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "step-08-layout",
+      "title": "Estrazione _layout.scss (strutture grid/flex/positioning)",
+      "description": "Genera workspace/output/scss/_layout.scss con le regole CSS del sorgente relative a strutture di layout: contenitori principali (#app/#main/#content/#wrapper/.container), sidebar, topbar/header, footer, grid/flex container, positioning (position/top/left/z-index). Usa i breakpoint di _breakpoints.scss per le regole responsive di layout invece di ripetere @media inline, mantenendo lo stesso comportamento visivo a ogni soglia.\n\nAMBITO ISOLATO (indipendenza dei task): valida SOLO il tuo file compilando un test standalone (_breakpoints.scss + _mixins.scss + _layout.scss). NON compilare main.scss né l'intero progetto: non è compito tuo. Riferisci solo a variabili/mixin che esistono già nei tuoi inputPaths dichiarati; non inventare token di altri partial.",
+      "agentId": "scss-extractor-agent",
+      "skillIds": [],
+      "dependencies": ["step-06-breakpoints", "step-05-mixins"],
+      "inputPaths": ["workspace/input/**", "workspace/output/scss/_breakpoints.scss", "workspace/output/scss/_mixins.scss"],
+      "outputPaths": ["workspace/output/scss/_layout.scss"],
+      "validationCriteria": [
+        "workspace/output/scss/_layout.scss esiste",
+        "usa @include respond-to per almeno una regola responsive, se il sorgente contiene @media relative al layout"
+      ],
+      "continueOnError": false,
+      "maxAttempts": 2,
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "step-09-components",
+      "title": "Estrazione _components.scss (classi componente ripetute 3+ volte)",
+      "description": "Identifica le classi usate 3+ volte nel sorgente (card/panel, button/btn, field/form-group, nav-item/tab, badge/chip/tag, table/list) e genera workspace/output/scss/_components.scss con le rispettive regole CSS, preservando stati (:hover, :focus, :active, :disabled) e pseudo-elementi (::before/::after) esattamente come nel sorgente.\n\nAMBITO ISOLATO (indipendenza dei task): valida SOLO il tuo file compilando un test standalone (_variables.scss + _mixins.scss + _components.scss). NON compilare main.scss né l'intero progetto. Riferisci solo a variabili/mixin che esistono già nei tuoi inputPaths dichiarati.",
+      "agentId": "scss-extractor-agent",
+      "skillIds": [],
+      "dependencies": ["step-03-variables", "step-05-mixins"],
+      "inputPaths": ["workspace/input/**", "workspace/output/scss/_variables.scss", "workspace/output/scss/_mixins.scss"],
+      "outputPaths": ["workspace/output/scss/_components.scss"],
+      "validationCriteria": [
+        "workspace/output/scss/_components.scss esiste"
+      ],
+      "continueOnError": false,
+      "maxAttempts": 2,
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "step-10-utilities",
+      "title": "Estrazione _utilities.scss (classi atomiche)",
+      "description": "Genera workspace/output/scss/_utilities.scss con le classi utility atomiche presenti nel sorgente (spacing, display, text-align, flex helpers, ecc.) e con classi sintetiche per i pattern style=\"\" inline ricorrenti (3+ volte) individuati in step-01 (nominale x-inline-style-NNNN), documentando la corrispondenza elemento→classe in un commento sopra ogni regola.\n\nAMBITO ISOLATO (indipendenza dei task): valida SOLO il tuo file compilando un test standalone (_variables.scss + _utilities.scss). NON compilare main.scss né l'intero progetto. Riferisci solo a variabili che esistono già in _variables.scss.",
+      "agentId": "scss-extractor-agent",
+      "skillIds": [],
+      "dependencies": ["step-01-baseline-inventory", "step-03-variables"],
+      "inputPaths": ["workspace/input/**", "workspace/output/scss/reports/inventory.md", "workspace/output/scss/_variables.scss"],
+      "outputPaths": ["workspace/output/scss/_utilities.scss"],
+      "validationCriteria": [
+        "workspace/output/scss/_utilities.scss esiste"
+      ],
+      "continueOnError": false,
+      "maxAttempts": 2,
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "step-11-bootstrap-compat",
+      "title": "_bootstrap-compat.scss (SOLO se Bootstrap è rilevato nel sorgente)",
+      "description": "Controlla se il sorgente in workspace/input/ referenzia Bootstrap (link a bootstrap.min.css/cdn, o classi col-/row/btn/form-control/d-flex/mt-/mb-/etc. usate 3+ volte). Se NON rilevato, crea comunque workspace/output/scss/_bootstrap-compat.scss con il solo commento \"// Bootstrap non rilevato nel sorgente — file vuoto intenzionale\" e termina. Se rilevato, crea override delle CSS custom properties di Bootstrap usando i token di _variables.scss (es. --bs-primary: $color-primary;) senza duplicare le regole strutturali di Bootstrap stesso.\n\nAMBITO ISOLATO (indipendenza dei task): valida SOLO il tuo file in isolamento. NON compilare main.scss né l'intero progetto.",
+      "agentId": "scss-extractor-agent",
+      "skillIds": [],
+      "dependencies": ["step-01-baseline-inventory", "step-03-variables"],
+      "inputPaths": ["workspace/input/**", "workspace/output/scss/_variables.scss"],
+      "outputPaths": ["workspace/output/scss/_bootstrap-compat.scss"],
+      "validationCriteria": [
+        "workspace/output/scss/_bootstrap-compat.scss esiste"
+      ],
+      "continueOnError": true,
+      "maxAttempts": 2,
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "step-12-main-scss",
+      "title": "Assemblaggio main.scss (@use nell'ordine corretto)",
+      "description": "Crea workspace/output/scss/main.scss con @use di TUTTI i partial generati, nell'ordine che riproduce esattamente la cascata del sorgente originale: variables, functions, mixins, breakpoints, base, layout, components, utilities, bootstrap-compat (ultimo). Non aggiungere CSS proprio in questo file: solo direttive @use. Verifica che ogni partial elencato esista realmente su disco prima di referenziarlo.",
+      "agentId": "scss-extractor-agent",
+      "skillIds": [],
+      "dependencies": [
+        "step-04-functions",
+        "step-07-base",
+        "step-08-layout",
+        "step-09-components",
+        "step-10-utilities",
+        "step-11-bootstrap-compat"
+      ],
+      "inputPaths": [
+        "workspace/output/scss/_variables.scss",
+        "workspace/output/scss/_functions.scss",
+        "workspace/output/scss/_mixins.scss",
+        "workspace/output/scss/_breakpoints.scss",
+        "workspace/output/scss/_base.scss",
+        "workspace/output/scss/_layout.scss",
+        "workspace/output/scss/_components.scss",
+        "workspace/output/scss/_utilities.scss",
+        "workspace/output/scss/_bootstrap-compat.scss"
+      ],
+      "outputPaths": ["workspace/output/scss/main.scss"],
+      "validationCriteria": [
+        "workspace/output/scss/main.scss esiste",
+        "contiene @use per ognuno dei 9 partial nell'ordine: variables, functions, mixins, breakpoints, base, layout, components, utilities, bootstrap-compat",
+        "non contiene regole CSS dirette, solo @use"
+      ],
+      "continueOnError": false,
+      "maxAttempts": 2,
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "step-13-compile-css",
+      "title": "Compilazione main.scss → main.css (obbligatoria)",
+      "description": "Esegui: npx sass workspace/output/scss/main.scss workspace/output/scss/main.css --style=expanded --no-source-map\nSe la compilazione fallisce, identifica il file .scss incriminato, applica il fix minimo necessario (senza alterare selettori o valori non correlati all'errore) e ricompila fino a zero errori. Riporta eventuali warning nel summary. Verifica che workspace/output/scss/main.css sia stato generato e abbia dimensione > 5KB.",
+      "agentId": "scss-extractor-agent",
+      "skillIds": [],
+      "dependencies": ["step-12-main-scss"],
+      "inputPaths": ["workspace/output/scss/main.scss"],
+      "outputPaths": ["workspace/output/scss/main.css"],
+      "validationCriteria": [
+        "workspace/output/scss/main.css esiste",
+        "workspace/output/scss/main.css ha dimensione > 5KB",
+        "il comando sass termina senza errori (solo eventuali warning)"
+      ],
+      "continueOnError": false,
+      "maxAttempts": 2,
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "step-14-cleaned-html",
+      "title": "Creazione source-cleaned.html (CSS rimosso, link a main.css)",
+      "description": "Parti dal file HTML in workspace/input/ e crea workspace/output/scss/source-cleaned.html:\n- RIMUOVI ogni blocco <style>...</style>\n- RIMUOVI ogni attributo style=\"...\" dagli elementi\n- AGGIUNGI nel <head>, nella stessa posizione di cascata dei blocchi rimossi, <link rel=\"stylesheet\" href=\"./main.css\" data-source=\"compiled-from-scss\"> con un commento sopra che indichi la provenienza (main.scss compilato)\n- AGGIUNGI prima di </body> un commento HTML di confronto che elenchi i file SCSS generati\nNON modificare struttura HTML, classi, id, script, o i link a Google Fonts/Material Icons/altri asset dell'app.",
+      "agentId": "scss-extractor-agent",
+      "skillIds": [],
+      "dependencies": ["step-13-compile-css"],
+      "inputPaths": ["workspace/input/**", "workspace/output/scss/main.scss"],
+      "outputPaths": ["workspace/output/scss/source-cleaned.html"],
+      "validationCriteria": [
+        "workspace/output/scss/source-cleaned.html esiste",
+        "source-cleaned.html NON contiene blocco <style>",
+        "source-cleaned.html NON contiene attributi style=\"",
+        "source-cleaned.html contiene <link rel=\"stylesheet\" href=\"./main.css\">",
+        "tutti i tag <script> del sorgente sono ancora presenti in source-cleaned.html"
+      ],
+      "continueOnError": false,
+      "maxAttempts": 2,
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "step-15-visual-equivalence-test",
+      "title": "Phase 6 — Test Playwright originale vs cleaned (screenshot + computed style + geometria)",
+      "description": "Servi workspace/output/scss/source-original.html e workspace/output/scss/source-cleaned.html via HTTP su due path distinti. Con Playwright, per ciascuno dei 5 viewport (375x812, 768x1024, 1366x768, 1440x900, 1920x1080):\n1. attendi document.fonts.ready\n2. cattura screenshot full-page di entrambe le pagine in workspace/output/scss/screenshots/candidate/<viewport>.png\n3. genera pixel-diff rispetto a workspace/output/scss/screenshots/baseline/<viewport>.png e salvalo in workspace/output/scss/screenshots/diff/<viewport>.png\n4. calcola pixelDiffRatio e registralo\n5. confronta computed style (font-family, font-size, color, background, border*, display, position, margin*, padding*, flex*, grid*) e geometria (x,y,width,height) per gli elementi strutturali principali\nProduci workspace/output/scss/reports/visual-report.md con una tabella per viewport: PASS/FAIL + pixelDiffRatio + eventuali note su computed style/geometria. Target pixelDiffRatio <= 0.001.",
+      "agentId": "scss-extractor-agent",
+      "skillIds": [],
+      "dependencies": ["step-14-cleaned-html", "step-02-baseline-screenshots"],
+      "inputPaths": [
+        "workspace/output/scss/source-original.html",
+        "workspace/output/scss/source-cleaned.html",
+        "workspace/output/scss/screenshots/baseline/**"
+      ],
+      "outputPaths": [
+        "workspace/output/scss/screenshots/candidate/**",
+        "workspace/output/scss/screenshots/diff/**",
+        "workspace/output/scss/reports/visual-report.md"
+      ],
+      "validationCriteria": [
+        "esistono 5 screenshot in screenshots/candidate/",
+        "esistono 5 diff-image in screenshots/diff/",
+        "workspace/output/scss/reports/visual-report.md esiste e riporta PASS/FAIL + pixelDiffRatio per ognuno dei 5 viewport"
+      ],
+      "continueOnError": true,
+      "maxAttempts": 2,
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "step-16-diagnose-and-fix",
+      "title": "Phase 7 — Diagnosi e fix delle differenze residue (solo se visual-report.md riporta FAIL)",
+      "description": "Leggi workspace/output/scss/reports/visual-report.md. Se tutti i viewport sono PASS, non modificare nulla e riporta \"nessun fix necessario\" nel summary. Se esiste almeno un FAIL, per ogni differenza: classificala (cascade/source-order, specificity, inheritance, inline-style priority, custom property mancante, URL asset errato, font non caricato, media query spostata, keyframes mancante, pseudo-elemento mancante, breakpoint diverso), applica il fix minimo nel/i file .scss o in source-cleaned.html pertinenti, ricompila con sass, e aggiorna workspace/output/scss/reports/visual-report.md con l'esito post-fix. Non introdurre cambi non correlati alla differenza diagnosticata.",
+      "agentId": "scss-extractor-agent",
+      "skillIds": [],
+      "dependencies": ["step-15-visual-equivalence-test"],
+      "inputPaths": [
+        "workspace/output/scss/reports/visual-report.md",
+        "workspace/output/scss/main.scss"
+      ],
+      "outputPaths": [
+        "workspace/output/scss/*.scss",
+        "workspace/output/scss/main.css",
+        "workspace/output/scss/source-cleaned.html",
+        "workspace/output/scss/reports/visual-report.md"
+      ],
+      "validationCriteria": [
+        "workspace/output/scss/reports/visual-report.md è stato aggiornato con timestamp/esito post-fix, oppure il summary dichiara esplicitamente che nessun fix era necessario"
+      ],
+      "continueOnError": true,
+      "maxAttempts": 2,
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "step-17-final-report",
+      "title": "Report finale (formato STATUS/OUTPUT/EXTRACTED/VISUAL TESTS)",
+      "description": "Genera workspace/output/scss/reports/extraction-report.md nel formato richiesto dalla skill:\nSTATUS: PASS | PASS_WITH_KNOWN_LIMITATIONS | FAIL\nSOURCE: <path originale>\nOUTPUT: <source-cleaned.html>, <main.scss>, <main.css>\nEXTRACTED: numero blocchi style, numero CSS locali, numero inline migrati/mantenuti\nPRESERVED EXTERNAL/VENDOR: elenco\nVISUAL TESTS: riga per ognuno dei 5 viewport con PASS/FAIL e diff ratio (da visual-report.md)\nCOMPUTED STYLE / GEOMETRY: PASS/FAIL\nCONSOLE/NETWORK: PASS/FAIL\nUNRESOLVED DIFFERENCES: elenco esplicito o \"nessuna\"",
+      "agentId": "scss-extractor-agent",
+      "skillIds": [],
+      "dependencies": ["step-16-diagnose-and-fix"],
+      "inputPaths": [
+        "workspace/output/scss/reports/visual-report.md",
+        "workspace/output/scss/reports/inventory.md"
+      ],
+      "outputPaths": ["workspace/output/scss/reports/extraction-report.md"],
+      "validationCriteria": [
+        "workspace/output/scss/reports/extraction-report.md esiste",
+        "contiene le sezioni STATUS, SOURCE, OUTPUT, EXTRACTED, VISUAL TESTS, UNRESOLVED DIFFERENCES"
+      ],
+      "continueOnError": true,
+      "maxAttempts": 2,
+      "status": "pending",
+      "attempts": 0
+    }
+  ]
+}
+

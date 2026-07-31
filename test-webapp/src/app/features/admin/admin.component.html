@@ -1,0 +1,9 @@
+<div class="feature-placeholder">
+   <h2>Admin</h2>
+   <p *ngIf="isLoading$ | async">Caricamento…</p>
+   <p *ngIf="!(isLoading$ | async)">
+      Sezione "Admin" pronta ad ospitare <code>lib-admin</code>.
+      Importa il modulo della libreria generata in <code>admin.module.ts</code>
+      e sostituisci questo placeholder con <code>&lt;lib-admin&gt;&lt;/lib-admin&gt;</code>.
+   </p>
+</div>

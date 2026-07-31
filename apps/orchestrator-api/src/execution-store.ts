@@ -1,7 +1,7 @@
 import { EventEmitter } from "node:events";
 import { CancellationRegistry } from "../../../src/cancellation.js";
 
-export type ExecutionStatus = 'queued' | 'running' | 'completed' | 'failed' | 'cancelled';
+export type ExecutionStatus = 'queued' | 'running' | 'completed' | 'failed' | 'cancelled' | 'awaiting_input';
 export type TaskStatus = 'pending' | 'running' | 'completed' | 'failed' | 'blocked' | 'skipped';
 
 export interface ExecutionEvent {
@@ -138,6 +138,10 @@ class ExecutionStore extends EventEmitter {
 
   deregisterAbort(execId: string): void {
     this.abortControllers.delete(execId);
+  }
+
+  isRunning(execId: string): boolean {
+    return this.abortControllers.has(execId);
   }
 }
 

@@ -1,0 +1,9 @@
+<div class="feature-placeholder">
+   <h2>Homepage</h2>
+   <p *ngIf="isLoading$ | async">Caricamento…</p>
+   <p *ngIf="!(isLoading$ | async)">
+      Sezione "Homepage" pronta ad ospitare <code>lib-homepage</code>.
+      Importa il modulo della libreria generata in <code>homepage.module.ts</code>
+      e sostituisci questo placeholder con <code>&lt;lib-homepage&gt;&lt;/lib-homepage&gt;</code>.
+   </p>
+</div>

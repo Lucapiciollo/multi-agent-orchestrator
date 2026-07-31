@@ -1,0 +1,11 @@
+<h2 mat-dialog-title class="confirm-box__title">
+  <mat-icon>delete</mat-icon>
+  Elimina report
+</h2>
+<mat-dialog-content class="confirm-box__message">
+  Sei sicuro di voler eliminare questo report personalizzato? L'azione non può essere annullata.
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-stroked-button type="button" (click)="cancel()">Annulla</button>
+  <button mat-flat-button color="warn" type="button" (click)="confirm()">Elimina</button>
+</mat-dialog-actions>

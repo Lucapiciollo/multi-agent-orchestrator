@@ -1,0 +1,59 @@
+/* You can add global styles to this file, and also import other style files */
+
+// ── @use PRIMA di qualsiasi altra regola (obbligo Sass) ──────────────────
+@use '@angular/material' as mat;
+@use '../../workspace/output/scss/main';
+@use 'bootstrap/scss/bootstrap-grid';   // richiesto da pl-dynamicform per layout col-*
+
+// ── Stili globali lib-report (CDK overlay, dialog panel, backdrop) ────────
+// Il CDK overlay inietta .cdk-overlay-pane e backdrop direttamente nel <body>
+// → non raggiungibili da component SCSS → devono stare nel global stylesheet.
+@use '../projects/lib-report/src/lib/lib-report.theme';
+
+// ── Tema Angular Material ────────────────────────────────────────────────
+$tv-primary-palette: (
+  50:  #fdf1ec,
+  100: #faddd1,
+  200: #f6c6b2,
+  300: #f2af93,
+  400: #ef9e7b,
+  500: #EB5E2D,
+  600: #e8532a,
+  700: #e44625,
+  800: #e13c21,
+  900: #BA3D12,
+  contrast: (
+    50:  rgba(0,0,0,.87),
+    100: rgba(0,0,0,.87),
+    200: rgba(0,0,0,.87),
+    300: rgba(0,0,0,.87),
+    400: rgba(0,0,0,.87),
+    500: white,
+    600: white,
+    700: white,
+    800: white,
+    900: white,
+  )
+);
+
+$tv-primary:  mat.m2-define-palette($tv-primary-palette, 500, 300, 900);
+$tv-accent:   mat.m2-define-palette(mat.$m2-gray-palette, 600);
+$tv-warn:     mat.m2-define-palette(mat.$m2-red-palette);
+
+$tv-theme: mat.m2-define-light-theme((
+  color: (
+    primary:  $tv-primary,
+    accent:   $tv-accent,
+    warn:     $tv-warn,
+  ),
+  typography: mat.m2-define-typography-config(
+    $font-family: "'Open Sans', sans-serif",
+    $body-1: mat.m2-define-typography-level(13px, 1.5, 400),
+    $body-2: mat.m2-define-typography-level(13px, 1.5, 500),
+  ),
+  density: 0,
+));
+
+@include mat.core();
+@include mat.all-component-themes($tv-theme);
+

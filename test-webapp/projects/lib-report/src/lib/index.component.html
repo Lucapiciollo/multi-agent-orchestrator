@@ -1,0 +1,64 @@
+<div class="report-page">
+
+  @if ((view$ | async) === 'elenco') {
+    <section class="report-page__view report-page__view--elenco">
+      <div class="sub-header">
+        <h1>Consulta, personalizza ed esporta i dati delle principali aree funzionali</h1>
+        <p>Scegli un report preimpostato o crea il tuo con filtri e campi personalizzati</p>
+      </div>
+
+      <div class="categories-container">
+        @if (categoriesLoading$ | async) {
+          <p class="report-page__status">Caricamento catalogo report…</p>
+        }
+        @if (categoriesError$ | async; as error) {
+          <p class="report-page__status report-page__status--error">{{ error }}</p>
+        }
+
+        @for (category of (categories$ | async); track category.catId) {
+          <lib-report-category
+            [category]="category"
+            [myReportsBySubId]="(myReportsBySubId$ | async) ?? {}"
+            (openPreset)="onOpenPreset($event)"
+            (openCustom)="onOpenCustom($event)"
+            (openSavedReport)="onOpenSavedReport($event)"
+            (deleteSavedReport)="onDeleteSavedReport($event)"
+          ></lib-report-category>
+        }
+      </div>
+    </section>
+  }
+
+  @if ((view$ | async) === 'storico') {
+    <section class="report-page__view report-page__view--storico">
+      <div class="sub-header">
+        <h1>Storico report</h1>
+        <p>Visualizza e scarica i file generati dalle tue richieste di export</p>
+      </div>
+      <div class="storico-container">
+        <lib-report-storico-filter-bar
+          [filters]="(storicoFilters$ | async) ?? null"
+          (filtersChange)="onStoricoFiltersChange($event)"
+          (reset)="onStoricoFiltersReset()"
+        ></lib-report-storico-filter-bar>
+
+        @if (storicoLoading$ | async) {
+          <p class="report-page__status">Caricamento storico…</p>
+        }
+        @if (storicoError$ | async; as error) {
+          <p class="report-page__status report-page__status--error">{{ error }}</p>
+        }
+
+        <lib-report-storico-table
+          [rows]="(storicoPage$ | async) ?? []"
+          [total]="(storicoTotal$ | async) ?? 0"
+          [pageIndex]="(storicoPageIndex$ | async) ?? 0"
+          [pageSize]="(storicoPageSize$ | async) ?? 10"
+          (rowClick)="onStoricoRowClick($event)"
+          (download)="onStoricoDownload($event)"
+          (pageChange)="onStoricoPageChange($event)"
+        ></lib-report-storico-table>
+      </div>
+    </section>
+  }
+</div>

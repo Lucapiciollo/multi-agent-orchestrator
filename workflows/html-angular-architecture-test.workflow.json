@@ -1,0 +1,350 @@
+{
+  "id": "html-angular-architecture-test",
+  "objective": "HTML → Angular Section Architecture — 16 step atomici eseguibili singolarmente (taskId), allineati alle Phase 0-15 della skill html-angular-architect: discovery sorgente, analisi navigazione (Gate 1), scoperta flusso sezione, dialog/modali, JS, componenti, mapping Material, report architettura (Gate 2), generazione lib Angular completa (NgModule + NgRx + guard + routing + index.component), migrazione template/form/routing/SCSS, verifica comportamentale e visiva, report finale.",
+  "projectRoot": ".",
+  "contextFiles": [],
+  "createGitCheckpoints": false,
+  "tasks": [
+    {
+      "id": "step-00-source-discovery",
+      "title": "Phase 0 — Source discovery (nessuna modifica al sorgente)",
+      "description": "Esegui SOLO la Phase 0 della skill html-angular-architect: localizza l'HTML richiesto in workspace/input/, risolvi tutti i link locali referenziati, individua pagine HTML correlate, asset CSS/SCSS, file JavaScript, immagini/SVG/icone, librerie esterne. Classifica il prototipo (single-page, multi-page, dashboard shell, wizard, CRUD-style, nested navigation). Se esiste un output di estrazione SCSS precedente (es. workspace/output/scss/), carica il relativo report e i percorsi (main.scss, _variables.scss, ecc.) da riusare come integration contract. NON modificare il prototipo sorgente. Produci workspace/output/angular/reports/source-discovery.md con l'inventario completo.",
+      "agentId": "angular-lib-agent",
+      "skillIds": ["angular-component-extractor"],
+      "dependencies": [],
+      "inputPaths": ["workspace/input/**", "workspace/output/scss/**"],
+      "outputPaths": ["workspace/output/angular/reports/source-discovery.md"],
+      "validationCriteria": [
+        "workspace/output/angular/reports/source-discovery.md esiste",
+        "il report classifica il tipo di prototipo e lista pagine/CSS/JS/asset scoperti",
+        "il sorgente in workspace/input/ non è stato modificato"
+      ],
+      "continueOnError": false,
+      "maxAttempts": 2,
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "step-01-navigation-analysis",
+      "title": "Phase 1 — Menu/navigation analysis + Gate 1 output (elenco sezioni candidate)",
+      "description": "Esegui la Phase 1: analizza <nav>, sidebar, top navigation, dropdown/hamburger menu, anchor <a href>, bottoni con onclick, data-attribute di routing, tab che fungono da navigazione, item menu guidati da JS, link a pagine locali. Per ogni voce raccogli label/selector/href/parent/submenu/icon/source file/meccanismo di navigazione/pagina correlata/selettore stato attivo/comportamento responsive, normalizzando i duplicati. Produci l'output Gate 1 obbligatorio in workspace/output/angular/reports/gate1-menu-analysis.md: elenco numerato di TUTTE le sezioni candidate nel formato esatto `[N] Label` seguito dai dettagli (source/target/type/...), evidenziando con ★ le sezioni funzionalmente implementate (non stub). NON scegliere autonomamente la sezione da angularizzare e NON dichiarare una SELECTED SECTION: la scelta finale spetta all'utente tramite l'interfaccia, che si fermerà qui in attesa della sua selezione esplicita prima di proseguire con la Phase 2. NON iniziare l'implementazione.",
+      "agentId": "angular-lib-agent",
+      "skillIds": ["angular-component-extractor"],
+      "dependencies": ["step-00-source-discovery"],
+      "inputPaths": ["workspace/input/**", "workspace/output/angular/reports/source-discovery.md"],
+      "outputPaths": ["workspace/output/angular/reports/gate1-menu-analysis.md"],
+      "validationCriteria": [
+        "workspace/output/angular/reports/gate1-menu-analysis.md esiste",
+        "contiene l'elenco numerato delle sezioni di menu con source/target/type nel formato `[N] Label`",
+        "NON dichiara una SELECTED SECTION: la scelta è demandata all'utente fuori da questo step"
+      ],
+      "continueOnError": false,
+      "maxAttempts": 2,
+      "status": "pending",
+      "attempts": 0,
+      "metadata": {
+        "gate": true,
+        "gateLabel": "Scegli la sezione di menu da angularizzare",
+        "gateCandidatesPath": "workspace/output/angular/reports/gate1-menu-analysis.md",
+        "gateOutputPath": "workspace/output/angular/reports/selected-section.md"
+      }
+    },
+    {
+      "id": "step-02-section-flow-discovery",
+      "title": "Phase 2 — Selected section flow discovery",
+      "description": "Sulla base della sezione scelta dall'utente in workspace/output/angular/reports/selected-section.md (NON dedurla autonomamente e NON ridiscuterla: è una decisione già presa fuori da questo step), esegui la Phase 2: ricostruisci il flusso di interazione completo della sezione scelta (pagine coinvolte, stati, transizioni, sotto-viste, tab, wizard-step, azioni CRUD, filtri/paginazione se presenti). Produci workspace/output/angular/reports/section-flow.md con il grafo/flusso descritto testualmente e l'elenco di ogni pagina/stato con relativo selettore o file sorgente.",
+      "agentId": "angular-lib-agent",
+      "skillIds": ["angular-component-extractor"],
+      "dependencies": ["step-01-navigation-analysis"],
+      "inputPaths": ["workspace/input/**", "workspace/output/angular/reports/gate1-menu-analysis.md", "workspace/output/angular/reports/selected-section.md"],
+      "outputPaths": ["workspace/output/angular/reports/section-flow.md"],
+      "validationCriteria": [
+        "workspace/output/angular/reports/section-flow.md esiste",
+        "descrive il flusso di interazione della sola sezione scelta in selected-section.md"
+      ],
+      "continueOnError": false,
+      "maxAttempts": 2,
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "step-03-modal-dialog-discovery",
+      "title": "Phase 3 — Modal, dialog and secondary page discovery",
+      "description": "Esegui la Phase 3 limitatamente alla SELECTED SECTION: individua ogni modale/dialog/overlay/popup e pagina secondaria collegata (conferme, form in dialog, dettagli, wizard step in overlay). Per ciascuno registra trigger, markup sorgente, contenuto, azioni di conferma/annullamento. Produci workspace/output/angular/reports/dialogs-inventory.md.",
+      "agentId": "angular-lib-agent",
+      "skillIds": ["angular-component-extractor"],
+      "dependencies": ["step-02-section-flow-discovery"],
+      "inputPaths": ["workspace/input/**", "workspace/output/angular/reports/section-flow.md"],
+      "outputPaths": ["workspace/output/angular/reports/dialogs-inventory.md"],
+      "validationCriteria": [
+        "workspace/output/angular/reports/dialogs-inventory.md esiste",
+        "lista ogni modale/dialog trovato nella sezione selezionata, oppure dichiara esplicitamente che non ce ne sono"
+      ],
+      "continueOnError": true,
+      "maxAttempts": 2,
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "step-04-js-discovery-classification",
+      "title": "Phase 4 — JavaScript discovery and mandatory classification",
+      "description": "Esegui la Phase 4: individua tutto il JavaScript (inline e file esterni) rilevante per la SELECTED SECTION e classificalo secondo lo schema obbligatorio della skill (es. DOM behavior → directive, data fetching → NgRx effect/service, validazione → reactive form validator, navigazione → router, stato UI locale → component state, animazioni → CSS/Angular animations). Produci workspace/output/angular/reports/js-classification.md con un ID progressivo per ogni snippet (JS-001, JS-002, ...) e la strategia di migrazione proposta per ciascuno.",
+      "agentId": "angular-lib-agent",
+      "skillIds": ["angular-component-extractor"],
+      "dependencies": ["step-02-section-flow-discovery"],
+      "inputPaths": ["workspace/input/**", "workspace/output/angular/reports/section-flow.md"],
+      "outputPaths": ["workspace/output/angular/reports/js-classification.md"],
+      "validationCriteria": [
+        "workspace/output/angular/reports/js-classification.md esiste",
+        "ogni snippet JS rilevante ha un ID (JS-NNN), una classificazione e una strategia di migrazione"
+      ],
+      "continueOnError": false,
+      "maxAttempts": 2,
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "step-05-component-discovery",
+      "title": "Phase 5 — Angular component discovery",
+      "description": "Esegui la Phase 5: scomponi la SELECTED SECTION in componenti Angular (index.component come entry point/container + sotto-componenti presentazionali in components/ + dialog in dialogs/), applicando le convenzioni di naming della skill. Produci workspace/output/angular/reports/component-breakdown.md con l'elenco componenti proposti, responsabilità, gerarchia (parent/children) e markup sorgente sostituito da ciascuno.",
+      "agentId": "angular-lib-agent",
+      "skillIds": ["angular-component-extractor"],
+      "dependencies": ["step-03-modal-dialog-discovery", "step-04-js-discovery-classification"],
+      "inputPaths": [
+        "workspace/output/angular/reports/section-flow.md",
+        "workspace/output/angular/reports/dialogs-inventory.md",
+        "workspace/output/angular/reports/js-classification.md"
+      ],
+      "outputPaths": ["workspace/output/angular/reports/component-breakdown.md"],
+      "validationCriteria": [
+        "workspace/output/angular/reports/component-breakdown.md esiste",
+        "include esplicitamente index.component come entry point e la gerarchia dei sotto-componenti"
+      ],
+      "continueOnError": false,
+      "maxAttempts": 2,
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "step-06-material-mapping",
+      "title": "Phase 6 — Angular Material mapping",
+      "description": "Esegui la Phase 6: per ogni elemento HTML/pattern UI della SELECTED SECTION (tabelle, form, bottoni, badge, tab, menu, card, ecc.) individua il componente Angular Material equivalente (mat-table, mat-form-field, mat-button, mat-chip, mat-tab-group, mat-menu, mat-card, mat-dialog, ecc.) preservando il contratto visivo esistente (SCSS estratto come source of truth). Produci workspace/output/angular/reports/material-mapping.md con la tabella pattern-HTML → componente-Material → note di adattamento SCSS.",
+      "agentId": "angular-lib-agent",
+      "skillIds": ["angular-component-extractor"],
+      "dependencies": ["step-05-component-discovery"],
+      "inputPaths": ["workspace/output/angular/reports/component-breakdown.md", "workspace/output/scss/**"],
+      "outputPaths": ["workspace/output/angular/reports/material-mapping.md"],
+      "validationCriteria": [
+        "workspace/output/angular/reports/material-mapping.md esiste",
+        "ogni componente proposto in component-breakdown.md ha una corrispondente riga di mapping Material (o nota esplicita 'nessun componente Material necessario')"
+      ],
+      "continueOnError": false,
+      "maxAttempts": 2,
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "step-07-architecture-report",
+      "title": "Phase 7 — Required architecture report (Gate 2, hard stop)",
+      "description": "Esegui la Phase 7: componi il report architetturale completo nel formato obbligatorio della skill (SELECTED SECTION, ENTRY POINT, ROUTES FOUND, FLOW, PAGES FOUND, DIALOGS/MODALS FOUND, COMPONENTS PROPOSED con index.component come primo, DIALOGS PROPOSED, DIRECTIVES PROPOSED, GUARD PROPOSED con index.guard.ts, SERVICES PROPOSED con index.service.ts, MODELS/INTERFACES, STATE STRATEGY NgRx obbligatoria con tutti i file redux/, SCSS REUSE, JAVASCRIPT MIGRATION, RISKS/AMBIGUITIES, PROPOSED ANGULAR TREE completo sotto test-webapp/projects/{slug}/src/lib/ — {slug} è un PROGETTO ANGULAR LIBRARY REALE già registrato in test-webapp/angular.json e in test-webapp/tsconfig.json (compilerOptions.paths), NON una cartella dentro test-webapp/src/app/). SELECTED SECTION deve essere presa da workspace/output/angular/reports/selected-section.md (la scelta dell'utente), non ridiscussa. Determina {slug} in kebab-case dal nome della sezione scelta PRECEDUTO SEMPRE dal prefisso obbligatorio `lib-` (es. sezione \"Report\" → {slug} = `lib-report`; sezione \"Ferie e Permessi\" → {slug} = `lib-ferie-permessi`) e usalo in modo coerente in tutti i task successivi. Produci workspace/output/angular/reports/architecture-report.md. Questo è un hard stop: NON generare codice in questo step.",
+      "agentId": "angular-lib-agent",
+      "skillIds": ["angular-component-extractor"],
+      "dependencies": ["step-06-material-mapping"],
+      "inputPaths": [
+        "workspace/output/angular/reports/component-breakdown.md",
+        "workspace/output/angular/reports/material-mapping.md",
+        "workspace/output/angular/reports/js-classification.md",
+        "workspace/output/angular/reports/selected-section.md"
+      ],
+      "outputPaths": ["workspace/output/angular/reports/architecture-report.md"],
+      "validationCriteria": [
+        "workspace/output/angular/reports/architecture-report.md esiste",
+        "contiene tutte le sezioni obbligatorie del formato Gate 2",
+        "STATE STRATEGY elenca tutti e sei i file redux/ (state, actions, reducer, selectors, effects, store-module)",
+        "GUARD PROPOSED indica esplicitamente index.guard.ts",
+        "PROPOSED ANGULAR TREE usa il path test-webapp/projects/{slug}/src/lib/ con {slug} valorizzato nella forma lib-<sezione-kebab> (es. lib-report)"
+      ],
+      "continueOnError": false,
+      "maxAttempts": 2,
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "step-08-lib-scaffold-ngmodule-ngrx",
+      "title": "Phase 8a — Scaffold NgModule + NgRx completo + guard + routing",
+      "description": "Leggi workspace/output/angular/reports/architecture-report.md e usa lo {slug} lì determinato. Genera in workspace/output/test-app/src/libs/{slug}/ i file architetturali obbligatori (NON i componenti UI, che sono nel task successivo): index.module.ts (standalone: false, importa index-routing.module.ts e {slug}-store.module.ts più i soli moduli Material realmente usati), index-routing.module.ts (RouterModule.forChild, path '' → IndexComponent, canActivate: [IndexGuard]), index.guard.ts (CanActivate; se non esiste una regola di accesso reale nel prototipo, ritorna true e documentalo come placeholder), index.service.ts (HttpClient, data access only), index.models.ts (tutte le interfacce), e la cartella redux/ COMPLETA ({slug}.state.ts, {slug}.actions.ts, {slug}.reducer.ts, {slug}.selectors.ts, {slug}.effects.ts, {slug}-store.module.ts, index.ts) dove {slug}.effects.ts è l'unico punto che invoca index.service.ts.",
+      "agentId": "angular-lib-agent",
+      "skillIds": ["angular-component-extractor"],
+      "dependencies": ["step-07-architecture-report"],
+      "inputPaths": ["workspace/output/angular/reports/architecture-report.md"],
+      "outputPaths": [
+        "workspace/output/test-app/src/libs/**/index.module.ts",
+        "workspace/output/test-app/src/libs/**/index-routing.module.ts",
+        "workspace/output/test-app/src/libs/**/index.guard.ts",
+        "workspace/output/test-app/src/libs/**/index.service.ts",
+        "workspace/output/test-app/src/libs/**/index.models.ts",
+        "workspace/output/test-app/src/libs/**/redux/**"
+      ],
+      "validationCriteria": [
+        "index.module.ts, index-routing.module.ts, index.guard.ts, index.service.ts, index.models.ts esistono nella cartella della feature",
+        "redux/ contiene tutti e sei i file (state, actions, reducer, selectors, effects, store-module) più index.ts",
+        "index-routing.module.ts referenzia canActivate con il guard generato",
+        "nessun componente è standalone: true"
+      ],
+      "continueOnError": false,
+      "maxAttempts": 2,
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "step-09-lib-scaffold-components",
+      "title": "Phase 8b — Scaffold index.component + components/ + dialogs/ + mock-data/",
+      "description": "Nella stessa cartella feature (workspace/output/test-app/src/libs/{slug}/), genera: index.component.ts/.html/.scss come componente container connesso allo store (legge SOLO tramite selector, scrive SOLO tramite dispatch di action), la cartella components/ con i sotto-componenti presentazionali proposti in component-breakdown.md (ognuno con .ts/.html/.scss + barrel index.ts), la cartella dialogs/ con i MatDialog component per ogni modale individuato in dialogs-inventory.md (se presenti), e mock-data/{slug}.mock.ts + index.ts con dati realistici e tipizzati secondo index.models.ts. Usa sintassi di controllo Angular 17+ (@if/@for/@switch), mai *ngIf/*ngFor.",
+      "agentId": "angular-lib-agent",
+      "skillIds": ["angular-component-extractor"],
+      "dependencies": ["step-08-lib-scaffold-ngmodule-ngrx"],
+      "inputPaths": [
+        "workspace/output/angular/reports/architecture-report.md",
+        "workspace/output/angular/reports/component-breakdown.md",
+        "workspace/output/angular/reports/dialogs-inventory.md"
+      ],
+      "outputPaths": [
+        "workspace/output/test-app/src/libs/**/index.component.ts",
+        "workspace/output/test-app/src/libs/**/index.component.html",
+        "workspace/output/test-app/src/libs/**/index.component.scss",
+        "workspace/output/test-app/src/libs/**/components/**",
+        "workspace/output/test-app/src/libs/**/dialogs/**",
+        "workspace/output/test-app/src/libs/**/mock-data/**"
+      ],
+      "validationCriteria": [
+        "index.component.ts/.html/.scss esistono ed è il componente attivato dalla route",
+        "index.component.ts legge lo stato solo tramite store.select(...) e scrive solo tramite dispatch",
+        "components/ contiene un file index.ts di barrel export",
+        "se dialogs-inventory.md riporta modali, esistono i corrispondenti componenti in dialogs/"
+      ],
+      "continueOnError": false,
+      "maxAttempts": 2,
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "step-10-template-migration",
+      "title": "Phase 9 — Template migration rules",
+      "description": "Rifinisci i template generati (index.component.html e components/**/*.html) applicando le regole di migrazione della Phase 9: sostituisci il comportamento imperativo HTML/JS con costrutti Angular (event binding, property binding, @if/@for/@switch, pipe), mantenendo il markup semanticamente equivalente all'originale senza cambi DOM non necessari. Aggiorna js-classification.md marcando come 'migrated' ogni snippet JS ora coperto dai template/componenti Angular.",
+      "agentId": "angular-lib-agent",
+      "skillIds": ["angular-component-extractor"],
+      "dependencies": ["step-09-lib-scaffold-components"],
+      "inputPaths": [
+        "workspace/output/angular/reports/js-classification.md",
+        "workspace/output/test-app/src/libs/**"
+      ],
+      "outputPaths": [
+        "workspace/output/test-app/src/libs/**/*.html",
+        "workspace/output/angular/reports/js-classification.md"
+      ],
+      "validationCriteria": [
+        "i template non usano *ngIf/*ngFor (solo @if/@for/@switch)",
+        "js-classification.md riporta lo stato di migrazione aggiornato per ogni snippet"
+      ],
+      "continueOnError": true,
+      "maxAttempts": 2,
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "step-11-forms",
+      "title": "Phase 10 — Forms (Reactive Forms + Material)",
+      "description": "Applica la Phase 10: converti ogni form della sezione in Reactive Forms Angular con i relativi mat-form-field/validators, collegando submit/validazione alle action NgRx dove pertinente (mai chiamando index.service.ts direttamente dal componente). Aggiorna i componenti in components/ e/o index.component interessati.",
+      "agentId": "angular-lib-agent",
+      "skillIds": ["angular-component-extractor"],
+      "dependencies": ["step-10-template-migration"],
+      "inputPaths": ["workspace/output/test-app/src/libs/**"],
+      "outputPaths": ["workspace/output/test-app/src/libs/**/*.ts", "workspace/output/test-app/src/libs/**/*.html"],
+      "validationCriteria": [
+        "ogni form individuato nel prototipo originale ha un corrispondente FormGroup/FormControl reattivo",
+        "il submit dei form dispatcha action NgRx invece di chiamare direttamente index.service.ts"
+      ],
+      "continueOnError": true,
+      "maxAttempts": 2,
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "step-12-routing-wireup",
+      "title": "Phase 11 — Routing wiring nell'app/test-app",
+      "description": "Applica la Phase 11: verifica/aggiorna il routing di livello superiore (es. app-routing.module.ts o il modulo di routing del test-app) per montare index-routing.module.ts della feature tramite lazy-loading (loadChildren) sul path corrispondente alla SELECTED SECTION, senza alterare altre route esistenti.",
+      "agentId": "angular-lib-agent",
+      "skillIds": ["angular-component-extractor"],
+      "dependencies": ["step-08-lib-scaffold-ngmodule-ngrx"],
+      "inputPaths": ["workspace/output/test-app/src/**", "workspace/output/angular/reports/architecture-report.md"],
+      "outputPaths": ["workspace/output/test-app/src/**/*routing*.ts"],
+      "validationCriteria": [
+        "esiste una route (lazy loadChildren o import diretto) che punta a index-routing.module.ts della feature",
+        "le route preesistenti non sono state rimosse o alterate senza necessità"
+      ],
+      "continueOnError": true,
+      "maxAttempts": 2,
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "step-13-scss-migration",
+      "title": "Phase 12 — SCSS migration and reuse (tokens condivisi)",
+      "description": "Applica la Phase 12: classifica ogni regola SCSS coinvolta secondo lo schema (GLOBAL_KEEP, FEATURE_GLOBAL, COMPONENT_LOCAL, MATERIAL_OVERRIDE, RESPONSIVE_GLOBAL, UTILITY_SHARED). Ogni file *.component.scss deve fare @use del file dei design tokens (_variables.scss/_tokens.scss estratti dalla skill css-to-material) con il path relativo corretto in base alla profondità in src/libs/{slug}/. Non riscrivere l'intera architettura SCSS esistente: estendila solo dove necessario per Angular Material.",
+      "agentId": "angular-lib-agent",
+      "skillIds": ["angular-component-extractor"],
+      "dependencies": ["step-09-lib-scaffold-components"],
+      "inputPaths": ["workspace/output/test-app/src/libs/**", "workspace/output/scss/**"],
+      "outputPaths": ["workspace/output/test-app/src/libs/**/*.scss"],
+      "validationCriteria": [
+        "ogni *.component.scss usa @use verso il file dei design tokens condiviso con path relativo corretto",
+        "non esistono valori di colore/spacing hardcoded duplicati rispetto ai token già estratti"
+      ],
+      "continueOnError": true,
+      "maxAttempts": 2,
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "step-14-behavior-verification",
+      "title": "Phase 13 — Behavior verification",
+      "description": "Applica la Phase 13: verifica che ogni comportamento JS classificato in js-classification.md sia effettivamente coperto dall'implementazione Angular generata (component/directive/effect/service/guard). Produci workspace/output/angular/reports/behavior-verification.md con una riga per ogni JS-NNN: covered/not-covered + dove è stato migrato.",
+      "agentId": "angular-lib-agent",
+      "skillIds": ["angular-component-extractor"],
+      "dependencies": ["step-11-forms", "step-13-scss-migration"],
+      "inputPaths": ["workspace/output/angular/reports/js-classification.md", "workspace/output/test-app/src/libs/**"],
+      "outputPaths": ["workspace/output/angular/reports/behavior-verification.md"],
+      "validationCriteria": [
+        "workspace/output/angular/reports/behavior-verification.md esiste",
+        "ogni JS-NNN elencato in js-classification.md ha un esito covered/not-covered"
+      ],
+      "continueOnError": true,
+      "maxAttempts": 2,
+      "status": "pending",
+      "attempts": 0
+    },
+    {
+      "id": "step-15-visual-verification-and-final-report",
+      "title": "Phase 14 — Visual verification + Definition of Done + report finale",
+      "description": "Applica la Phase 14: confronta (dove possibile via build/serve del test-app e Playwright) il rendering della feature Angular generata con il contratto visivo SCSS/HTML originale della sezione selezionata, riportando eventuali scostamenti. Poi verifica la Definition of Done della skill (NgModule non-standalone, NgRx completo, guard presente e collegato, index.component come entry point, template con @if/@for/@switch, SCSS che riusa i token). Produci workspace/output/angular/reports/final-report.md nel formato richiesto dalla skill (STATUS, SELECTED SECTION, ENTRY POINT, GENERATED TREE, NGRX FILES, GUARD, VISUAL/BEHAVIOR VERIFICATION, UNRESOLVED DIFFERENCES/RISKS).",
+      "agentId": "angular-lib-agent",
+      "skillIds": ["angular-component-extractor"],
+      "dependencies": ["step-14-behavior-verification", "step-12-routing-wireup"],
+      "inputPaths": [
+        "workspace/output/angular/reports/behavior-verification.md",
+        "workspace/output/angular/reports/architecture-report.md",
+        "workspace/output/test-app/src/libs/**"
+      ],
+      "outputPaths": ["workspace/output/angular/reports/final-report.md"],
+      "validationCriteria": [
+        "workspace/output/angular/reports/final-report.md esiste",
+        "contiene le sezioni STATUS, SELECTED SECTION, ENTRY POINT, GENERATED TREE, NGRX FILES, GUARD, VISUAL/BEHAVIOR VERIFICATION, UNRESOLVED DIFFERENCES/RISKS",
+        "dichiara esplicitamente il rispetto della Definition of Done (NgModule non-standalone, NgRx completo, guard, index.component entry point)"
+      ],
+      "continueOnError": true,
+      "maxAttempts": 2,
+      "status": "pending",
+      "attempts": 0
+    }
+  ]
+}

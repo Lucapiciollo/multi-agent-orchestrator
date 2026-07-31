@@ -1,0 +1,43 @@
+// period-half-picker.component.scss — reuses legacy .period-popup/.sb-periodo-cal/.sb-cal-*
+@use '../../../../../../scss/variables' as tokens;
+
+.period-half-picker {
+  display: inline-block;
+
+  &__trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+}
+
+.period-popup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: tokens.$color-neutral-0;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  min-width: 220px;
+
+  &__nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__month {
+    font-weight: 500;
+  }
+
+  &__halves {
+    display: flex;
+    gap: 8px;
+  }
+
+  &__clear {
+    align-self: flex-start;
+    color: #b3261e;
+  }
+}

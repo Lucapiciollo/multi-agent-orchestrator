@@ -31,7 +31,12 @@ export class Orchestrator {
     private readonly reporter: Reporter
   ) { }
 
-  async execute(plan: ExecutionPlan): Promise<WorkflowReport> {
+  async execute(
+    plan: ExecutionPlan,
+    onTaskOutput?: (taskId: string, chunk: string) => void,
+    onTaskStart?: (taskId: string) => void,
+    onTaskEnd?: (taskId: string, status: 'completed' | 'failed') => void
+  ): Promise<WorkflowReport> {
     const startedAt = new Date();
     await this.validatePlan(plan);
 
@@ -49,7 +54,7 @@ export class Orchestrator {
       );
 
       const settled = await Promise.allSettled(
-        batch.map(task => this.executeTask(plan, task))
+        batch.map(task => this.executeTask(plan, task, onTaskOutput, onTaskStart, onTaskEnd))
       );
 
       const failed = settled.some(result => result.status === "rejected");
@@ -67,7 +72,10 @@ export class Orchestrator {
 
   private async executeTask(
     plan: ExecutionPlan,
-    task: AgentTask
+    task: AgentTask,
+    onTaskOutput?: (taskId: string, chunk: string) => void,
+    onTaskStart?: (taskId: string) => void,
+    onTaskEnd?: (taskId: string, status: 'completed' | 'failed') => void
   ): Promise<void> {
     const agent = this.registry.getAgent(task.agentId);
     const provider = this.providerFactory.createForAgent(agent);
@@ -88,7 +96,9 @@ export class Orchestrator {
     let feedback: string[] = [];
 
     task.status = "running";
+    onTaskStart?.(task.id);
 
+    try {
     while (task.attempts < maxAttempts) {
       task.attempts += 1;
 
@@ -99,7 +109,9 @@ export class Orchestrator {
         );
       }
 
-      const request = { agent, task, plan, agentSkills, taskSkills, feedback };
+      const request = { agent, task, plan, agentSkills, taskSkills, feedback,
+        onChunk: onTaskOutput ? (chunk: string) => onTaskOutput(task.id, chunk) : undefined
+      };
       const prompt = await this.promptBuilder.build(request);
 
       process.stdout.write(`\n[${task.id}] provider=${agent.provider?.type ?? this.config.defaultProvider} model=${agent.provider?.model ?? ""} — avvio Copilot...\n`);
@@ -114,6 +126,7 @@ export class Orchestrator {
 
       if (validation.valid) {
         task.status = "completed";
+        onTaskEnd?.(task.id, 'completed');
         return;
       }
 
@@ -121,6 +134,7 @@ export class Orchestrator {
 
       if (task.attempts >= maxAttempts) {
         task.status = "failed";
+        onTaskEnd?.(task.id, 'failed');
         if (!task.continueOnError) {
           throw new Error(
             `Task ${task.id} fallito: ${validation.errors.join("; ")}`
@@ -128,6 +142,20 @@ export class Orchestrator {
         }
         return;
       }
+    }
+    } catch (err) {
+      // Guarantee status is never left as "running" on unexpected errors
+      if (task.status === "running") {
+        if (task.continueOnError) {
+          // Don't block downstream tasks when continueOnError=true (e.g. timeout)
+          task.status = "completed";
+          onTaskEnd?.(task.id, 'completed');
+          return;
+        }
+        task.status = "failed";
+        onTaskEnd?.(task.id, 'failed');
+      }
+      throw err;
     }
   }
 

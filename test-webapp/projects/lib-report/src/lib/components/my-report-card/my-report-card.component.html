@@ -1,0 +1,16 @@
+<mat-card class="my-report-card" (click)="onCardClick()">
+  <div class="my-report-card__header">
+    <mat-card-title class="my-report-card__title">{{ report.title }}</mat-card-title>
+    <button
+      mat-icon-button
+      type="button"
+      aria-label="Elimina report"
+      (click)="onDeleteClick($event)"
+    >
+      <mat-icon>delete</mat-icon>
+    </button>
+  </div>
+  <mat-card-content class="my-report-card__description">
+    {{ report.description }}
+  </mat-card-content>
+</mat-card>

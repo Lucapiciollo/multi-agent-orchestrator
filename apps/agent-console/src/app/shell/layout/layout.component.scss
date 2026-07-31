@@ -1,5 +1,12 @@
 .sidenav-container { height: 100vh; }
-.sidenav { width: 240px; background: var(--sidebar-bg, #1e293b); color: #e2e8f0; }
+.sidenav {
+  width: 220px; background: #ffffff !important;
+  --mat-sidenav-container-background-color: #ffffff;
+  --mat-sidenav-container-text-color: #1a1f36;
+  border-right: 1px solid var(--c-border);
+  box-shadow: 2px 0 8px rgba(50,50,93,.04);
+}
 .main-content { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-.content-area { flex: 1; overflow-y: auto; background: var(--content-bg, #f8fafc); }
-.dark-theme { --sidebar-bg: #0f172a; --content-bg: #1e293b; color-scheme: dark; }
+.content-area { flex: 1; overflow-y: auto; background: var(--c-bg, #f6f9fc); }
+
+
