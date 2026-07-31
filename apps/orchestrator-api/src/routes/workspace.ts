@@ -73,6 +73,42 @@ workspaceRouter.delete("/input/:name", async (req: Request, res: Response) => {
   }
 });
 
+// GET /api/workspace/output?runSlug=xxx — lista file prodotti (opz. filtrati per run)
+// Se runSlug è fornito, scansiona solo workspace/runs/{runSlug}/
+// Altrimenti scansiona tutto workspace/ (escluso input)
+workspaceRouter.get("/output", async (req: Request, res: Response) => {
+  try {
+    const runSlug = (req.query["runSlug"] as string | undefined)?.trim();
+    const base = runSlug
+      ? path.join(ROOT_DIR, "workspace", "runs", runSlug)
+      : path.join(ROOT_DIR, "workspace");
+
+    const result: { path: string; size: number; modifiedAt: string }[] = [];
+
+    async function walk(dir: string) {
+      let entries: string[];
+      try { entries = await fs.readdir(dir); } catch { return; }
+      for (const entry of entries) {
+        const full = path.join(dir, entry);
+        const rel  = path.relative(ROOT_DIR, full).replace(/\\/g, "/");
+        // Skip input folder and hidden files
+        if (rel.startsWith("workspace/input")) continue;
+        if (entry.startsWith(".")) continue;
+        const stat = await fs.stat(full).catch(() => null);
+        if (!stat) continue;
+        if (stat.isDirectory()) { await walk(full); }
+        else { result.push({ path: rel, size: stat.size, modifiedAt: stat.mtime.toISOString() }); }
+      }
+    }
+
+    await walk(base);
+    result.sort((a, b) => b.modifiedAt.localeCompare(a.modifiedAt));
+    res.json({ data: result, meta: { total: result.length } });
+  } catch (e: any) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // GET /api/workspace/routing — restituisce le regole di routing file→workflow
 workspaceRouter.get("/routing", async (_req: Request, res: Response) => {
   try {

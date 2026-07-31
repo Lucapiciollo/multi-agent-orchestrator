@@ -72,16 +72,97 @@ export async function findWorkflow(workflowId: string): Promise<WorkflowDefiniti
   }
 }
 
-export async function createAndRunExecution(workflowId: string, taskId?: string): Promise<{ id: string; status: string }> {
+// ── Slug dal nome file input ──────────────────────────────────────────────
+// "timevision-report-v128 1.html" → "timevision-report-v128-1"
+async function detectInputSlug(): Promise<{ slug: string; inputFile: string } | null> {
+  try {
+    const inputDir = path.join(ROOT_DIR, "workspace", "input");
+    const files = await readdir(inputDir).catch(() => [] as string[]);
+    if (!files.length) return null;
+    // Pick most-recently-modified file
+    let latest = files[0]!;
+    const { stat } = await import("node:fs/promises");
+    let latestMtime = 0;
+    for (const f of files) {
+      const s = await stat(path.join(inputDir, f)).catch(() => null);
+      if (s && s.mtimeMs > latestMtime) { latestMtime = s.mtimeMs; latest = f; }
+    }
+    // Slugify: remove extension, replace spaces+dots+special chars with dash, lowercase
+    const base = path.basename(latest, path.extname(latest));
+    const slug = base.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+    return { slug: slug || "run", inputFile: latest };
+  } catch { return null; }
+}
+
+// ── Riscrittura path del workflow per run isolato ─────────────────────────
+// outputPaths: workspace/(context|output|reports) → workspace/runs/{slug}/...
+// inputPaths workspace/input/**  → workspace/input/{inputFile} se file specifico
+function rewriteWorkflowPaths<T extends WorkflowDefinition>(
+  wf: T, slug: string, inputFile?: string
+): T {
+  const prefix = `workspace/runs/${slug}`;
+  const rewritePath = (p: string): string => {
+    // Output dirs → isolate in run dir
+    const output = p.replace(
+      /^workspace\/(context|output|reports|logs)(\/|$)/,
+      `${prefix}/$1$2`
+    );
+    if (output !== p) return output;
+    // workspace/input/** → workspace/input/{file} when specific file given
+    if (inputFile && (p === "workspace/input/**" || p === "workspace/input/*")) {
+      return `workspace/input/${inputFile}`;
+    }
+    return p;
+  };
+  const rewriteTask = (task: any) => ({
+    ...task,
+    inputPaths:  task.inputPaths?.map(rewritePath),
+    outputPaths: task.outputPaths?.map(rewritePath),
+  });
+  return { ...wf, tasks: wf.tasks.map(rewriteTask) } as T;
+}
+
+export async function createAndRunExecution(
+  workflowId: string,
+  taskId?: string,
+  inputFile?: string
+): Promise<{ id: string; status: string }> {
   const workflow = await findWorkflow(workflowId);
   const req: StartExecutionRequest = { workflowId, taskId };
 
+  // Determine run slug from input file
+  // Priority: 1) explicit inputFile passed by caller  2) most-recently-modified file in workspace/input/
+  let slug: string;
+  let actualInputFile: string;
+
+  if (inputFile) {
+    // Explicit file passed — use it directly, never auto-detect
+    actualInputFile = inputFile;
+    const base = path.basename(inputFile, path.extname(inputFile));
+    slug = base.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "run";
+  } else {
+    const detected = await detectInputSlug();
+    slug = detected?.slug ?? "run";
+    actualInputFile = detected?.inputFile ?? "";
+  }
+
+  // Create the isolated run directory upfront
+  const runDir = `workspace/runs/${slug}`;
+  await mkdir(path.join(ROOT_DIR, runDir, "context"), { recursive: true });
+  await mkdir(path.join(ROOT_DIR, runDir, "output"),  { recursive: true });
+  await mkdir(path.join(ROOT_DIR, runDir, "reports"), { recursive: true });
+
+  // Rewrite workflow paths to use the run directory + pin the specific input file
+  const isolatedWorkflow = rewriteWorkflowPaths(workflow, slug, actualInputFile);
+
   // If a specific taskId is requested, build a single-task workflow
   const plan = taskId
-    ? { ...workflow, objective: `[Step singolo] ${taskId} — ${workflow.objective}`, tasks: workflow.tasks.map((t: any) => ({ ...t, status: t.id === taskId ? "pending" : "completed" })) }
-    : workflow;
+    ? { ...isolatedWorkflow, objective: `[Step singolo] ${taskId} — ${isolatedWorkflow.objective}`, tasks: isolatedWorkflow.tasks.map((t: any) => ({ ...t, status: t.id === taskId ? "pending" : "completed" })) }
+    : isolatedWorkflow;
 
-  const execution = executionStore.create(req, plan.objective, taskId ? 1 : workflow.tasks.length);
+  const execution = executionStore.create(req, plan.objective, taskId ? 1 : workflow.tasks.length, {
+    runDir, runSlug: slug, inputFile: actualInputFile
+  });
   void runWorkflowAsync(execution.id, plan as any, req);
   return { id: execution.id, status: execution.status };
 }
@@ -97,7 +178,8 @@ executionsRouter.post("/", async (req, res) => {
 
   try {
     // Optional: run only a specific task (skip all others)
-    const execution = await createAndRunExecution(body.workflowId, body.taskId);
+    // inputFile: nome esplicito del file da processare (evita auto-rilevamento)
+    const execution = await createAndRunExecution(body.workflowId, body.taskId, body.inputFile);
     res.status(201).json({ data: execution });
   } catch (e: any) {
     res.status(404).json({ error: "NotFound", message: e.message, statusCode: 404 });
@@ -192,7 +274,20 @@ executionsRouter.get("/:id/gate", async (req, res) => {
       return;
     }
     const meta = (gateTask as any).metadata ?? {};
-    const candidatesPath: string = meta.gateCandidatesPath ?? "";
+
+    // ── Path isolation: usa il runDir dell'esecuzione ─────────────────────
+    // Il candidatesPath nel workflow punta a workspace/output/... (path generico).
+    // Se l'esecuzione è isolata (runDir presente), il file è sotto workspace/runs/{slug}/...
+    const isolatePath = (p: string): string => {
+      if (!ex.runDir || !p) return p;
+      // workspace/output/... → workspace/runs/{slug}/output/...
+      return p.replace(
+        /^workspace\/(context|output|reports|logs)(\/|$)/,
+        `${ex.runDir}/$1$2`
+      );
+    };
+
+    const candidatesPath = isolatePath(meta.gateCandidatesPath ?? "");
     let markdown = "";
     try {
       markdown = await readFile(path.join(ROOT_DIR, candidatesPath), "utf8");
@@ -247,7 +342,18 @@ executionsRouter.post("/:id/select-section", async (req, res) => {
   try {
     const workflow = await findWorkflow(ex.workflowId);
     const gateTask = workflow.tasks.find((t: any) => t.metadata?.gate === true);
-    const outputPath: string = (gateTask as any)?.metadata?.gateOutputPath ?? "workspace/output/gate-selection.md";
+
+    // ── Path isolation: scrive nel runDir dell'esecuzione (non nel path generico) ──
+    const isolatePath = (p: string): string => {
+      if (!ex.runDir || !p) return p;
+      return p.replace(
+        /^workspace\/(context|output|reports|logs)(\/|$)/,
+        `${ex.runDir}/$1$2`
+      );
+    };
+
+    const rawOutputPath: string = (gateTask as any)?.metadata?.gateOutputPath ?? "workspace/output/gate-selection.md";
+    const outputPath = isolatePath(rawOutputPath);
 
     const abs = path.join(ROOT_DIR, outputPath);
     await mkdir(path.dirname(abs), { recursive: true });
@@ -335,6 +441,7 @@ async function runWorkflowAsync(
         attempts: 0,
         errors: [],
         inputPaths: [...(task.inputPaths ?? [])],
+        outputPaths: [...(task.outputPaths ?? [])],
         changedFiles: [],
         commandsExecuted: []
       } as TaskResult);

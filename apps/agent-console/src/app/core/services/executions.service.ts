@@ -13,6 +13,10 @@ export class ExecutionsService {
   retryTask(execId: string, taskId: string): Observable<any> { return this.api.post<any>(`/api/executions/${execId}/tasks/${taskId}/retry`, {}).pipe(map((r: any) => r.data)); }
   getGate(execId: string): Observable<any> { return this.api.get<any>(`/api/executions/${execId}/gate`).pipe(map((r: any) => r.data)); }
   selectSection(execId: string, section: string): Observable<any> { return this.api.post<any>(`/api/executions/${execId}/select-section`, { section }).pipe(map((r: any) => r.data)); }
+  getWorkspaceOutput(runSlug?: string): Observable<any[]> {
+    const url = runSlug ? `/api/workspace/output?runSlug=${encodeURIComponent(runSlug)}` : '/api/workspace/output';
+    return this.api.get<any>(url).pipe(map((r: any) => r.data as any[]));
+  }
   streamEvents(execId: string, destroy$: Subject<void>): Observable<any> {
     const es = this.api.getEventSource(`/api/executions/${execId}/events`);
     return new Observable<any>(obs => {

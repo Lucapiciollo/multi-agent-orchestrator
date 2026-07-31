@@ -1,5 +1,9 @@
 import { EventEmitter } from "node:events";
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
+import { writeFile, mkdir } from "node:fs/promises";
+import { join, dirname } from "node:path";
 import { CancellationRegistry } from "../../../src/cancellation.js";
+import { ROOT_DIR } from "./config.js";
 
 export type ExecutionStatus = 'queued' | 'running' | 'completed' | 'failed' | 'cancelled' | 'awaiting_input';
 export type TaskStatus = 'pending' | 'running' | 'completed' | 'failed' | 'blocked' | 'skipped';
@@ -25,6 +29,7 @@ export interface TaskResult {
   summary?: string;
   errors: string[];
   inputPaths?: string[];
+  outputPaths?: string[];
   changedFiles?: string[];
   commandsExecuted?: string[];
 }
@@ -34,6 +39,9 @@ export interface ExecutionDetail {
   workflowId: string;
   workflowObjective: string;
   projectId?: string;
+  runDir?: string;          // es. "workspace/runs/timevision-report"
+  runSlug?: string;         // es. "timevision-report"
+  inputFile?: string;       // es. "timevision-report-v128.html"
   status: ExecutionStatus;
   startedAt?: string;
   completedAt?: string;
@@ -49,14 +57,54 @@ class ExecutionStore extends EventEmitter {
   private readonly executions = new Map<string, ExecutionDetail>();
   private readonly abortControllers = new Map<string, AbortController>();
   private nextId = 1;
+  private readonly persistPath: string;
 
-  create(req: StartExecutionRequest, workflowObjective: string, taskCount: number): ExecutionDetail {
+  constructor() {
+    super();
+    this.persistPath = join(ROOT_DIR, "workspace", "logs", "executions.json");
+    this.loadFromDisk();
+  }
+
+  private loadFromDisk(): void {
+    try {
+      if (!existsSync(this.persistPath)) return;
+      const raw = readFileSync(this.persistPath, "utf-8");
+      const data: ExecutionDetail[] = JSON.parse(raw);
+      for (const ex of data) {
+        // Mark any in-flight executions as failed (they were interrupted by restart)
+        if (ex.status === "running" || ex.status === "queued") ex.status = "failed";
+        this.executions.set(ex.id, ex);
+        // Update nextId to avoid collisions
+        const numPart = parseInt(ex.id.split("-").pop() ?? "0", 10);
+        if (numPart >= this.nextId) this.nextId = numPart + 1;
+      }
+    } catch { /* first run or corrupt file — start fresh */ }
+  }
+
+  private async persistAsync(): Promise<void> {
+    try {
+      const dir = dirname(this.persistPath);
+      await mkdir(dir, { recursive: true });
+      const data = [...this.executions.values()];
+      await writeFile(this.persistPath, JSON.stringify(data, null, 2), "utf-8");
+    } catch { /* non-critical — ignore disk errors */ }
+  }
+
+  create(
+    req: StartExecutionRequest,
+    workflowObjective: string,
+    taskCount: number,
+    runMeta?: { runDir?: string; runSlug?: string; inputFile?: string }
+  ): ExecutionDetail {
     const id = `exec-${Date.now()}-${this.nextId++}`;
     const execution: ExecutionDetail = {
       id,
       workflowId: req.workflowId,
       workflowObjective,
       projectId: req.projectId,
+      runDir: runMeta?.runDir,
+      runSlug: runMeta?.runSlug,
+      inputFile: runMeta?.inputFile,
       status: "queued",
       totalTasks: taskCount,
       completedTasks: 0,
@@ -107,10 +155,19 @@ class ExecutionStore extends EventEmitter {
     ex.logs.push(event);
     this.executions.set(execId, ex);
     this.emit("event", event);
+    // Persist on task completion/failure events (not on every log line)
+    if (event.type === "task.completed" || event.type === "task.failed" ||
+        event.type === "execution.completed" || event.type === "execution.failed") {
+      void this.persistAsync();
+    }
   }
 
   setStatus(execId: string, status: ExecutionStatus): void {
     this.update(execId, { status });
+    // Persist on terminal states or awaiting_input
+    if (status === "completed" || status === "failed" || status === "cancelled" || status === "awaiting_input") {
+      void this.persistAsync();
+    }
   }
 
   cancel(execId: string): boolean {

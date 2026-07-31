@@ -91,7 +91,7 @@
             <mat-option value="">
               Automatico{{ detectRule(f) ? ' (' + detectRule(f)!.label + ')' : '' }}
             </mat-option>
-            <mat-option *ngFor="let w of items" [value]="w.id">{{w.objective || w.id}}</mat-option>
+            <mat-option *ngFor="let w of items" [value]="w.id">{{w.id}}</mat-option>
           </mat-select>
         </mat-form-field>
 

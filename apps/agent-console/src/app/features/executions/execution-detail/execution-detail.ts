@@ -14,6 +14,8 @@ export class ExecutionDetail implements OnInit, AfterViewChecked, OnDestroy {
   retryErrors = new Map<string, string>();
   elapsedStr = '';
   taskLogMap = new Map<string, any[]>();
+  workspaceFiles: any[] = [];
+  workspaceLoading = false;
 
   // ── Gate: attesa scelta utente (es. sezione di menu da angularizzare) ──
   gateInfo: { gateLabel: string; options: { index: number; label: string }[] } | null = null;
@@ -267,6 +269,20 @@ export class ExecutionDetail implements OnInit, AfterViewChecked, OnDestroy {
         this.retryErrors.set(task.id, err?.message || 'Impossibile riprovare il task');
         this.cdr.detectChanges();
       })
+    });
+  }
+
+  loadWorkspaceFiles() {
+    if (this.workspaceLoading || this.workspaceFiles.length) return;
+    this.workspaceLoading = true;
+    const runSlug = this.execution?.runSlug;
+    this.svc.getWorkspaceOutput(runSlug).subscribe({
+      next: files => this.zone.run(() => {
+        this.workspaceFiles = files;
+        this.workspaceLoading = false;
+        this.cdr.detectChanges();
+      }),
+      error: () => this.zone.run(() => { this.workspaceLoading = false; this.cdr.detectChanges(); })
     });
   }
 

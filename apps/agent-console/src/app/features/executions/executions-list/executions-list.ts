@@ -5,11 +5,12 @@ import { ExecutionsService } from '../../../core/services/executions.service';
 @Component({ selector: 'app-executions-list', standalone: false, templateUrl: './executions-list.html', styleUrl: './executions-list.scss' })
 export class ExecutionsList implements OnInit, OnDestroy {
   items: any[] = []; loading = true; error = '';
+  wsFiles: any[] = []; wsLoading = false; wsExpanded = false;
   private timer: any;
 
   constructor(private svc: ExecutionsService, private router: Router, private cdr: ChangeDetectorRef, private zone: NgZone) {}
 
-  ngOnInit() { this.load(); }
+  ngOnInit() { this.load(); this.loadWs(); }
   ngOnDestroy() { clearInterval(this.timer); }
 
   load() {
@@ -23,6 +24,14 @@ export class ExecutionsList implements OnInit, OnDestroy {
         }
       }),
       error: e => this.zone.run(() => { this.error = e.message; this.loading = false; this.cdr.detectChanges(); })
+    });
+  }
+
+  loadWs() {
+    this.wsLoading = true;
+    this.svc.getWorkspaceOutput().subscribe({
+      next: files => this.zone.run(() => { this.wsFiles = files; this.wsLoading = false; this.cdr.detectChanges(); }),
+      error: () => this.zone.run(() => { this.wsLoading = false; this.cdr.detectChanges(); })
     });
   }
 

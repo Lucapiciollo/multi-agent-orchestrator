@@ -241,7 +241,9 @@ export class WorkflowsList implements OnInit, OnDestroy {
     if (!workflowId) return;
     this.fileRunning[file.name] = true;
     this.cdr.detectChanges();
-    this.executions.start({ workflowId }).subscribe({
+    // Passa inputFile in modo che il server usi ESATTAMENTE questo file
+    // e non auto-rilevi il più recente nella directory.
+    this.executions.start({ workflowId, inputFile: file.name }).subscribe({
       next: exec => this.zone.run(() => {
         this.fileRunning[file.name] = false;
         this.cdr.detectChanges();

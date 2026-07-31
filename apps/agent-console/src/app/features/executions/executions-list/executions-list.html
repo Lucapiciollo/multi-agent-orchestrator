@@ -9,6 +9,25 @@
     </button>
   </div>
 
+  <!-- Workspace output browser — sempre visibile -->
+  <div class="ws-panel">
+    <div class="ws-panel-header" (click)="wsExpanded = !wsExpanded">
+      <mat-icon>folder_open</mat-icon>
+      <span>Output workspace</span>
+      <span class="ws-count" *ngIf="wsFiles.length">({{wsFiles.length}} file)</span>
+      <mat-spinner *ngIf="wsLoading" [diameter]="14" style="margin-left:8px"></mat-spinner>
+      <mat-icon class="ws-chevron">{{wsExpanded ? 'expand_less' : 'expand_more'}}</mat-icon>
+    </div>
+    <div class="ws-file-list" *ngIf="wsExpanded && wsFiles.length">
+      <div *ngFor="let f of wsFiles" class="ws-file-row">
+        <mat-icon class="ws-file-icon">{{f.path.endsWith('.md') ? 'article' : f.path.endsWith('.json') ? 'data_object' : f.path.endsWith('.html') ? 'html' : f.path.endsWith('.scss') || f.path.endsWith('.css') ? 'palette' : f.path.endsWith('.ts') ? 'code' : 'description'}}</mat-icon>
+        <span class="ws-file-path">{{f.path}}</span>
+        <span class="ws-file-meta">{{f.size | number}} B &middot; {{f.modifiedAt | date:'dd/MM HH:mm:ss'}}</span>
+      </div>
+    </div>
+    <div class="ws-empty" *ngIf="wsExpanded && !wsFiles.length && !wsLoading">Nessun file nel workspace</div>
+  </div>
+
   <div *ngIf="loading" class="dv-loading"><mat-spinner [diameter]="20"></mat-spinner> Caricamento...</div>
   <div *ngIf="error" class="dv-error">{{error}}</div>
 
@@ -23,6 +42,7 @@
       <tr>
         <th>ID</th>
         <th>WORKFLOW</th>
+        <th>RUN</th>
         <th>STATO</th>
         <th>AVVIATO</th>
         <th style="width:60px;"></th>
@@ -32,6 +52,10 @@
       <tr *ngFor="let item of items" class="exec-row" (click)="open(item.id)">
         <td><span class="mono">{{item.id | slice:0:12}}...</span></td>
         <td><span class="mono">{{item.workflowId}}</span></td>
+        <td>
+          <span class="run-slug-badge" *ngIf="item.runSlug">{{item.runSlug}}</span>
+          <span class="td-none" *ngIf="!item.runSlug">—</span>
+        </td>
         <td>
           <span class="exec-status running" *ngIf="item.status === 'running'">
             <span class="pulse"></span>in esecuzione

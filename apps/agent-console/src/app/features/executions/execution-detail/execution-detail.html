@@ -102,6 +102,34 @@
       </ng-container>
     </div>
 
+    <!-- Workspace output panel — visibile solo quando completato -->
+    <div class="ws-output-panel" *ngIf="execution.status === 'completed' || execution.status === 'failed'">
+      <div class="ws-output-header" (click)="loadWorkspaceFiles()">
+        <mat-icon>folder_open</mat-icon>
+        <span>Output workspace</span>
+        <span class="ws-run-badge" *ngIf="execution.runSlug">
+          <mat-icon>tag</mat-icon>{{execution.runSlug}}
+        </span>
+        <span class="ws-count" *ngIf="workspaceFiles.length">({{workspaceFiles.length}})</span>
+        <mat-spinner *ngIf="workspaceLoading" [diameter]="14" style="margin-left:8px"></mat-spinner>
+        <mat-icon *ngIf="!workspaceFiles.length && !workspaceLoading" class="ws-expand-icon">expand_more</mat-icon>
+      </div>
+      <div class="ws-run-dir" *ngIf="execution.runDir">
+        <mat-icon>folder</mat-icon>
+        <span>{{execution.runDir}}</span>
+        <span class="ws-input-file" *ngIf="execution.inputFile">
+          <mat-icon>upload_file</mat-icon> {{execution.inputFile}}
+        </span>
+      </div>
+      <div class="ws-file-list" *ngIf="workspaceFiles.length">
+        <div *ngFor="let f of workspaceFiles" class="ws-file-row">
+          <mat-icon class="ws-file-icon">{{f.path.endsWith('.md') ? 'article' : f.path.endsWith('.json') ? 'data_object' : f.path.endsWith('.html') ? 'html' : f.path.endsWith('.scss') || f.path.endsWith('.css') ? 'palette' : f.path.endsWith('.ts') ? 'code' : 'description'}}</mat-icon>
+          <span class="ws-file-path">{{f.path}}</span>
+          <span class="ws-file-meta">{{f.size | number}} B · {{f.modifiedAt | date:'HH:mm:ss'}}</span>
+        </div>
+      </div>
+    </div>
+
     <!-- Vertical timeline -->
     <div class="timeline">
       <ng-container *ngFor="let task of execution.tasks; let i = index; let last = last">
@@ -141,7 +169,7 @@
               </div>
             </div>
             <div class="tl-card-body" *ngIf="expandedTasks.has(task.id)">
-              <div class="tl-artifacts" *ngIf="task.inputPaths?.length || task.changedFiles?.length">
+              <div class="tl-artifacts" *ngIf="task.inputPaths?.length || task.changedFiles?.length || task.outputPaths?.length">
                 <div class="tl-artifact-group" *ngIf="task.inputPaths?.length">
                   <span class="tl-artifact-label"><mat-icon>input</mat-icon> Input</span>
                   <span *ngFor="let f of task.inputPaths" class="tl-chip tl-chip-in"><mat-icon>description</mat-icon>{{f}}</span>
@@ -149,6 +177,10 @@
                 <div class="tl-artifact-group" *ngIf="task.changedFiles?.length">
                   <span class="tl-artifact-label"><mat-icon>output</mat-icon> Output</span>
                   <span *ngFor="let f of task.changedFiles" class="tl-chip tl-chip-out"><mat-icon>edit_document</mat-icon>{{f}}</span>
+                </div>
+                <div class="tl-artifact-group" *ngIf="!task.changedFiles?.length && task.outputPaths?.length">
+                  <span class="tl-artifact-label"><mat-icon>folder_open</mat-icon> Output previsto</span>
+                  <span *ngFor="let f of task.outputPaths" class="tl-chip tl-chip-expected"><mat-icon>description</mat-icon>{{f}}</span>
                 </div>
               </div>
               <div class="tl-errors" *ngIf="task.errors?.length">

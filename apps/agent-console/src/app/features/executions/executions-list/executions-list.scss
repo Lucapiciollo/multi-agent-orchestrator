@@ -1,4 +1,34 @@
 .exec-row { cursor: pointer; }
+.run-slug-badge {
+  display: inline-block; font-size: 11px; padding: 2px 7px; border-radius: 4px;
+  background: #064e3b; color: #a7f3d0; font-family: 'SFMono-Regular', Consolas, Menlo, monospace;
+}
+.td-none { color: #9ca3af; }
+
+/* ── Workspace output panel ─────────────────────────────────────────────── */
+.ws-panel {
+  border: 1px solid #d1fae5; border-radius: 10px; background: #f0fdf4;
+  overflow: hidden; margin-bottom: 20px;
+}
+.ws-panel-header {
+  display: flex; align-items: center; gap: 8px; padding: 10px 16px;
+  font-size: 12.5px; font-weight: 600; color: #065f46; cursor: pointer; user-select: none;
+  mat-icon { font-size: 16px; width: 16px; height: 16px; }
+  &:hover { background: #d1fae5; }
+}
+.ws-count { font-size: 11px; font-weight: 400; color: #059669; }
+.ws-chevron { margin-left: auto; font-size: 18px !important; }
+.ws-file-list { border-top: 1px solid #d1fae5; max-height: 320px; overflow-y: auto; }
+.ws-file-row {
+  display: flex; align-items: center; gap: 8px; padding: 6px 14px;
+  font-size: 11.5px; border-bottom: 1px solid #ecfdf5;
+  &:last-child { border-bottom: none; }
+  &:hover { background: #ecfdf5; }
+}
+.ws-file-icon { font-size: 14px !important; width: 14px !important; height: 14px !important; color: #059669; flex-shrink: 0; }
+.ws-file-path { flex: 1; font-family: 'SFMono-Regular', Consolas, Menlo, monospace; color: #064e3b; word-break: break-all; }
+.ws-file-meta { font-size: 10.5px; color: #6b7280; white-space: nowrap; flex-shrink: 0; }
+.ws-empty { padding: 16px; font-size: 12px; color: #6b7280; text-align: center; border-top: 1px solid #d1fae5; }
 
 .exec-status.running {
   display: inline-flex; align-items: center; gap: 6px;

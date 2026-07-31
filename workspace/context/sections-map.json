@@ -1,0 +1,207 @@
+{
+  "generatedAt": "2026-07-31T08:39:59Z",
+  "sourceFiles": [
+    "timevision-report-v128 1.html",
+    "angular-responsive-golden-master.html"
+  ],
+  "sections": [
+    {
+      "routeId": "report-elenco",
+      "sourceFile": "timevision-report-v128 1.html",
+      "selector": "#view-elenco",
+      "htmlPreview": "<div class=\"sub-header\"><h1>Consulta, personalizza ed esporta i dati delle principali aree funzionali</h1><p>Scegli un report preimpostato o crea il tuo con filtri e campi personalizzati</p></div><div class=\"content-inner\" id=\"categories-container\"><!-- Categories rendered by JS --></div>",
+      "cssClasses": ["sub-header", "content-inner", "categories-container", "report-card", "my-report-card", "card-dl-btn"],
+      "estimatedLineCount": 350,
+      "dataPatterns": {
+        "hasRepeatableRows": true,
+        "hasFilters": false,
+        "hasPagination": false,
+        "hasInlineActions": true,
+        "hasStatusIndicators": false
+      },
+      "notes": "Categorie e card renderizzate dinamicamente via JS (funzione che genera .report-card / .my-report-card in #categories-container); ogni card apre #report-modal-overlay con stepper wizard per configurare/creare un report personalizzato."
+    },
+    {
+      "routeId": "report-storico",
+      "sourceFile": "timevision-report-v128 1.html",
+      "selector": "#view-storico",
+      "htmlPreview": "<div class=\"sub-header\"><h1>Storico report</h1><p>Visualizza e scarica i file generati dalle tue richieste di export</p></div><div class=\"content-inner\"><div class=\"storico-filter-bar\">... campi Data richiesta, Template (multiselect), Nome file, Formato, Stato ...",
+      "cssClasses": ["sub-header", "content-inner", "storico-filter-bar", "field-wrap", "multiselect-btn", "storico-filter-dd", "storico-table-wrap", "storico-table", "storico-pagination", "storico-pg-btn"],
+      "estimatedLineCount": 125,
+      "dataPatterns": {
+        "hasRepeatableRows": true,
+        "hasFilters": true,
+        "hasPagination": true,
+        "hasInlineActions": true,
+        "hasStatusIndicators": true
+      },
+      "notes": "Tabella (#storico-tbody popolata via JS) con colonne Data richiesta/Template/Nome file/Ver./Dimensione/Formato/Stato/Azioni; righe cliccabili aprono #storico-modal-overlay con dettagli/filtri applicati/colonne incluse; azione eliminazione apre #confirm-overlay."
+    },
+    {
+      "routeId": "homepage",
+      "sourceFile": "timevision-report-v128 1.html",
+      "selector": ".sb-voce[title=\"Homepage\"]",
+      "htmlPreview": "<div class=\"sb-voce\" title=\"Homepage\"><span class=\"sb-voce-icon\">...</span><span class=\"sb-voce-label\">Homepage</span></div>",
+      "cssClasses": ["sb-voce", "sb-voce-icon", "sb-voce-label"],
+      "estimatedLineCount": 4,
+      "dataPatterns": { "hasRepeatableRows": false, "hasFilters": false, "hasPagination": false, "hasInlineActions": false, "hasStatusIndicators": false },
+      "notes": "Solo voce di navigazione, nessun contenuto pagina presente nell'HTML sorgente."
+    },
+    {
+      "routeId": "periodo",
+      "sourceFile": "timevision-report-v128 1.html",
+      "selector": "#sub-periodo",
+      "htmlPreview": "<div class=\"sb-periodo-cal\"><div class=\"sb-cal-nav\">...</div><div class=\"sb-cal-grid\" id=\"sb-cal-grid\"></div></div><div class=\"sb-periodo-corrente-item\" onclick=\"sbCalSelectCurrent()\">Periodo corrente</div>",
+      "cssClasses": ["sb-periodo-cal", "sb-cal-nav", "sb-cal-nav-btn", "sb-cal-selectors", "sb-cal-grid", "sb-periodo-corrente-item"],
+      "estimatedLineCount": 15,
+      "dataPatterns": { "hasRepeatableRows": true, "hasFilters": false, "hasPagination": false, "hasInlineActions": true, "hasStatusIndicators": false },
+      "notes": "Mini date-picker inline nella sidebar, griglia calendario popolata via JS; non una pagina navigabile a sé stante."
+    },
+    {
+      "routeId": "gestione-periodo",
+      "sourceFile": "timevision-report-v128 1.html",
+      "selector": "#sub-gestione",
+      "htmlPreview": "<div class=\"sb-submenu\" id=\"sub-gestione\"><div class=\"sb-subitem\">Controllo</div><div class=\"sb-subitem\">Approvazioni</div><div class=\"sb-subitem\">Gestione allegati</div></div>",
+      "cssClasses": ["sb-submenu", "sb-subitem"],
+      "estimatedLineCount": 5,
+      "dataPatterns": { "hasRepeatableRows": true, "hasFilters": false, "hasPagination": false, "hasInlineActions": false, "hasStatusIndicators": false },
+      "notes": "Solo etichette di sotto-menu, nessun contenuto di pagina corrispondente nell'HTML sorgente."
+    },
+    {
+      "routeId": "commesse",
+      "sourceFile": "timevision-report-v128 1.html",
+      "selector": "#sub-commesse",
+      "htmlPreview": "<div class=\"sb-submenu\" id=\"sub-commesse\"><div class=\"sb-subitem\">Lista commesse</div><div class=\"sb-subitem\">Gestione abilitazioni</div><div class=\"sb-subitem\">Anagrafica</div></div>",
+      "cssClasses": ["sb-submenu", "sb-subitem"],
+      "estimatedLineCount": 5,
+      "dataPatterns": { "hasRepeatableRows": true, "hasFilters": false, "hasPagination": false, "hasInlineActions": false, "hasStatusIndicators": false },
+      "notes": "Solo etichette di sotto-menu, nessun contenuto di pagina corrispondente nell'HTML sorgente."
+    },
+    {
+      "routeId": "ferie-permessi",
+      "sourceFile": "timevision-report-v128 1.html",
+      "selector": "#sub-ferie",
+      "htmlPreview": "<div class=\"sb-submenu\" id=\"sub-ferie\"><div class=\"sb-subitem\">Richieste</div><div class=\"sb-subitem\">Configurazione</div></div>",
+      "cssClasses": ["sb-submenu", "sb-subitem"],
+      "estimatedLineCount": 4,
+      "dataPatterns": { "hasRepeatableRows": true, "hasFilters": false, "hasPagination": false, "hasInlineActions": false, "hasStatusIndicators": false },
+      "notes": "Solo etichette di sotto-menu, nessun contenuto di pagina corrispondente nell'HTML sorgente."
+    },
+    {
+      "routeId": "deleghe",
+      "sourceFile": "timevision-report-v128 1.html",
+      "selector": "#sub-deleghe",
+      "htmlPreview": "<div class=\"sb-submenu\" id=\"sub-deleghe\"><div class=\"sb-subitem\">Gestione</div></div>",
+      "cssClasses": ["sb-submenu", "sb-subitem"],
+      "estimatedLineCount": 3,
+      "dataPatterns": { "hasRepeatableRows": false, "hasFilters": false, "hasPagination": false, "hasInlineActions": false, "hasStatusIndicators": false },
+      "notes": "Solo etichetta di sotto-menu, nessun contenuto di pagina corrispondente nell'HTML sorgente."
+    },
+    {
+      "routeId": "admin",
+      "sourceFile": "timevision-report-v128 1.html",
+      "selector": "#sub-admin",
+      "htmlPreview": "<div class=\"sb-submenu\" id=\"sub-admin\"><div class=\"sb-subitem\">Feature flags</div><div class=\"sb-subitem\">Gestione licenza</div><div class=\"sb-subitem\">Gestione ruoli</div><div class=\"sb-subitem\">Matrice ruoli</div><div class=\"sb-subitem\">Gestione tenant</div></div>",
+      "cssClasses": ["sb-submenu", "sb-subitem"],
+      "estimatedLineCount": 7,
+      "dataPatterns": { "hasRepeatableRows": true, "hasFilters": false, "hasPagination": false, "hasInlineActions": false, "hasStatusIndicators": false },
+      "notes": "Solo etichette di sotto-menu, nessun contenuto di pagina corrispondente nell'HTML sorgente."
+    },
+    {
+      "routeId": "configurazioni",
+      "sourceFile": "timevision-report-v128 1.html",
+      "selector": "#sub-configurazioni",
+      "htmlPreview": "<div class=\"sb-submenu\" id=\"sub-configurazioni\"><div class=\"sb-subitem\">Gruppi</div><div class=\"sb-subitem\">Causali nota spese</div><div class=\"sb-subitem\">Chargeability</div><div class=\"sb-subitem\">Contratti utenti</div>...",
+      "cssClasses": ["sb-submenu", "sb-subitem"],
+      "estimatedLineCount": 10,
+      "dataPatterns": { "hasRepeatableRows": true, "hasFilters": false, "hasPagination": false, "hasInlineActions": false, "hasStatusIndicators": false },
+      "notes": "Solo etichette di sotto-menu (8 voci), nessun contenuto di pagina corrispondente nell'HTML sorgente."
+    },
+    {
+      "routeId": "impostazioni",
+      "sourceFile": "timevision-report-v128 1.html",
+      "selector": "#sub-impostazioni",
+      "htmlPreview": "<div class=\"sb-submenu\" id=\"sub-impostazioni\"><div class=\"sb-subitem\">Notifiche</div></div>",
+      "cssClasses": ["sb-submenu", "sb-subitem"],
+      "estimatedLineCount": 3,
+      "dataPatterns": { "hasRepeatableRows": false, "hasFilters": false, "hasPagination": false, "hasInlineActions": false, "hasStatusIndicators": false },
+      "notes": "Solo etichetta di sotto-menu, nessun contenuto di pagina corrispondente nell'HTML sorgente."
+    },
+    {
+      "routeId": "download",
+      "sourceFile": "timevision-report-v128 1.html",
+      "selector": "#sub-download",
+      "htmlPreview": "<div class=\"sb-submenu\" id=\"sub-download\"><div class=\"sb-subitem\">File pronti</div></div>",
+      "cssClasses": ["sb-submenu", "sb-subitem"],
+      "estimatedLineCount": 3,
+      "dataPatterns": { "hasRepeatableRows": false, "hasFilters": false, "hasPagination": false, "hasInlineActions": false, "hasStatusIndicators": false },
+      "notes": "Solo etichetta di sotto-menu, nessun contenuto di pagina corrispondente nell'HTML sorgente."
+    },
+    {
+      "routeId": "documentazione",
+      "sourceFile": "timevision-report-v128 1.html",
+      "selector": ".sb-voce[title=\"Documentazione\"]",
+      "htmlPreview": "<div class=\"sb-voce\" title=\"Documentazione\"><span class=\"sb-voce-icon\">...</span><span class=\"sb-voce-label\">Documentazione</span><span class=\"sb-voce-chevron\" style=\"opacity:1\">...</span></div>",
+      "cssClasses": ["sb-bottom", "sb-voce", "sb-voce-icon", "sb-voce-label", "sb-voce-chevron"],
+      "estimatedLineCount": 5,
+      "dataPatterns": { "hasRepeatableRows": false, "hasFilters": false, "hasPagination": false, "hasInlineActions": false, "hasStatusIndicators": false },
+      "notes": "Voce di navigazione bottom-fixed, icona a forma di link esterno, nessun contenuto pagina nell'HTML sorgente."
+    },
+    {
+      "routeId": "dashboard",
+      "sourceFile": "angular-responsive-golden-master.html",
+      "selector": ".content",
+      "htmlPreview": "<div class=\"heading\"><div><h1>Gestione clienti</h1><p>Monitora clienti, contratti, stato commerciale e attività recenti.</p></div><div class=\"actions\"><button class=\"btn secondary\">Esporta CSV</button><button class=\"btn\" id=\"openModal\">+ Nuovo cliente</button></div></div>",
+      "cssClasses": ["content", "heading", "actions", "stats", "card", "stat", "card-header", "filters", "field", "table-wrap", "table-footer", "pagination", "bottom", "form-body", "form-grid", "checks", "activity-list", "activity", "modal-backdrop", "modal"],
+      "estimatedLineCount": 420,
+      "dataPatterns": {
+        "hasRepeatableRows": true,
+        "hasFilters": true,
+        "hasPagination": true,
+        "hasInlineActions": true,
+        "hasStatusIndicators": true
+      },
+      "notes": "4 stat card, tabella clienti (7 colonne) con filtri (ricerca, stato, segmento, account manager) e paginazione statica, form profilo commerciale (2 colonne + textarea + checkbox), activity feed a 4 item, modale 'Nuovo cliente' con validazione campi required."
+    },
+    {
+      "routeId": "clienti",
+      "sourceFile": "angular-responsive-golden-master.html",
+      "selector": ".nav a[href=\"#\"]:nth-child(2)",
+      "htmlPreview": "<a href=\"#\">Clienti</a>",
+      "cssClasses": ["nav"],
+      "estimatedLineCount": 1,
+      "dataPatterns": { "hasRepeatableRows": false, "hasFilters": false, "hasPagination": false, "hasInlineActions": false, "hasStatusIndicators": false },
+      "notes": "Link statico href=\"#\", nessun routing JS, nessun contenuto proprio nel golden master."
+    },
+    {
+      "routeId": "contratti",
+      "sourceFile": "angular-responsive-golden-master.html",
+      "selector": ".nav a[href=\"#\"]:nth-child(3)",
+      "htmlPreview": "<a href=\"#\">Contratti</a>",
+      "cssClasses": ["nav"],
+      "estimatedLineCount": 1,
+      "dataPatterns": { "hasRepeatableRows": false, "hasFilters": false, "hasPagination": false, "hasInlineActions": false, "hasStatusIndicators": false },
+      "notes": "Link statico href=\"#\", nessun routing JS, nessun contenuto proprio nel golden master."
+    },
+    {
+      "routeId": "report-2",
+      "sourceFile": "angular-responsive-golden-master.html",
+      "selector": ".nav a[href=\"#\"]:nth-child(4)",
+      "htmlPreview": "<a href=\"#\">Report</a>",
+      "cssClasses": ["nav"],
+      "estimatedLineCount": 1,
+      "dataPatterns": { "hasRepeatableRows": false, "hasFilters": false, "hasPagination": false, "hasInlineActions": false, "hasStatusIndicators": false },
+      "notes": "Link statico href=\"#\", nessun routing JS, nessun contenuto proprio nel golden master."
+    },
+    {
+      "routeId": "impostazioni-2",
+      "sourceFile": "angular-responsive-golden-master.html",
+      "selector": ".nav a[href=\"#\"]:nth-child(5)",
+      "htmlPreview": "<a href=\"#\">Impostazioni</a>",
+      "cssClasses": ["nav"],
+      "estimatedLineCount": 1,
+      "dataPatterns": { "hasRepeatableRows": false, "hasFilters": false, "hasPagination": false, "hasInlineActions": false, "hasStatusIndicators": false },
+      "notes": "Link statico href=\"#\", nessun routing JS, nessun contenuto proprio nel golden master."
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "appName": "ClientFlow",
+  "appTitle": "ClientFlow — Gestione clienti",
+  "defaultRoute": "dashboard",
+  "shellType": "sidenav",
+  "sidenavMode": "side",
+  "sidenavDefaultOpen": true,
+  "hasTopbar": true,
+  "topbarTitle": "ClientFlow",
+  "primaryNavPosition": "sidenav",
+  "generatedAt": "2026-07-31T11:33:40+02:00"
+}

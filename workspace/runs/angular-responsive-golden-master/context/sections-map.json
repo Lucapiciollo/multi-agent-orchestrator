@@ -1,0 +1,112 @@
+{
+  "generatedAt": "2026-07-31T11:33:40+02:00",
+  "sourceFile": "angular-responsive-golden-master.html",
+  "sections": [
+    {
+      "routeId": "nav-dashboard",
+      "selector": ".content",
+      "htmlPreview": "<div class=\"heading\"><div><h1>Gestione clienti</h1><p>Monitora clienti, contratti, stato commerciale e attivit\u00e0 recenti.</p></div><div class=\"actions\"><button class=\"btn secondary\">Esporta CSV</button><button class=\"btn\" id=\"openModal\">+ Nuovo cliente</button></div></div><section class=\"stats\">...",
+      "cssClasses": [
+        "content",
+        "heading",
+        "actions",
+        "btn",
+        "stats",
+        "card",
+        "stat",
+        "label",
+        "value",
+        "delta",
+        "card-header",
+        "filters",
+        "field",
+        "filter-actions",
+        "table-wrap",
+        "customer",
+        "customer-badge",
+        "small",
+        "badge",
+        "badge ok",
+        "badge wait",
+        "badge off",
+        "row-actions",
+        "table-footer",
+        "pagination",
+        "page",
+        "bottom",
+        "form-body",
+        "form-grid",
+        "span-2",
+        "checks",
+        "form-footer",
+        "activity-list",
+        "activity",
+        "activity-icon"
+      ],
+      "estimatedLineCount": 190,
+      "dataPatterns": {
+        "hasRepeatableRows": true,
+        "hasFilters": true,
+        "hasPagination": true,
+        "hasInlineActions": true,
+        "hasStatusIndicators": true
+      }
+    },
+    {
+      "routeId": "nav-clienti",
+      "selector": null,
+      "htmlPreview": "",
+      "cssClasses": [],
+      "estimatedLineCount": 0,
+      "dataPatterns": {
+        "hasRepeatableRows": false,
+        "hasFilters": false,
+        "hasPagination": false,
+        "hasInlineActions": false,
+        "hasStatusIndicators": false
+      }
+    },
+    {
+      "routeId": "nav-contratti",
+      "selector": null,
+      "htmlPreview": "",
+      "cssClasses": [],
+      "estimatedLineCount": 0,
+      "dataPatterns": {
+        "hasRepeatableRows": false,
+        "hasFilters": false,
+        "hasPagination": false,
+        "hasInlineActions": false,
+        "hasStatusIndicators": false
+      }
+    },
+    {
+      "routeId": "nav-report",
+      "selector": null,
+      "htmlPreview": "",
+      "cssClasses": [],
+      "estimatedLineCount": 0,
+      "dataPatterns": {
+        "hasRepeatableRows": false,
+        "hasFilters": false,
+        "hasPagination": false,
+        "hasInlineActions": false,
+        "hasStatusIndicators": false
+      }
+    },
+    {
+      "routeId": "nav-impostazioni",
+      "selector": null,
+      "htmlPreview": "",
+      "cssClasses": [],
+      "estimatedLineCount": 0,
+      "dataPatterns": {
+        "hasRepeatableRows": false,
+        "hasFilters": false,
+        "hasPagination": false,
+        "hasInlineActions": false,
+        "hasStatusIndicators": false
+      }
+    }
+  ]
+}
