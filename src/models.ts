@@ -75,6 +75,9 @@ export interface ExecutionPlan {
   contextFiles: string[];
   createGitCheckpoints: boolean;
   tasks: AgentTask[];
+  /** Run isolation metadata — iniettati da createAndRunExecution */
+  runDir?: string;
+  runInputFile?: string;
 }
 
 export interface AgentRunRequest {
@@ -88,6 +91,10 @@ export interface AgentRunRequest {
   feedback?: string[] | undefined;
   /** Callback per lo streaming dell'output LLM chunk-by-chunk */
   onChunk?: (chunk: string) => void;
+  /** Run isolation: cartella base del run corrente (es. workspace/runs/my-file) */
+  runDir?: string;
+  /** Run isolation: file di input scelto dall'utente (es. my-file.html) */
+  runInputFile?: string;
 }
 export interface AgentRunResult {
   agentId: string;

@@ -95,31 +95,51 @@ async function detectInputSlug(): Promise<{ slug: string; inputFile: string } | 
 }
 
 // ── Riscrittura path del workflow per run isolato ─────────────────────────
-// outputPaths: workspace/(context|output|reports) → workspace/runs/{slug}/...
-// inputPaths workspace/input/**  → workspace/input/{inputFile} se file specifico
+// ── Riscrittura path del workflow per run isolato ─────────────────────────
+// Sostituisce workspace/(context|output|reports|logs) → workspace/runs/{slug}/$1
+// in: inputPaths, outputPaths, description del task, contextFiles del piano,
+//     metadata.gateCandidatesPath e metadata.gateOutputPath.
+// Se inputFile è specificato, workspace/input/** → workspace/input/{file}.
 function rewriteWorkflowPaths<T extends WorkflowDefinition>(
   wf: T, slug: string, inputFile?: string
 ): T {
   const prefix = `workspace/runs/${slug}`;
+  const OUTPUT_RE = /workspace\/(context|output|reports|logs)(\/|$)/g;
+
+  const rewriteStr = (s: string): string =>
+    s.replace(OUTPUT_RE, `${prefix}/$1$2`);
+
   const rewritePath = (p: string): string => {
-    // Output dirs → isolate in run dir
-    const output = p.replace(
-      /^workspace\/(context|output|reports|logs)(\/|$)/,
-      `${prefix}/$1$2`
-    );
-    if (output !== p) return output;
-    // workspace/input/** → workspace/input/{file} when specific file given
+    // workspace/input/** → workspace/input/{file} se specificato
     if (inputFile && (p === "workspace/input/**" || p === "workspace/input/*")) {
       return `workspace/input/${inputFile}`;
     }
-    return p;
+    return rewriteStr(p);
   };
-  const rewriteTask = (task: any) => ({
-    ...task,
-    inputPaths:  task.inputPaths?.map(rewritePath),
-    outputPaths: task.outputPaths?.map(rewritePath),
-  });
-  return { ...wf, tasks: wf.tasks.map(rewriteTask) } as T;
+
+  // Riscrive anche i contextFiles del piano
+  const newContextFiles = (wf.contextFiles ?? []).map(rewriteStr);
+
+  const rewriteTask = (task: any) => {
+    const newMeta = task.metadata
+      ? {
+          ...task.metadata,
+          gateCandidatesPath: task.metadata.gateCandidatesPath
+            ? rewriteStr(task.metadata.gateCandidatesPath) : task.metadata.gateCandidatesPath,
+          gateOutputPath: task.metadata.gateOutputPath
+            ? rewriteStr(task.metadata.gateOutputPath) : task.metadata.gateOutputPath,
+        }
+      : task.metadata;
+    return {
+      ...task,
+      description:  task.description  ? rewriteStr(task.description)  : task.description,
+      inputPaths:   task.inputPaths?.map(rewritePath),
+      outputPaths:  task.outputPaths?.map(rewriteStr),
+      metadata:     newMeta,
+    };
+  };
+
+  return { ...wf, contextFiles: newContextFiles, tasks: wf.tasks.map(rewriteTask) } as T;
 }
 
 export async function createAndRunExecution(
@@ -157,8 +177,8 @@ export async function createAndRunExecution(
 
   // If a specific taskId is requested, build a single-task workflow
   const plan = taskId
-    ? { ...isolatedWorkflow, objective: `[Step singolo] ${taskId} — ${isolatedWorkflow.objective}`, tasks: isolatedWorkflow.tasks.map((t: any) => ({ ...t, status: t.id === taskId ? "pending" : "completed" })) }
-    : isolatedWorkflow;
+    ? { ...isolatedWorkflow, runDir, runInputFile: actualInputFile, objective: `[Step singolo] ${taskId} — ${isolatedWorkflow.objective}`, tasks: isolatedWorkflow.tasks.map((t: any) => ({ ...t, status: t.id === taskId ? "pending" : "completed" })) }
+    : { ...isolatedWorkflow, runDir, runInputFile: actualInputFile };
 
   const execution = executionStore.create(req, plan.objective, taskId ? 1 : workflow.tasks.length, {
     runDir, runSlug: slug, inputFile: actualInputFile

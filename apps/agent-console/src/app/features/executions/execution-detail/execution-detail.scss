@@ -94,6 +94,12 @@
 .ws-input-file { margin-left: 12px; color: #6b7280; display: inline-flex; align-items: center; gap: 4px; }
 .ws-count { font-size: 11px; font-weight: 400; color: #059669; }
 .ws-expand-icon { margin-left: auto; font-size: 18px !important; }
+.ws-refresh-btn {
+  margin-left: auto; background: none; border: none; cursor: pointer; padding: 2px;
+  display: flex; align-items: center;
+  mat-icon { font-size: 16px !important; width: 16px !important; height: 16px !important; color: #059669; }
+  &:hover mat-icon { color: #065f46; }
+}
 .ws-file-list {
   border-top: 1px solid #d1fae5; max-height: 280px; overflow-y: auto;
 }

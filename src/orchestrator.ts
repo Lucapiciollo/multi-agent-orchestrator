@@ -110,7 +110,9 @@ export class Orchestrator {
       }
 
       const request = { agent, task, plan, agentSkills, taskSkills, feedback,
-        onChunk: onTaskOutput ? (chunk: string) => onTaskOutput(task.id, chunk) : undefined
+        onChunk: onTaskOutput ? (chunk: string) => onTaskOutput(task.id, chunk) : undefined,
+        runDir: plan.runDir,
+        runInputFile: plan.runInputFile,
       };
       const prompt = await this.promptBuilder.build(request);
 

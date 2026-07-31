@@ -14,6 +14,37 @@ export class PromptBuilder {
     const context     = await this.loadContext(request.plan.contextFiles ?? []);
     const inputFiles  = await this.loadInputContent(request.task.inputPaths ?? []);
 
+    // ── Run isolation override ─────────────────────────────────────────────
+    // Se il run è isolato, inietta una sezione obbligatoria che sovrascrive
+    // qualsiasi riferimento a workspace/ nelle istruzioni della skill.
+    const runOverride: string[] = [];
+    if (request.runDir) {
+      runOverride.push(
+        ``,
+        `# ⚠️ OVERRIDE OBBLIGATORIO — PERCORSI WORKSPACE`,
+        `Questo run è isolato. DEVI usare ESCLUSIVAMENTE questi percorsi base:`,
+        ``,
+        `  BASE RUN DIR : ${request.runDir}/`,
+        `  INPUT FILE   : workspace/input/${request.runInputFile ?? ""}`,
+        ``,
+        `Regole ferree — NESSUNA eccezione:`,
+        `- workspace/context/...  → ${request.runDir}/context/...`,
+        `- workspace/output/...   → ${request.runDir}/output/...`,
+        `- workspace/reports/...  → ${request.runDir}/reports/...`,
+        `- workspace/logs/...     → ${request.runDir}/logs/...`,
+        `- File di input da leggere: workspace/input/${request.runInputFile ?? ""}`,
+        ``,
+        `NON leggere né scrivere MAI in:`,
+        `- workspace/output/ (senza il prefisso runs/)`,
+        `- workspace/context/ (senza il prefisso runs/)`,
+        `- workspace/reports/ (senza il prefisso runs/)`,
+        `- Qualsiasi file HTML in workspace/output/scss/ o workspace/output/angular/`,
+        ``,
+        `Se una skill o istruzione cita "workspace/output/test-app/src/libs/...", leggi`,
+        `"${request.runDir}/output/test-app/src/libs/..." e scrivi lì.`
+      );
+    }
+
     return [
       `# Identità`,
       `Sei ${request.agent.name} (${request.agent.id}).`,
@@ -21,6 +52,7 @@ export class PromptBuilder {
       ``,
       `# Obiettivo generale`,
       request.plan.objective,
+      ...runOverride,
       ``,
       `# Attività assegnata`,
       `ID: ${request.task.id}`,

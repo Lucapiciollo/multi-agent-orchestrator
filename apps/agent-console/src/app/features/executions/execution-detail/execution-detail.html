@@ -102,8 +102,8 @@
       </ng-container>
     </div>
 
-    <!-- Workspace output panel — visibile solo quando completato -->
-    <div class="ws-output-panel" *ngIf="execution.status === 'completed' || execution.status === 'failed'">
+    <!-- Workspace output panel — visibile sempre (aggiornabile live) -->
+    <div class="ws-output-panel" *ngIf="execution.status !== 'queued'">
       <div class="ws-output-header" (click)="loadWorkspaceFiles()">
         <mat-icon>folder_open</mat-icon>
         <span>Output workspace</span>
@@ -112,6 +112,9 @@
         </span>
         <span class="ws-count" *ngIf="workspaceFiles.length">({{workspaceFiles.length}})</span>
         <mat-spinner *ngIf="workspaceLoading" [diameter]="14" style="margin-left:8px"></mat-spinner>
+        <button class="ws-refresh-btn" *ngIf="workspaceFiles.length" (click)="$event.stopPropagation(); workspaceFiles=[]; loadWorkspaceFiles()" title="Aggiorna lista file">
+          <mat-icon>refresh</mat-icon>
+        </button>
         <mat-icon *ngIf="!workspaceFiles.length && !workspaceLoading" class="ws-expand-icon">expand_more</mat-icon>
       </div>
       <div class="ws-run-dir" *ngIf="execution.runDir">
