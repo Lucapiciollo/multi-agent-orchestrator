@@ -1,0 +1,12 @@
+<!-- components/dashboard-heading/dashboard-heading.component.html — lib-dashboard -->
+<!-- Sostituisce: <div class="heading">...</div> (riga 23 del sorgente) -->
+<div class="heading">
+  <div>
+    <h1>Gestione clienti</h1>
+    <p>Monitora clienti, contratti, stato commerciale e attività recenti.</p>
+  </div>
+  <div class="actions">
+    <button type="button" class="btn secondary" (click)="exportCsv.emit()">Esporta CSV</button>
+    <button type="button" class="btn" (click)="openNuovoCliente.emit()">+ Nuovo cliente</button>
+  </div>
+</div>

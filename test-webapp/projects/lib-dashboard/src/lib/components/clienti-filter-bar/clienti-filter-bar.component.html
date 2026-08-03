@@ -1,0 +1,38 @@
+<!-- components/clienti-filter-bar/clienti-filter-bar.component.html — lib-dashboard -->
+<!-- Sostituisce: <div class="filters">...</div> (riga 31 del sorgente) -->
+<form class="filters" [formGroup]="form" (ngSubmit)="onFiltra()">
+  <div class="field wide">
+    <label for="dashboard-clienti-ricerca">Ricerca</label>
+    <input id="dashboard-clienti-ricerca" type="text" formControlName="ricerca" placeholder="Nome, email o azienda" />
+  </div>
+  <div class="field">
+    <label for="dashboard-clienti-stato">Stato</label>
+    <select id="dashboard-clienti-stato" formControlName="stato">
+      <option value="">Tutti</option>
+      <option value="ok">Attivo</option>
+      <option value="wait">In attesa</option>
+      <option value="off">Sospeso</option>
+    </select>
+  </div>
+  <div class="field">
+    <label for="dashboard-clienti-segmento">Segmento</label>
+    <select id="dashboard-clienti-segmento" formControlName="segmento">
+      <option value="">Tutti</option>
+      <option value="enterprise">Enterprise</option>
+      <option value="pmi">PMI</option>
+      <option value="startup">Startup</option>
+    </select>
+  </div>
+  <div class="field">
+    <label for="dashboard-clienti-account-manager">Account manager</label>
+    <select id="dashboard-clienti-account-manager" formControlName="accountManager">
+      <option value="">Tutti</option>
+      <option value="Giulia Rossi">Giulia Rossi</option>
+      <option value="Marco Bianchi">Marco Bianchi</option>
+    </select>
+  </div>
+  <div class="filter-actions">
+    <button type="button" class="btn secondary" (click)="onReset()">Reset</button>
+    <button type="submit" class="btn">Filtra</button>
+  </div>
+</form>

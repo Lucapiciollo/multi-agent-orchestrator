@@ -1,8 +1,0 @@
-{
-  "selector": "#view-elenco",
-  "featureName": "report",
-  "libName": "lib-report",
-  "outputPath": "test-webapp/projects/lib-report/src/lib",
-  "publicApiPath": "test-webapp/projects/lib-report/src/public-api.ts",
-  "comment": "STRUTTURA MONOREPO: la lib Angular va in projects/{libName}/src/lib/. Non copiare in src/app/features. Il featureName corrisponde alla route nell'app (app-routing → features/report → importa 'lib-report'). Dopo la generazione aggiornare public-api.ts con i nuovi export."
-}

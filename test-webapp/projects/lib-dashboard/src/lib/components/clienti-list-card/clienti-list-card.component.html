@@ -1,0 +1,30 @@
+<!-- components/clienti-list-card/clienti-list-card.component.html — lib-dashboard -->
+<!-- Sostituisce: <section class="card">...</section> (righe 30-38, wrapper "Elenco clienti") -->
+<section class="card">
+  <div class="card-header">
+    <div>
+      <h2>Elenco clienti</h2>
+      <div class="small">Ultimo aggiornamento: oggi, 09:42</div>
+    </div>
+    <button
+      type="button"
+      class="icon-btn"
+      [disabled]="loading"
+      (click)="refresh.emit()"
+      aria-label="Aggiorna elenco clienti"
+    >↻</button>
+  </div>
+
+  <lib-dashboard-clienti-filter-bar
+    (filter)="filter.emit($event)"
+    (reset)="resetFilter.emit()"
+  ></lib-dashboard-clienti-filter-bar>
+
+  <lib-dashboard-clienti-table [clienti]="clienti"></lib-dashboard-clienti-table>
+
+  <lib-dashboard-clienti-pagination
+    [totalCount]="totalCount"
+    [page]="page"
+    (pageChange)="pageChange.emit($event)"
+  ></lib-dashboard-clienti-pagination>
+</section>

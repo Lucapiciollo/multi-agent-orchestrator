@@ -15,8 +15,7 @@ const routes: Routes = [
       component: LayoutComponent,
       children: [
          { path: '', pathMatch: 'full', redirectTo: 'homepage' },
-         { path: 'homepage', loadChildren: () => import('./features/homepage/homepage.module').then((m) => m.HomepageModule) },
-         { path: 'periodo', loadChildren: () => import('./features/periodo/periodo.module').then((m) => m.PeriodoModule) },
+         { path: 'homepage', loadChildren: () => import('./features/homepage/homepage.module').then((m) => m.HomepageModule) },        { path: 'dashboard', loadChildren: () => import('./features/dashboard/dashboard.module').then((m) => m.DashboardModule) },         { path: 'periodo', loadChildren: () => import('./features/periodo/periodo.module').then((m) => m.PeriodoModule) },
          {
             path: 'gestione-periodo',
             loadChildren: () => import('./features/gestione-periodo/gestione-periodo.module').then((m) => m.GestionePeriodoModule),

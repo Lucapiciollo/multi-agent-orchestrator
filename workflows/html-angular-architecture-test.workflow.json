@@ -146,7 +146,7 @@
     {
       "id": "step-07-architecture-report",
       "title": "Phase 7 — Required architecture report (Gate 2, hard stop)",
-      "description": "Esegui la Phase 7: componi il report architetturale completo nel formato obbligatorio della skill (SELECTED SECTION, ENTRY POINT, ROUTES FOUND, FLOW, PAGES FOUND, DIALOGS/MODALS FOUND, COMPONENTS PROPOSED con index.component come primo, DIALOGS PROPOSED, DIRECTIVES PROPOSED, GUARD PROPOSED con index.guard.ts, SERVICES PROPOSED con index.service.ts, MODELS/INTERFACES, STATE STRATEGY NgRx obbligatoria con tutti i file redux/, SCSS REUSE, JAVASCRIPT MIGRATION, RISKS/AMBIGUITIES, PROPOSED ANGULAR TREE completo sotto test-webapp/projects/{slug}/src/lib/ — {slug} è un PROGETTO ANGULAR LIBRARY REALE già registrato in test-webapp/angular.json e in test-webapp/tsconfig.json (compilerOptions.paths), NON una cartella dentro test-webapp/src/app/). SELECTED SECTION deve essere presa da workspace/output/angular/reports/selected-section.md (la scelta dell'utente), non ridiscussa. Determina {slug} in kebab-case dal nome della sezione scelta PRECEDUTO SEMPRE dal prefisso obbligatorio `lib-` (es. sezione \"Report\" → {slug} = `lib-report`; sezione \"Ferie e Permessi\" → {slug} = `lib-ferie-permessi`) e usalo in modo coerente in tutti i task successivi. Produci workspace/output/angular/reports/architecture-report.md. Questo è un hard stop: NON generare codice in questo step.",
+      "description": "Esegui la Phase 7: componi il report architetturale completo nel formato obbligatorio della skill (SELECTED SECTION, ENTRY POINT, ROUTES FOUND, FLOW, PAGES FOUND, DIALOGS/MODALS FOUND, COMPONENTS PROPOSED con index.component come primo, DIALOGS PROPOSED, DIRECTIVES PROPOSED, GUARD PROPOSED con index.guard.ts, SERVICES PROPOSED con index.service.ts, MODELS/INTERFACES, STATE STRATEGY NgRx obbligatoria con tutti i file redux/, SCSS REUSE, JAVASCRIPT MIGRATION, RISKS/AMBIGUITIES, PROPOSED ANGULAR TREE completo sotto workspace/output/test-app/src/libs/{slug}/src/lib/ — {slug} è un PROGETTO ANGULAR LIBRARY REALE già registrato in test-webapp/angular.json e in test-webapp/tsconfig.json (compilerOptions.paths), NON una cartella dentro test-webapp/src/app/). SELECTED SECTION deve essere presa da workspace/output/angular/reports/selected-section.md (la scelta dell'utente), non ridiscussa. Determina {slug} in kebab-case dal nome della sezione scelta PRECEDUTO SEMPRE dal prefisso obbligatorio `lib-` (es. sezione \"Report\" → {slug} = `lib-report`; sezione \"Ferie e Permessi\" → {slug} = `lib-ferie-permessi`) e usalo in modo coerente in tutti i task successivi. Produci workspace/output/angular/reports/architecture-report.md. Questo è un hard stop: NON generare codice in questo step.",
       "agentId": "angular-lib-agent",
       "skillIds": ["angular-component-extractor"],
       "dependencies": ["step-06-material-mapping"],
@@ -162,7 +162,7 @@
         "contiene tutte le sezioni obbligatorie del formato Gate 2",
         "STATE STRATEGY elenca tutti e sei i file redux/ (state, actions, reducer, selectors, effects, store-module)",
         "GUARD PROPOSED indica esplicitamente index.guard.ts",
-        "PROPOSED ANGULAR TREE usa il path test-webapp/projects/{slug}/src/lib/ con {slug} valorizzato nella forma lib-<sezione-kebab> (es. lib-report)"
+        "PROPOSED ANGULAR TREE usa il path workspace/output/test-app/src/libs/{slug}/src/lib/ con {slug} valorizzato nella forma lib-<sezione-kebab> (es. lib-report)"
       ],
       "continueOnError": false,
       "maxAttempts": 2,

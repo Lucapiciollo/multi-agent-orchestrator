@@ -1,0 +1,40 @@
+// components/stat-card/stat-card.component.scss — lib-dashboard
+//
+// Phase 12 (SCSS migration): @use dei design token condivisi — dedup di
+// #fff → var(--surface) (UTILITY_SHARED).
+@use '../../../tokens' as tokens;
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.stat {
+  padding: 18px;
+
+  .label {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .value {
+    font-size: 28px;
+    font-weight: 800;
+    margin: 7px 0;
+  }
+
+  .delta {
+    font-size: 12px;
+    color: var(--success);
+
+    // Il sorgente applica inline style="color:var(--warning)" solo sulla card
+    // "Da ricontattare" (riga 27): riprodotto qui come modificatore pilotato
+    // da StatCard.deltaWarning, senza introdurre elementi non presenti nel sorgente.
+    &.delta--warning {
+      color: var(--warning);
+    }
+  }
+}

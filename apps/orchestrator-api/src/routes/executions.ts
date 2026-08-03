@@ -1,12 +1,65 @@
 import { Router } from "express";
 import path from "node:path";
-import { readdir, readFile, writeFile, mkdir } from "node:fs/promises";
+import { readdir, readFile, writeFile, mkdir, rename, stat } from "node:fs/promises";
 import { readJson, initSseHeaders, sendSse } from "../utils.js";
 import { ROOT_DIR } from "../config.js";
 import { executionStore, type ExecutionEvent, type TaskResult } from "../execution-store.js";
 import { CancellationRegistry } from "../../../../src/cancellation.js";
 
 export const executionsRouter = Router();
+
+// ── Safety net: sposta i file scritti nei path globali → runDir ───────────
+// Viene chiamata dopo ogni task completato. Se l'agente ha scritto in
+// workspace/output/ o workspace/context/ invece del runDir, i file
+// vengono spostati automaticamente nella cartella isolata del run.
+async function enforceRunIsolation(
+  execId: string,
+  runDir: string,   // es. "workspace/runs/angular-responsive-golden-master"
+  taskStartMs: number
+): Promise<string[]> {
+  const moved: string[] = [];
+  const GLOBAL_DIRS = ["workspace/output", "workspace/context", "workspace/reports", "workspace/logs"];
+
+  for (const globalDir of GLOBAL_DIRS) {
+    const absGlobal = path.join(ROOT_DIR, globalDir);
+    // Segmento finale (output|context|reports|logs) per costruire il path run
+    const segment = globalDir.replace("workspace/", "");  // es. "output"
+
+    async function walkAndMove(dir: string): Promise<void> {
+      let entries: string[];
+      try { entries = await readdir(dir); } catch { return; }
+      for (const entry of entries) {
+        const full = path.join(dir, entry);
+        let s;
+        try { s = await stat(full); } catch { continue; }
+        if (s.isDirectory()) {
+          await walkAndMove(full);
+        } else {
+          // Sposta solo i file creati DOPO l'avvio del task
+          if (s.mtimeMs >= taskStartMs - 500) {
+            const rel = path.relative(absGlobal, full).replace(/\\/g, "/");
+            const dest = path.join(ROOT_DIR, runDir, segment, rel);
+            try {
+              await mkdir(path.dirname(dest), { recursive: true });
+              await rename(full, dest);
+              const relFull = `${globalDir}/${rel}`;
+              moved.push(`${relFull} → ${runDir}/${segment}/${rel}`);
+              executionStore.addLog(execId, {
+                type: "task.files-moved",
+                executionId: execId,
+                timestamp: new Date().toISOString(),
+                message: `[isolation] Spostato ${relFull} → ${runDir}/${segment}/${rel}`
+              });
+            } catch { /* file già spostato o in uso */ }
+          }
+        }
+      }
+    }
+
+    await walkAndMove(absGlobal);
+  }
+  return moved;
+}
 
 // ── GET /api/executions ───────────────────────────────────────────────────
 executionsRouter.get("/", (_req, res) => {
@@ -173,12 +226,15 @@ export async function createAndRunExecution(
   await mkdir(path.join(ROOT_DIR, runDir, "reports"), { recursive: true });
 
   // Rewrite workflow paths to use the run directory + pin the specific input file
-  const isolatedWorkflow = rewriteWorkflowPaths(workflow, slug, actualInputFile);
+  // Skip isolation if the workflow explicitly opts out (es. integrate-lib-to-webapp)
+  const skipIsolation = !!(workflow as any).skipIsolation;
+  const isolatedWorkflow = skipIsolation ? workflow : rewriteWorkflowPaths(workflow, slug, actualInputFile);
 
   // If a specific taskId is requested, build a single-task workflow
+  const runMeta = skipIsolation ? {} : { runDir, runInputFile: actualInputFile };
   const plan = taskId
-    ? { ...isolatedWorkflow, runDir, runInputFile: actualInputFile, objective: `[Step singolo] ${taskId} — ${isolatedWorkflow.objective}`, tasks: isolatedWorkflow.tasks.map((t: any) => ({ ...t, status: t.id === taskId ? "pending" : "completed" })) }
-    : { ...isolatedWorkflow, runDir, runInputFile: actualInputFile };
+    ? { ...isolatedWorkflow, ...runMeta, objective: `[Step singolo] ${taskId} — ${isolatedWorkflow.objective}`, tasks: isolatedWorkflow.tasks.map((t: any) => ({ ...t, status: t.id === taskId ? "pending" : "completed" })) }
+    : { ...isolatedWorkflow, ...runMeta };
 
   const execution = executionStore.create(req, plan.objective, taskId ? 1 : workflow.tasks.length, {
     runDir, runSlug: slug, inputFile: actualInputFile
@@ -469,6 +525,7 @@ async function runWorkflowAsync(
 
     // ── Task lifecycle helpers ────────────────────────────────────────────
     const taskById = (taskId: string) => plan.tasks.find(t => t.id === taskId);
+    const taskStartTimes = new Map<string, number>(); // safety net: timestamp avvio
 
     const onTaskStart = (taskId: string) => {
       const t = taskById(taskId);
@@ -489,12 +546,19 @@ async function runWorkflowAsync(
           message: `File in lettura: ${t.inputPaths.join(", ")}`
         });
       }
+      // Registra il timestamp di avvio per il safety net
+      taskStartTimes.set(taskId, Date.now());
     };
 
     const onTaskEnd = (taskId: string, status: 'completed' | 'failed') => {
       executionStore.updateTask(execId, taskId, { status } as Partial<TaskResult>);
       if (status === 'completed') executionStore.update(execId, { completedTasks: (executionStore.get(execId)?.completedTasks ?? 0) + 1 });
       if (status === 'failed')    executionStore.update(execId, { failedTasks:    (executionStore.get(execId)?.failedTasks    ?? 0) + 1 });
+      // Safety net: sposta file scritti fuori dal runDir → runDir
+      if (plan.runDir) {
+        const startMs = taskStartTimes.get(taskId) ?? Date.now();
+        void enforceRunIsolation(execId, plan.runDir, startMs);
+      }
     };
 
     // ── Human-in-the-loop gate ──────────────────────────────────────────

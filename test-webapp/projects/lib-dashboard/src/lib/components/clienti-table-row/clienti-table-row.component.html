@@ -1,0 +1,29 @@
+<!-- components/clienti-table-row/clienti-table-row.component.html — lib-dashboard -->
+<!-- Sostituisce: ognuna delle <tr> del <tbody> mock (righe 33-36) -->
+<td>
+  <div class="customer">
+    <div class="customer-badge">{{ iniziali }}</div>
+    <div>
+      <strong>{{ cliente.nome }}</strong>
+      <div class="small">{{ cliente.email }}</div>
+    </div>
+  </div>
+</td>
+<td>{{ cliente.azienda }}</td>
+<td>{{ segmentoLabel }}</td>
+<td>
+  <span
+    class="badge"
+    [class.ok]="cliente.stato === 'ok'"
+    [class.wait]="cliente.stato === 'wait'"
+    [class.off]="cliente.stato === 'off'"
+  >{{ statoLabel }}</span>
+</td>
+<td>{{ cliente.ultimoContatto }}</td>
+<td>{{ valoreFormattato }}</td>
+<td>
+  <div class="row-actions">
+    <button type="button" class="icon-btn" (click)="edit.emit(cliente)" aria-label="Modifica cliente">✎</button>
+    <button type="button" class="icon-btn" (click)="openMenu.emit(cliente)" aria-label="Altre azioni">⋯</button>
+  </div>
+</td>

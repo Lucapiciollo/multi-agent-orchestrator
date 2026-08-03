@@ -420,6 +420,61 @@ Angular CDK inietta `.cdk-overlay-pane`, `.cdk-overlay-backdrop`, `panelClass` e
 
 **Soluzione per librerie self-contained**: creare `_lib-name.theme.scss` nella lib e importarlo nel consumer.
 
+### ⚠️ SCSS deve stare nella lib, non nella webapp
+
+I design token e le CSS custom properties della feature devono essere **nella libreria stessa**, non nella webapp consumer:
+
+```
+projects/lib-{name}/
+  src/
+    _tokens.scss          ← SCSS variables + mixin host-properties
+    lib/
+      lib-{name}.theme.scss  ← CSS globale (CDK overlay + :root custom props)
+      index.component.scss   ← @include tokens.host-properties (unica chiamata)
+      components/**          ← @use '../../../tokens' as tokens; + var(--nome)
+```
+
+**`_tokens.scss`** — unica fonte di verità per la feature:
+```scss
+// Breakpoint responsive
+$bp-xl: 1180px; $bp-lg: 900px; $bp-sm: 680px; $bp-xs: 440px;
+
+// Design token (estratti dai CSS custom properties del sorgente HTML)
+$color-primary: #3b5ccc;
+$color-bg: #f5f7fb;
+// ... tutti i token del sorgente
+
+// Mixin: emette CSS custom properties su :host
+// Chiamato SOLO da index.component.scss — i figli le ereditano via cascata
+@mixin host-properties {
+  --primary: #{$color-primary};
+  --bg: #{$color-bg};
+  // ... tutti i token
+}
+```
+
+**`index.component.scss`** — applica i token sul :host:
+```scss
+@use '../../tokens' as tokens;
+:host {
+  display: block;
+  @include tokens.host-properties;  // ← unica chiamata al mixin
+}
+```
+
+**`components/*.component.scss`** — usa solo `var()` CSS, non hardcoded:
+```scss
+@use '../../../tokens' as tokens;  // path relativo dalla profondità del componente
+.card { border-radius: var(--radius); background: var(--surface); }
+@media (max-width: tokens.$bp-sm) { ... }  // breakpoint SCSS via tokens
+```
+
+**Importante**: la lib-{name}.theme.scss va importata nel `styles.scss` del consumer:
+```scss
+// styles.scss
+@use '../projects/lib-{name}/src/lib/lib-{name}.theme';  // CSS globale della lib
+```
+
 ```scss
 /* projects/lib-name/src/lib/lib-name.theme.scss */
 // Il consumer aggiunge in styles.scss:

@@ -1,0 +1,27 @@
+<!-- components/clienti-table/clienti-table.component.html — lib-dashboard -->
+<!-- Sostituisce: <div class="table-wrap"><table>...</table></div> (righe 32-37) -->
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Cliente</th>
+        <th>Azienda</th>
+        <th>Segmento</th>
+        <th>Stato</th>
+        <th>Ultimo contatto</th>
+        <th>Valore</th>
+        <th>Azioni</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (cliente of clienti; track cliente.id) {
+        <tr
+          lib-dashboard-clienti-table-row
+          [cliente]="cliente"
+          (edit)="edit.emit($event)"
+          (openMenu)="openMenu.emit($event)"
+        ></tr>
+      }
+    </tbody>
+  </table>
+</div>

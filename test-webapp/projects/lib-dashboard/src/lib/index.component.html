@@ -1,0 +1,30 @@
+<!-- index.component.html — lib-dashboard -->
+<!-- Sostituisce: <section class="content">...</section> (righe 22-41 del sorgente) -->
+<section class="content">
+  <lib-dashboard-heading
+    (exportCsv)="onExportCsv()"
+    (openNuovoCliente)="onOpenNuovoCliente()"
+  ></lib-dashboard-heading>
+
+  <lib-dashboard-stats-panel [stats]="(stats$ | async) ?? []"></lib-dashboard-stats-panel>
+
+  <lib-dashboard-clienti-list-card
+    [clienti]="(clienti$ | async) ?? []"
+    [totalCount]="(totalCount$ | async) ?? 0"
+    [page]="(page$ | async) ?? 1"
+    [loading]="(loading$ | async) ?? false"
+    (refresh)="onRefreshClienti()"
+    (filter)="onFilterClienti($event)"
+    (resetFilter)="onResetFiltri()"
+    (pageChange)="onPageChange($event)"
+  ></lib-dashboard-clienti-list-card>
+
+  <section class="bottom">
+    <lib-dashboard-profilo-form (save)="onSaveProfilo($event)"></lib-dashboard-profilo-form>
+
+    <lib-dashboard-attivita-recenti
+      [activities]="(activities$ | async) ?? []"
+      (addActivity)="onAddActivity()"
+    ></lib-dashboard-attivita-recenti>
+  </section>
+</section>

@@ -5,6 +5,9 @@
 @use '../../workspace/output/scss/main';
 @use 'bootstrap/scss/bootstrap-grid';   // richiesto da pl-dynamicform per layout col-*
 
+// ── Stili globali lib-dashboard (CSS custom properties ClientFlow) ─────────
+@use '../projects/lib-dashboard/src/lib/lib-dashboard.theme';
+
 // ── Stili globali lib-report (CDK overlay, dialog panel, backdrop) ────────
 // Il CDK overlay inietta .cdk-overlay-pane e backdrop direttamente nel <body>
 // → non raggiungibili da component SCSS → devono stare nel global stylesheet.

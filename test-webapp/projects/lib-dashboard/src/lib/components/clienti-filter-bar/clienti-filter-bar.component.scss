@@ -1,0 +1,104 @@
+// components/clienti-filter-bar/clienti-filter-bar.component.scss — lib-dashboard
+//
+// Phase 12 (SCSS migration): @use dei design token condivisi — dedup di
+// color: #4b5563 → var(--label-color), #fff → var(--surface),
+// border-radius: 10px → var(--radius-sm) (UTILITY_SHARED); breakpoint
+// (RESPONSIVE_GLOBAL) sostituiti con tokens.$bp-*.
+@use '../../../tokens' as tokens;
+
+.filters {
+  padding: 18px 20px;
+  display: grid;
+  grid-template-columns: minmax(220px, 2fr) repeat(3, minmax(150px, 1fr)) auto;
+  gap: 12px;
+  align-items: end;
+  background: #fafbfe;
+  border-bottom: 1px solid var(--border);
+}
+
+.field {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+
+  label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--label-color);
+  }
+
+  input,
+  select {
+    height: 42px;
+    padding: 0 11px;
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text);
+    font: inherit;
+  }
+}
+
+.filter-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn {
+  border-radius: var(--radius-sm);
+  border: 0;
+  font-weight: 700;
+  cursor: pointer;
+  height: 40px;
+  padding: 0 15px;
+  background: var(--primary);
+  color: var(--surface);
+
+  &.secondary {
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+}
+
+@media (max-width: tokens.$bp-xl) {
+  .filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    .wide,
+    .filter-actions {
+      grid-column: span 2;
+    }
+  }
+
+  .filter-actions {
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: tokens.$bp-sm) {
+  .filters {
+    grid-template-columns: 1fr;
+
+    .wide,
+    .filter-actions {
+      grid-column: auto;
+    }
+  }
+
+  .filter-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: tokens.$bp-xs) {
+  .filter-actions {
+    grid-template-columns: 1fr;
+
+    .btn {
+      width: 100%;
+    }
+  }
+}

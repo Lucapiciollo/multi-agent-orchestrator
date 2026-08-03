@@ -1,0 +1,65 @@
+// _tokens.scss — Design tokens condivisi per src/libs/**
+//
+// ⚠️ Fallback Phase 12 (SCSS migration / step-13-scss-migration):
+// workspace/output/scss/** (output atteso di scss-extractor-agent, skill
+// css-to-material) risulta VUOTO al momento di questa generazione.
+// Questo file assume temporaneamente il ruolo di _tokens.scss condiviso:
+// consolida in un unico punto (classe GLOBAL_KEEP) i valori già introdotti
+// come CSS custom properties in lib-dashboard/index.component.scss (:host)
+// più i valori hardcoded duplicati identificati durante la classificazione
+// Phase 12 (classe UTILITY_SHARED). Quando scss-extractor-agent produrrà i
+// design token reali, riconciliare qui SENZA alterare i valori già in uso,
+// per non violare la fedeltà visiva al 100%.
+//
+// Ogni *.component.scss della lib fa `@use` di questo file con il path
+// relativo corretto in base alla propria profondità in src/libs/{slug}/.
+
+// --- RESPONSIVE_GLOBAL — breakpoint condivisi da più feature component ---
+$bp-xl: 1180px; // desktop → tablet largo
+$bp-lg: 900px; // tablet
+$bp-sm: 680px; // tablet → mobile
+$bp-xs: 440px; // mobile stretto
+
+// --- FEATURE_GLOBAL — mirror dei valori già esposti come CSS custom
+// properties su :host di lib-dashboard/index.component.scss ---
+$color-bg: #f5f7fb;
+$color-surface: #fff;
+$color-text: #172033;
+$color-muted: #6b7280;
+$color-primary: #3b5ccc;
+$color-border: #dfe4ec;
+$color-success: #16875d;
+$color-warning: #b66a00;
+$color-danger: #c93a4b;
+$radius-lg: 14px; // = var(--radius) card/panel
+$shadow-card: 0 10px 30px rgba(23, 32, 51, 0.08);
+
+// --- UTILITY_SHARED — dedup di valori hardcoded duplicati identici tra
+// più *.component.scss della feature (Phase 12 classification) ---
+// $color-label: duplicato in clienti-filter-bar, profilo-commerciale-form,
+//   nuovo-cliente-dialog (.field label { color: #4b5563 })
+$color-label: #4b5563;
+// $radius-sm: duplicato in 8+ file (.icon-btn, .field input/select/textarea,
+//   .btn, .customer-badge, .activity-icon → tutti border-radius: 10px)
+$radius-sm: 10px;
+
+// Mixin: emette le CSS custom properties su :host — unica fonte di verità
+// runtime. Chiamata SOLO da lib-dashboard/index.component.scss; i componenti
+// figli ereditano via cascata (le custom properties attraversano l'albero
+// del DOM anche con ViewEncapsulation.Emulated) e continuano a referenziarle
+// con var(--nome), come già facevano prima di questo step.
+@mixin host-properties {
+  --bg: #{$color-bg};
+  --surface: #{$color-surface};
+  --text: #{$color-text};
+  --muted: #{$color-muted};
+  --primary: #{$color-primary};
+  --border: #{$color-border};
+  --success: #{$color-success};
+  --warning: #{$color-warning};
+  --danger: #{$color-danger};
+  --radius: #{$radius-lg};
+  --radius-sm: #{$radius-sm};
+  --label-color: #{$color-label};
+  --shadow: #{$shadow-card};
+}

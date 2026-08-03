@@ -1,0 +1,156 @@
+// dialogs/nuovo-cliente/nuovo-cliente-dialog.component.scss — lib-dashboard
+//
+// ⚠️ Regola skill "Angular Component Extractor" §4 (ANGULAR MATERIAL — DIALOG):
+// il componente interno DEVE avere width:100% (mai pixel fissi) per evitare
+// overflow rispetto al .cdk-overlay-pane. Le larghezze/backdrop/panelClass
+// del contenitore CDK (panelClass 'lib-dashboard-nuovo-cliente-panel',
+// backdropClass 'dashboard-nuovo-cliente-backdrop') vanno definite in un
+// file di tema globale (es. dashboard.theme.scss, alla radice della lib) —
+// FUORI dagli "Output autorizzati" di questo step (solo dialogs/** è
+// autorizzato), quindi non generato qui. Vedi commento in
+// nuovo-cliente-dialog.component.ts.
+//
+// Phase 12 (SCSS migration / step-13-scss-migration): @use dei design token
+// condivisi — dedup di #4b5563 → var(--label-color), #fff → var(--surface),
+// border-radius: 10px → var(--radius-sm) (UTILITY_SHARED); breakpoint
+// (RESPONSIVE_GLOBAL) sostituiti con tokens.$bp-*. .modal border-radius: 16px
+// è un valore MODAL-specifico non duplicato altrove: lasciato invariato per
+// fedeltà visiva.
+@use '../../../tokens' as tokens;
+
+.modal {
+  width: 100%;
+  max-height: calc(100vh - 48px);
+  overflow: auto;
+  background: var(--surface);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h3 {
+    margin: 0;
+  }
+}
+
+.small {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.icon-btn {
+  width: 38px;
+  height: 38px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.span-2 {
+  grid-column: span 2;
+}
+
+.field {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+
+  label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--label-color);
+  }
+
+  input,
+  select {
+    height: 42px;
+    padding: 0 11px;
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text);
+    font: inherit;
+  }
+
+  textarea {
+    min-height: 96px;
+    padding: 10px 11px;
+    resize: vertical;
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text);
+    font: inherit;
+  }
+}
+
+.modal-footer {
+  padding: 16px 20px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn {
+  border-radius: var(--radius-sm);
+  border: 0;
+  font-weight: 700;
+  cursor: pointer;
+  height: 40px;
+  padding: 0 15px;
+  background: var(--primary);
+  color: var(--surface);
+
+  &.secondary {
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+}
+
+@media (max-width: tokens.$bp-sm) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .span-2 {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: tokens.$bp-xs) {
+  .modal-footer {
+    display: grid;
+    grid-template-columns: 1fr;
+
+    .btn {
+      width: 100%;
+    }
+  }
+
+  .modal {
+    max-height: calc(100dvh - 20px);
+  }
+}

@@ -1,0 +1,13 @@
+<!-- components/attivita-recenti/attivita-recenti.component.html — lib-dashboard -->
+<!-- Sostituisce: <aside class="card">...</aside> (riga 40, wrapper) -->
+<aside class="card">
+  <div class="card-header">
+    <h2>Attività recenti</h2>
+    <button type="button" class="icon-btn" (click)="addActivity.emit()" aria-label="Aggiungi attività">+</button>
+  </div>
+  <div class="activity-list">
+    @for (activity of activities; track activity.id) {
+      <lib-dashboard-activity-item [activity]="activity"></lib-dashboard-activity-item>
+    }
+  </div>
+</aside>

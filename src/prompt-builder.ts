@@ -14,6 +14,20 @@ export class PromptBuilder {
     const context     = await this.loadContext(request.plan.contextFiles ?? []);
     const inputFiles  = await this.loadInputContent(request.task.inputPaths ?? []);
 
+    // ── Run isolation: riscrive i path workspace/ nel contenuto delle skill ──
+    // La SKILL.md può contenere path hardcoded come workspace/output/test-app/
+    // che verrebbero seguiti dall'agente ignorando l'override nel prompt.
+    // Sostituiamo PRIMA del rendering del prompt.
+    let agentSkills = request.agentSkills;
+    let taskSkills  = request.taskSkills;
+    if (request.runDir) {
+      const OUTPUT_RE = /workspace\/(context|output|reports|logs)(\/|$)/g;
+      const rewriteSkillContent = (content: string): string =>
+        content.replace(OUTPUT_RE, `${request.runDir!}/$1$2`);
+      agentSkills = agentSkills.map(s => ({ ...s, content: s.content ? rewriteSkillContent(s.content) : s.content }));
+      taskSkills  = taskSkills.map(s  => ({ ...s, content: s.content ? rewriteSkillContent(s.content) : s.content }));
+    }
+
     // ── Run isolation override ─────────────────────────────────────────────
     // Se il run è isolato, inietta una sezione obbligatoria che sovrascrive
     // qualsiasi riferimento a workspace/ nelle istruzioni della skill.
@@ -80,7 +94,7 @@ export class PromptBuilder {
       `# Criteri di validazione`,
       this.list(request.task.validationCriteria),
       ``,
-      ...this.buildSkillsSections(request.agentSkills, request.taskSkills),
+      ...this.buildSkillsSections(agentSkills, taskSkills),
       ``,
       `# Contesto condiviso`,
       context || "Nessun contesto aggiuntivo.",

@@ -17,6 +17,9 @@
       "lib-configurazioni": [
         "./dist/lib-configurazioni"
       ],
+      "lib-dashboard": [
+        "./dist/lib-dashboard"
+      ],
       "lib-deleghe": [
         "./dist/lib-deleghe"
       ],

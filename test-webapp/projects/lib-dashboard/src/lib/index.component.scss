@@ -1,0 +1,52 @@
+// index.component.scss — lib-dashboard
+//
+// Phase 12 (SCSS migration / step-13-scss-migration): design token condivisi
+// centralizzati in src/libs/_tokens.scss (classe GLOBAL_KEEP), perché
+// workspace/output/scss/** (output atteso di scss-extractor-agent) risulta
+// ancora vuoto. Le custom properties CSS restano l'unica fonte di verità
+// RUNTIME per i componenti figli (ereditano via cascata anche con
+// ViewEncapsulation.Emulated) — invariato rispetto allo step precedente.
+// Con questo step i valori letterali sono stati spostati in tokens.$color-* /
+// tokens.$radius-* per eliminare la duplicazione con gli altri
+// *.component.scss della feature che referenziano gli stessi valori
+// hardcoded (#fff, #4b5563, 10px) e gli stessi breakpoint (1180/900/440px).
+@use '../tokens' as tokens;
+
+:host {
+  display: block;
+
+  // FEATURE_GLOBAL — unica dichiarazione delle custom properties della
+  // feature; i figli le leggono con var(--nome), NON tramite @use diretto.
+  @include tokens.host-properties;
+}
+
+.content {
+  padding: 28px;
+  display: grid;
+  gap: 20px;
+}
+
+.bottom {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(300px, 0.7fr);
+  gap: 18px;
+}
+
+// RESPONSIVE_GLOBAL — breakpoint condivisi (tokens.$bp-*), non più letterali
+@media (max-width: tokens.$bp-xl) {
+  .bottom {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: tokens.$bp-lg) {
+  .content {
+    padding: 20px;
+  }
+}
+
+@media (max-width: tokens.$bp-xs) {
+  .content {
+    padding: 14px;
+  }
+}

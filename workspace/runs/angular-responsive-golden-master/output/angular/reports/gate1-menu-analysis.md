@@ -1,28 +1,28 @@
-# Phase 1 — Menu / Navigation Analysis (Gate 1)
+# Gate 1 — Menu / Navigation Analysis
 
 **Run:** `angular-responsive-golden-master`
 **Step:** `step-01-navigation-analysis`
-**Sorgente analizzato:** `workspace/input/angular-responsive-golden-master.html` (app "ClientFlow — Gestione clienti")
+**Sorgente analizzato:** `workspace/input/angular-responsive-golden-master.html` (app "ClientFlow — Gestione clienti", confermato da `source-discovery.md` §2 come unico file HTML in scope per questo run)
 **Modalità:** sola analisi — nessuna implementazione, nessuna selezione automatica della sezione
 
 ---
 
 ## 1. Metodologia
 
-Sono stati ispezionati, sul markup e sullo script inline del sorgente:
-- `<nav class="nav">` in `<aside class="sidebar">` (righe 18) — 5 elementi `<a href="#">`
-- Bottone hamburger `#menu` (topbar, riga 21) — meccanismo di navigazione responsive (toggle sidebar)
-- Overlay `#overlay` (riga 19) — companion del toggle sidebar mobile
-- Trigger di apertura modale `#openModal` (riga 23) — bottone con `onclick`/listener JS che apre un flusso overlay
-- Bottoni di paginazione `.page` (riga 38) — verificati e classificati come **non-navigazione tra sezioni** (paginazione dati interna alla tabella, stesso context, nessun routing)
-- Nessun tab-like element, nessun dropdown, nessun data-attribute di routing (`data-route`, `data-target`, `data-view`, ecc.), nessun secondo `<nav>`, nessun breadcrumb.
-- Nessuna richiesta a pagine locali fisiche (`.html`) — tutti gli `href` sono `#`.
+Sono stati ispezionati, sul markup e sullo script inline del sorgente, nell'ordine richiesto dalla Phase 1:
+- `<nav>` sidebar (`<aside class="sidebar" id="sidebar"><nav class="nav">`) — 5 elementi `<a href="#">`
+- sidebar collassabile / hamburger menu (`.menu-btn`, `#menu`) e overlay di chiusura (`#overlay`)
+- bottoni con handler `onclick`/listener JS che aprono/chiudono flussi overlay (`#openModal`, `#closeModal`, `#cancelModal`, click backdrop, tasto `Escape`)
+- tab che fungono da navigazione interna → **nessuna trovata** (nessun elemento `.tab`/`role="tab"`)
+- item menu guidati da JS / data-attribute di routing → **nessuno trovato** (nessun `data-route`, `data-target`, `data-view`)
+- link a pagine locali fisiche → **nessuno trovato** (tutti gli `<a href>` puntano a `#`)
+- comportamento responsive di ciascun meccanismo (breakpoint associato)
 
-Duplicati: nessuno rilevato (5 voci sidebar con label univoche, 1 solo trigger modale).
+I duplicati sono stati normalizzati: i tre trigger di chiusura modale (`#closeModal`, `#cancelModal`, click-backdrop) più il tasto `Escape` convergono sulla stessa funzione JS `setModal(false)` e sono raggruppati in un'unica voce [9].
 
 ---
 
-## 2. Elenco numerato sezioni candidate (Gate 1)
+## 2. Elenco numerato delle sezioni/voci di navigazione candidate
 
 ```
 [1] Dashboard ★
@@ -30,44 +30,48 @@ Duplicati: nessuno rilevato (5 voci sidebar con label univoche, 1 solo trigger m
 [3] Contratti
 [4] Report
 [5] Impostazioni
-[6] Nuovo cliente (dialog) ★
+[6] Hamburger menu (sidebar toggle mobile) ★
+[7] Overlay chiusura sidebar mobile ★
+[8] Trigger modale "Nuovo cliente" ★
+[9] Chiusura modale "Nuovo cliente" ★
 ```
 
 ---
 
 ## 3. Dettaglio per voce
 
-### [1] Dashboard ★ (funzionalmente implementata)
-- **source**: `<a class="active" href="#">Dashboard</a>` — riga 18, `<nav class="nav">` in `<aside class="sidebar" id="sidebar">`
-- **target**: nessun href reale (`#`); il contenuto associato è l'intero `<section class="content">` (righe 22–40): heading "Gestione clienti", stats, tabella clienti, form profilo commerciale, activity list
-- **type**: `page-section` (sidebar nav item, unica voce con contenuto renderizzato)
+### [1] Dashboard ★
+- **source**: `<a class="active" href="#">Dashboard</a>` — dentro `<aside class="sidebar" id="sidebar"><nav class="nav">`
+- **target/href**: `#` (nessun target reale — SPA a singola vista)
+- **type**: `page-section` (sidebar nav item)
 - **selector**: `.sidebar .nav a.active` / `.sidebar .nav a:nth-child(1)`
-- **parent**: `.sidebar .nav` (menu piatto, nessun livello superiore)
+- **parent**: `.sidebar .nav` (menu piatto, 1 solo livello)
 - **submenu**: nessuno
-- **icon**: nessuna icona dedicata alla voce (solo il brand `◈ ClientFlow` in cima alla sidebar, riga 18); icone Unicode presenti nel contenuto associato (🔔 ✎ ⋯ ↻ ☎ ✉ ✓ 📅)
+- **icon**: nessuna icona dedicata alla voce (il brand `◈ ClientFlow` in cima alla sidebar è il logo dell'app, non un'icona di questa voce)
 - **source file**: `angular-responsive-golden-master.html`
-- **meccanismo di navigazione**: nessun routing JS — è l'unica voce con markup di contenuto reale nella stessa pagina; stato attivo impostato staticamente via classe CSS `active` nel markup, non da JS
-- **pagina correlata**: nessuna pagina fisica — contenuto inline nello stesso documento
-- **selettore stato attivo**: `.nav a.active` (classe statica hardcoded nel sorgente, non toggling JS)
-- **comportamento responsive**: la sidebar (quindi anche il menu) collassa sotto i 900px (`@media(max-width:900px)`), diventando `position:fixed` fuori schermo (`transform:translateX(-102%)`); si apre con la classe `.open` tramite il bottone hamburger `#menu` (`sidebar.classList.add('open')`) e overlay associato (`#overlay`); chiusura via click su overlay o tasto `Escape`. Sotto i 440px `.user-info` viene nascosto e i bottoni azione diventano full-width.
+- **meccanismo di navigazione**: link statico `<a>`, nessun handler JS di routing; classe `.active` hardcoded nel markup, non pilotata da JS
+- **pagina/contenuto correlato**: l'intera `<section class="content">` renderizzata nel documento — heading "Gestione clienti", 4 stat card, tabella clienti con filtri/paginazione, form "Profilo commerciale", lista "Attività recenti"
+- **selettore stato attivo**: `.nav a.active` (statico, non toggled da JS)
+- **comportamento responsive**: la sidebar collassa sotto i 900px (`position:fixed`, `transform:translateX(-102%)`), apribile solo tramite [6]/[7]; sopra i 900px sempre visibile (`position:sticky`)
+- **nota**: ★ unica voce con contenuto realmente implementato e renderizzato (non stub)
 
 ### [2] Clienti
-- **source**: `<a href="#">Clienti</a>` — riga 18, 2° elemento di `.sidebar .nav`
-- **target**: nessuno (`href="#"`, nessun contenuto/route associato nel sorgente)
+- **source**: `<a href="#">Clienti</a>` — 2° elemento di `.sidebar .nav`
+- **target/href**: `#`
 - **type**: `stub-page-section`
 - **selector**: `.sidebar .nav a:nth-child(2)`
 - **parent**: `.sidebar .nav`
 - **submenu**: nessuno
 - **icon**: nessuna
 - **source file**: `angular-responsive-golden-master.html`
-- **meccanismo di navigazione**: nessuno — nessun listener JS associato, nessun `data-*` di routing, nessuna classe di stato dinamica
+- **meccanismo di navigazione**: nessuno — link statico senza handler JS, nessun contenuto associato
 - **pagina correlata**: nessuna (stub)
 - **selettore stato attivo**: nessuno (mai marcata `.active`)
-- **comportamento responsive**: eredita il comportamento di collasso/apertura della sidebar descritto in [1], nessun comportamento proprio aggiuntivo
+- **comportamento responsive**: eredita il collasso/apertura della sidebar descritto in [1]
 
 ### [3] Contratti
-- **source**: `<a href="#">Contratti</a>` — riga 18, 3° elemento di `.sidebar .nav`
-- **target**: nessuno
+- **source**: `<a href="#">Contratti</a>` — 3° elemento di `.sidebar .nav`
+- **target/href**: `#`
 - **type**: `stub-page-section`
 - **selector**: `.sidebar .nav a:nth-child(3)`
 - **parent**: `.sidebar .nav`
@@ -80,8 +84,8 @@ Duplicati: nessuno rilevato (5 voci sidebar con label univoche, 1 solo trigger m
 - **comportamento responsive**: eredita comportamento sidebar di [1]
 
 ### [4] Report
-- **source**: `<a href="#">Report</a>` — riga 18, 4° elemento di `.sidebar .nav`
-- **target**: nessuno
+- **source**: `<a href="#">Report</a>` — 4° elemento di `.sidebar .nav`
+- **target/href**: `#`
 - **type**: `stub-page-section`
 - **selector**: `.sidebar .nav a:nth-child(4)`
 - **parent**: `.sidebar .nav`
@@ -92,10 +96,11 @@ Duplicati: nessuno rilevato (5 voci sidebar con label univoche, 1 solo trigger m
 - **pagina correlata**: nessuna
 - **selettore stato attivo**: nessuno
 - **comportamento responsive**: eredita comportamento sidebar di [1]
+- **nota**: ⚠️ non confondere con l'area "Report" del prototipo `timevision-report-v128 1.html` — quel file è fuori scope per questo run (vedi `source-discovery.md` §4)
 
 ### [5] Impostazioni
-- **source**: `<a href="#">Impostazioni</a>` — riga 18, 5° elemento di `.sidebar .nav`
-- **target**: nessuno
+- **source**: `<a href="#">Impostazioni</a>` — 5° elemento di `.sidebar .nav`
+- **target/href**: `#`
 - **type**: `stub-page-section`
 - **selector**: `.sidebar .nav a:nth-child(5)`
 - **parent**: `.sidebar .nav`
@@ -107,19 +112,65 @@ Duplicati: nessuno rilevato (5 voci sidebar con label univoche, 1 solo trigger m
 - **selettore stato attivo**: nessuno
 - **comportamento responsive**: eredita comportamento sidebar di [1]
 
-### [6] Nuovo cliente (dialog) ★ (funzionalmente implementata)
-- **source**: `<button class="btn" id="openModal">+ Nuovo cliente</button>` — riga 23, dentro `.heading .actions` (contenuto della sezione Dashboard/Gestione clienti)
-- **target**: `<div class="modal-backdrop" id="modal">` — riga 42, overlay/dialog "Nuovo cliente" con form (Nome*, Cognome*, Azienda, Email*, Segmento, Stato iniziale, Note iniziali)
-- **type**: `modal-trigger` (non è una "pagina" di navigazione primaria, ma un flusso di navigazione secondario via overlay — incluso qui per completezza come richiesto dal task, sarà comunque ri-analizzato in dettaglio nella fase dedicata a dialog/modali)
-- **selector**: `#openModal` → apre `#modal.modal-backdrop`
-- **parent**: `.heading .actions` (non è parte del menu sidebar, è un'azione della sezione Dashboard)
+### [6] Hamburger menu (sidebar toggle mobile) ★
+- **source**: `<button class="icon-btn menu-btn" id="menu">☰</button>` + JS `document.getElementById('menu').onclick=()=>{sidebar.classList.add('open');overlay.classList.add('open')}`
+- **target**: rende visibile la sidebar [1]-[5]
+- **type**: `nav-toggle` (meccanismo responsive, non voce di menu autonoma)
+- **selector**: `#menu` (`.icon-btn.menu-btn`)
+- **parent**: `.topbar .top-left`
 - **submenu**: n/a
-- **icon**: nessuna icona dedicata (solo testo "+ Nuovo cliente")
+- **icon**: carattere Unicode `☰` inline (nessun SVG/icon-font)
+- **source file**: `angular-responsive-golden-master.html` (script inline)
+- **meccanismo di navigazione**: JS onclick — aggiunge `.open` a `#sidebar` e `#overlay`
+- **pagina correlata**: nessuna pagina propria — apre la sidebar di navigazione
+- **selettore stato attivo**: `.sidebar.open`, `.overlay.open`
+- **comportamento responsive**: visibile solo sotto i 900px (`display:none` di default → `display:block` in `@media(max-width:900px)`); su desktop nascosto, sidebar sempre visibile
+- **nota**: ★ meccanismo funzionale verificato nello script inline
+
+### [7] Overlay chiusura sidebar mobile ★
+- **source**: `<div class="overlay" id="overlay"></div>` + JS `overlay.onclick=()=>{sidebar.classList.remove('open');overlay.classList.remove('open')}`
+- **target**: chiude la sidebar [1]-[5]
+- **type**: `nav-toggle` (companion di chiusura di [6])
+- **selector**: `#overlay`
+- **parent**: `.app` (sibling diretto di `.sidebar` e `.main`)
+- **submenu**: n/a
+- **icon**: nessuna (area di sfondo scurita, cliccabile)
 - **source file**: `angular-responsive-golden-master.html`
-- **meccanismo di navigazione**: JS vanilla — `document.getElementById('openModal').onclick=()=>setModal(true)`; chiusura via `#closeModal`, `#cancelModal`, click sul backdrop, tasto `Escape`; focus automatico su `#firstFocus` all'apertura; `body.style.overflow` lockato quando aperto
-- **pagina correlata**: nessuna pagina fisica — overlay in-page
-- **selettore stato attivo**: `.modal-backdrop.open` (classe toggled via `modal.classList.toggle('open', v)`)
-- **comportamento responsive**: `.modal-backdrop` ha `padding:20px` di default, ridotto a `10px` sotto i 440px; `.modal` ha `max-height:calc(100dvh - 40px)` di default, `calc(100dvh - 20px)` sotto i 440px; footer del modal passa a layout `grid` a colonna singola con bottoni full-width sotto i 440px
+- **meccanismo di navigazione**: JS onclick — rimuove `.open` da `#sidebar`/`#overlay`; chiusura anche via tasto globale `Escape`
+- **pagina correlata**: nessuna
+- **selettore stato attivo**: `.overlay.open` (`display:block` solo se aperto)
+- **comportamento responsive**: attivo solo sotto i 900px, stesso breakpoint di [6]
+- **nota**: ★ meccanismo funzionale — controparte di chiusura di [6]
+
+### [8] Trigger modale "Nuovo cliente" ★
+- **source**: `<button class="btn" id="openModal">+ Nuovo cliente</button>` — dentro `.heading .actions`
+- **target**: `<div class="modal-backdrop" id="modal">` — dialog "Nuovo cliente" con form (Nome*, Cognome*, Azienda, Email*, Segmento, Stato iniziale, Note iniziali)
+- **type**: `modal-trigger`
+- **selector**: `#openModal` → apre `#modal.modal-backdrop`
+- **parent**: `.heading .actions` (azione della sezione Dashboard, non del menu sidebar)
+- **submenu**: n/a
+- **icon**: nessuna icona dedicata (solo simbolo testuale `+` nel testo del bottone)
+- **source file**: `angular-responsive-golden-master.html`
+- **meccanismo di navigazione**: JS onclick → `setModal(true)` → aggiunge `.open` a `#modal`, focus automatico su `#firstFocus` dopo 50ms, `body.style.overflow='hidden'` mentre aperto
+- **pagina correlata**: modale "Nuovo cliente" (overlay in-page, non pagina fisica)
+- **selettore stato attivo**: `.modal-backdrop.open` (`display:flex` quando aperto)
+- **comportamento responsive**: dialog `width:min(620px,100%)`; padding backdrop ridotto a 10px sotto i 440px; footer bottoni impilati full-width sotto i 440px
+- **nota**: ★ meccanismo funzionale verificato nello script inline
+
+### [9] Chiusura modale "Nuovo cliente" ★
+- **source**: `<button class="icon-btn" id="closeModal">×</button>` (header) + `<button class="btn secondary" id="cancelModal">Annulla</button>` (footer) + click su `#modal` (area backdrop) + tasto globale `Escape`
+- **target**: chiude `#modal` aperto da [8]
+- **type**: `modal-close` (4 trigger equivalenti normalizzati in 1 voce)
+- **selector**: `#closeModal`, `#cancelModal`, `#modal` (click con `e.target===modal`), listener globale `keydown`
+- **parent**: `#modal .modal-header` (per `#closeModal`), `#modal .modal-footer` (per `#cancelModal`)
+- **submenu**: n/a
+- **icon**: carattere Unicode `×` inline su `#closeModal`
+- **source file**: `angular-responsive-golden-master.html`
+- **meccanismo di navigazione**: tutti e 4 i trigger convergono su `setModal(false)`; `Escape` chiude contestualmente anche la sidebar mobile se aperta
+- **pagina correlata**: nessuna — chiude [8] senza navigare
+- **selettore stato attivo**: rimozione di `.modal-backdrop.open`
+- **comportamento responsive**: nessuna variazione oltre quanto già descritto in [8]
+- **nota**: ★ meccanismo funzionale — raggruppa 4 varianti equivalenti dello stesso comportamento di chiusura (evita duplicazione di voci)
 
 ---
 
@@ -127,24 +178,48 @@ Duplicati: nessuno rilevato (5 voci sidebar con label univoche, 1 solo trigger m
 
 | Elemento | Selector | Motivo esclusione |
 |---|---|---|
-| Bottoni paginazione | `.pagination .page` | Paginazione dati interna alla tabella "Elenco clienti", nessun cambio di sezione/route, nessun listener JS presente nel sorgente (markup statico) |
-| Bottone refresh tabella | `.card-header .icon-btn` (↻) | Nessun listener JS associato nel sorgente, azione presunta di refresh dati, non navigazione |
-| Bottoni riga tabella (✎ / ⋯) | `.row-actions .icon-btn` | Nessun listener JS associato, azioni CRUD presunte su riga, non navigazione a sezione |
-| Bottone hamburger `#menu` | `#menu` | Meccanismo di navigazione **responsive** (toggle sidebar), non target di una sezione autonoma — documentato come comportamento di [1] Dashboard |
-| Bottone "Esporta CSV" | `.actions .btn.secondary` | Nessun listener JS, nessuna sezione/dialog target nel sorgente |
+| Bottoni paginazione tabella clienti | `.pagination .page` (`‹ 1 2 3 4 … 321 ›`) | Paginazione dati interna alla stessa tabella, nessun listener JS presente nel sorgente (markup statico), nessun cambio sezione |
+| Filtri elenco clienti (Ricerca/Stato/Segmento/Account manager, Reset/Filtra) | `.filters`, `.filter-actions` | Filtro dati in-page, nessun listener JS presente, nessuna navigazione |
+| Bottone refresh tabella `↻` | `.card-header .icon-btn` | Nessun listener JS associato, azione presunta di refresh dati, non navigazione |
+| Bottone notifiche `🔔` | `.topbar .icon-btn` | Nessun listener JS, nessun target/vista associata |
+| Bottoni riga tabella (`✎`, `⋯`) | `.row-actions .icon-btn` | Nessun listener JS, azioni CRUD presunte su riga, non navigazione a sezione |
+| Submit form "Profilo commerciale" | `#profile` (`onsubmit`) | `preventDefault()` + `alert('Demo: profilo salvato')` — azione di salvataggio, non navigazione tra sezioni |
+| Bottoni "Esporta CSV" / "Annulla" / "Salva modifiche" | `.actions .btn.secondary`, `.form-footer .btn` | Azioni CRUD in-page, nessun listener JS di routing |
 | Bottone "+" attività recenti | `aside .card-header .icon-btn` | Nessun listener JS, nessun target associato |
-| Submit form profilo (`#profile`) | `#profile` | `preventDefault()` + `alert()` — non è navigazione tra sezioni, resta nella stessa vista Dashboard |
+
+Meccanismi di navigazione espressamente cercati e **non trovati**: tab-navigazione, dropdown menu, sottomenu sidebar (nav piatta a 1 livello), data-attribute di routing (`data-route`/`data-view`/`data-target`), link a pagine `.html` locali, router/history API.
 
 ---
 
-## 5. Normalizzazione duplicati
+## 5. Normalizzazione duplicati applicata
 
-Nessun duplicato rilevato tra le 6 voci elencate: label, selector e meccanismo di navigazione sono ciascuno univoci nel sorgente.
+- `#closeModal` + `#cancelModal` + click-backdrop (`modal.onclick` con `e.target===modal`) + tasto `Escape` → normalizzati in un'unica voce **[9]** (stessa funzione JS `setModal(false)`, stesso target)
+- `#menu` (apertura, [6]) e `#overlay` (chiusura, [7]) mantenuti come voci **distinte** poiché rappresentano azioni opposte con proprio selettore/trigger DOM dedicato, non duplicati tra loro
 
 ---
 
-## 6. Esito Gate 1
+## 6. Riepilogo
 
-✅ Elenco completo delle sezioni candidate prodotto (6 voci: 5 sidebar + 1 dialog trigger), con evidenza ★ sulle 2 funzionalmente implementate (**[1] Dashboard**, **[6] Nuovo cliente**).
+| # | Voce | Type | Funzionale (★) | Target/contenuto correlato |
+|---|---|---|---|---|
+| 1 | Dashboard | page-section | ★ sì | Vista "Gestione clienti" (unico contenuto renderizzato) |
+| 2 | Clienti | stub-page-section | no | nessuno |
+| 3 | Contratti | stub-page-section | no | nessuno |
+| 4 | Report | stub-page-section | no | nessuno |
+| 5 | Impostazioni | stub-page-section | no | nessuno |
+| 6 | Hamburger menu | nav-toggle | ★ sì | apre sidebar [1]-[5] |
+| 7 | Overlay chiusura sidebar | nav-toggle | ★ sì | chiude sidebar [1]-[5] |
+| 8 | Trigger modale "Nuovo cliente" | modal-trigger | ★ sì | Modale "Nuovo cliente" |
+| 9 | Chiusura modale "Nuovo cliente" | modal-close | ★ sì | chiude modale [8] |
 
-⚠️ **Nessuna sezione è stata selezionata automaticamente.** Questo step si ferma qui in attesa della **selezione esplicita dell'utente** tramite l'interfaccia, che indicherà quale voce tra `[1]`–`[6]` proseguire nella Phase 2 (scoperta flusso sezione). Non è stata dichiarata alcuna "SELECTED SECTION".
+**Totale voci candidate**: 9 (5 nav-link sidebar + 2 meccanismi toggle sidebar mobile + 2 meccanismi modale)
+**Voci funzionalmente implementate (★)**: 5 → [1], [6], [7], [8], [9]
+**Voci stub (non implementate)**: 4 → [2], [3], [4], [5]
+
+---
+
+## 7. Esito Gate 1
+
+✅ Elenco completo delle sezioni/voci di navigazione candidate prodotto (9 voci), con evidenza ★ sulle 5 funzionalmente implementate.
+
+⚠️ **Nessuna sezione è stata selezionata autonomamente.** Questo step si ferma qui in attesa della **selezione esplicita dell'utente** tramite l'interfaccia, che indicherà quale voce tra `[1]`–`[9]` proseguire nella Phase 2 (scoperta flusso sezione). Non viene dichiarata alcuna "SELECTED SECTION".

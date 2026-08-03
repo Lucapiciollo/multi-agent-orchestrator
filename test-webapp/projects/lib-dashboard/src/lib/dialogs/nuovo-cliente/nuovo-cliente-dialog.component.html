@@ -1,0 +1,57 @@
+<!-- dialogs/nuovo-cliente/nuovo-cliente-dialog.component.html — lib-dashboard -->
+<!-- Sostituisce: <div class="modal-backdrop" id="modal">...</div> (riga 42, contenuto interno) -->
+<div class="modal">
+  <div class="modal-header">
+    <div>
+      <h3>Nuovo cliente</h3>
+      <div class="small">Inserisci i dati principali del nuovo contatto.</div>
+    </div>
+    <button type="button" class="icon-btn" (click)="onClose()" aria-label="Chiudi">×</button>
+  </div>
+  <form [formGroup]="form" (ngSubmit)="onCrea()">
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field">
+          <label for="nc-nome">Nome *</label>
+          <input id="nc-nome" type="text" formControlName="nome" placeholder="Mario" />
+        </div>
+        <div class="field">
+          <label for="nc-cognome">Cognome *</label>
+          <input id="nc-cognome" type="text" formControlName="cognome" placeholder="Rossi" />
+        </div>
+        <div class="field span-2">
+          <label for="nc-azienda">Azienda</label>
+          <input id="nc-azienda" type="text" formControlName="azienda" placeholder="Azienda S.r.l." />
+        </div>
+        <div class="field span-2">
+          <label for="nc-email">Email *</label>
+          <input id="nc-email" type="email" formControlName="email" placeholder="mario.rossi@example.it" />
+        </div>
+        <div class="field">
+          <label for="nc-segmento">Segmento</label>
+          <select id="nc-segmento" formControlName="segmento">
+            <option>Enterprise</option>
+            <option>PMI</option>
+            <option>Startup</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="nc-stato">Stato iniziale</label>
+          <select id="nc-stato" formControlName="statoIniziale">
+            <option>Attivo</option>
+            <option>In attesa</option>
+            <option>Sospeso</option>
+          </select>
+        </div>
+        <div class="field span-2">
+          <label for="nc-note">Note iniziali</label>
+          <textarea id="nc-note" formControlName="note" placeholder="Inserisci eventuali note..."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn secondary" (click)="onClose()">Annulla</button>
+      <button type="submit" class="btn">Crea cliente</button>
+    </div>
+  </form>
+</div>

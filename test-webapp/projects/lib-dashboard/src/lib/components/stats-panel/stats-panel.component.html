@@ -1,0 +1,7 @@
+<!-- components/stats-panel/stats-panel.component.html — lib-dashboard -->
+<!-- Sostituisce: <section class="stats">...</section> (righe 24-29 del sorgente) -->
+<section class="stats">
+  @for (stat of stats; track stat.id) {
+    <lib-dashboard-stat-card [stat]="stat"></lib-dashboard-stat-card>
+  }
+</section>

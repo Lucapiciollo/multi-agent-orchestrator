@@ -1,0 +1,65 @@
+<!-- components/profilo-commerciale-form/profilo-commerciale-form.component.html — lib-dashboard -->
+<!-- Sostituisce: <article class="card">...<form id="profile">...</form></article> (riga 39) -->
+<article class="card">
+  <div class="card-header">
+    <div>
+      <h2>Profilo commerciale</h2>
+      <div class="small">Form di complessità media.</div>
+    </div>
+  </div>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="form-body">
+      <div class="form-grid">
+        <div class="field">
+          <label for="pc-nome">Nome</label>
+          <input id="pc-nome" type="text" formControlName="nome" />
+        </div>
+        <div class="field">
+          <label for="pc-cognome">Cognome</label>
+          <input id="pc-cognome" type="text" formControlName="cognome" />
+        </div>
+        <div class="field">
+          <label for="pc-azienda">Azienda</label>
+          <input id="pc-azienda" type="text" formControlName="azienda" />
+        </div>
+        <div class="field">
+          <label for="pc-ruolo">Ruolo</label>
+          <input id="pc-ruolo" type="text" formControlName="ruolo" />
+        </div>
+        <div class="field">
+          <label for="pc-email">Email</label>
+          <input id="pc-email" type="email" formControlName="email" />
+        </div>
+        <div class="field">
+          <label for="pc-telefono">Telefono</label>
+          <input id="pc-telefono" type="text" formControlName="telefono" />
+        </div>
+        <div class="field">
+          <label for="pc-priorita">Priorità</label>
+          <select id="pc-priorita" formControlName="priorita">
+            <option>Bassa</option>
+            <option>Media</option>
+            <option>Alta</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="pc-prossimo-contatto">Prossimo contatto</label>
+          <input id="pc-prossimo-contatto" type="date" formControlName="prossimoContatto" />
+        </div>
+        <div class="field span-2">
+          <label for="pc-note">Note</label>
+          <textarea id="pc-note" formControlName="note"></textarea>
+        </div>
+      </div>
+      <div class="checks">
+        <label><input type="checkbox" formControlName="newsletter" /> Newsletter</label>
+        <label><input type="checkbox" formControlName="comunicazioniCommerciali" /> Comunicazioni commerciali</label>
+        <label><input type="checkbox" formControlName="vip" /> Cliente VIP</label>
+      </div>
+    </div>
+    <div class="form-footer">
+      <button type="button" class="btn secondary" (click)="onAnnulla()">Annulla</button>
+      <button type="submit" class="btn" [disabled]="form.invalid">Salva modifiche</button>
+    </div>
+  </form>
+</article>

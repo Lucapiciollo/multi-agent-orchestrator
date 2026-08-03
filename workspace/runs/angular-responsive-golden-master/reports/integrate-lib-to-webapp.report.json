@@ -1,0 +1,63 @@
+{
+  "planId": "integrate-lib-to-webapp",
+  "objective": "Integra la libreria Angular generata dal workflow precedente (in workspace/output/test-app/src/libs/) nella test-webapp come progetto Angular ufficiale (test-webapp/projects/lib-{name}/), aggiorna angular.json, tsconfig.json e verifica che la build sia pulita.",
+  "startedAt": "2026-07-31T15:51:55.770Z",
+  "completedAt": "2026-07-31T15:54:49.904Z",
+  "durationMs": 174134,
+  "success": false,
+  "tasks": [
+    {
+      "id": "discover-generated-lib",
+      "title": "Scopre la lib generata nel workspace",
+      "agentId": "app-integrator-agent",
+      "provider": "copilot",
+      "model": "claude-sonnet-5",
+      "skills": [
+        "app-integrator",
+        "build-validator"
+      ],
+      "status": "failed",
+      "attempts": 2,
+      "errors": [
+        "Percorso richiesto workspace/runs/angular-responsive-golden-master/output/test-app/src/libs/ non esiste: nessuna libreria generata da scoprire.",
+        "Input workspace/runs/angular-responsive-golden-master/output/angular/reports/architecture-report.md non esiste.",
+        "Impossibile leggere index.module.ts (nome NgModule e selector prefix non determinabili) perché il file sorgente non esiste.",
+        "Blocco: dipendenze angular-lib-agent e test-webapp-agent non hanno prodotto output nel percorso run-scoped richiesto (output/test-app/ è interamente assente)."
+      ],
+      "summary": "Task bloccato: dipendenze angular-lib-agent e test-webapp-agent non hanno prodotto output nel percorso run-scoped workspace/runs/angular-responsive-golden-master/. Verificato: output/test-app/src/libs/ non esiste, output/angular/reports/architecture-report.md non esiste, output/test-app/ intero non esiste (solo output/angular/ presente). Il file lib-integration-plan.md risultava già presente (creato in un tentativo precedente) e documenta correttamente lo stato di blocco con i campi richiesti (nome lib atteso 'dashboard' da context/routing-map.json e selected-section.md, percorso sorgente atteso, percorso destinazione test-webapp/projects/dashboard/, package @app/dashboard, NgModule/selector N/D). Nessuna modifica applicata perché il contenuto esistente è già coerente e non ci sono nuovi dati reali da incorporare in assenza degli output di angular-lib-agent/test-webapp-agent."
+    },
+    {
+      "id": "copy-lib-to-projects",
+      "title": "Copia la lib in test-webapp/projects/",
+      "agentId": "app-integrator-agent",
+      "provider": "copilot",
+      "model": "claude-sonnet-5",
+      "skills": [],
+      "status": "blocked",
+      "attempts": 0,
+      "errors": []
+    },
+    {
+      "id": "register-in-angular-json",
+      "title": "Registra la lib in angular.json e tsconfig",
+      "agentId": "app-integrator-agent",
+      "provider": "copilot",
+      "model": "claude-sonnet-5",
+      "skills": [],
+      "status": "blocked",
+      "attempts": 0,
+      "errors": []
+    },
+    {
+      "id": "build-and-validate",
+      "title": "Build della lib e verifica",
+      "agentId": "app-integrator-agent",
+      "provider": "copilot",
+      "model": "claude-sonnet-5",
+      "skills": [],
+      "status": "blocked",
+      "attempts": 0,
+      "errors": []
+    }
+  ]
+}

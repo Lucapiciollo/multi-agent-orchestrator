@@ -1,0 +1,16 @@
+<!-- components/clienti-pagination/clienti-pagination.component.html — lib-dashboard -->
+<!-- Sostituisce: <div class="table-footer">...</div> (riga 38 del sorgente) -->
+<div class="table-footer">
+  <div>Mostrati {{ rangeStart }}–{{ rangeEnd }} di {{ totalCount }} clienti</div>
+  <div class="pagination">
+    <button type="button" class="page" [disabled]="page === 1" (click)="prev()" aria-label="Pagina precedente">‹</button>
+    @for (item of pageItems; track $index) {
+      @if (item === '...') {
+        <button type="button" class="page" disabled>…</button>
+      } @else {
+        <button type="button" class="page" [class.active]="item === page" (click)="goTo(item)">{{ item }}</button>
+      }
+    }
+    <button type="button" class="page" [disabled]="page === totalPages" (click)="next()" aria-label="Pagina successiva">›</button>
+  </div>
+</div>
