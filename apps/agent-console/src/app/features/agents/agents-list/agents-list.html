@@ -24,7 +24,8 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let item of items">
+      <ng-container *ngFor="let item of items">
+      <tr>
         <td><span class="mono">{{item.id}}</span></td>
         <td class="td-desc">{{item.description}}</td>
         <td class="td-priority">
@@ -41,6 +42,9 @@
         <td class="td-skills">
           <span *ngFor="let s of item.skills" class="skill-tag">{{s}}</span>
           <span class="td-none" *ngIf="!item.skills?.length">—</span>
+          <button class="skill-edit-btn" (click)="$event.stopPropagation(); toggleExpand(item.id)" title="Modifica skill">
+            <mat-icon>edit</mat-icon>
+          </button>
         </td>
         <td class="td-workflows">
           <span *ngFor="let w of item.usedByWorkflows" class="workflow-tag">{{w}}</span>
@@ -51,6 +55,43 @@
           <span class="td-none" *ngIf="!item.tags?.length">—</span>
         </td>
       </tr>
+      <!-- Pannello skill toggle espandibile -->
+      <tr *ngIf="expandedAgent === item.id" class="skill-panel-row">
+        <td colspan="7" class="skill-panel-cell">
+          <div class="skill-panel">
+            <div class="skill-panel-header">
+              <mat-icon>bolt</mat-icon>
+              <span>Skill assegnate a <strong>{{item.id}}</strong></span>
+              <span class="skill-panel-note">Le modifiche sono salvate su disco e persistono dopo il riavvio</span>
+              <div class="skill-panel-actions">
+                <button class="btn-reset" (click)="resetSkills(item.id)" title="Ripristina skill originali">
+                  <mat-icon>restart_alt</mat-icon> Reset
+                </button>
+                <button class="btn-save" [disabled]="savingAgent === item.id" (click)="saveSkills(item.id)">
+                  <mat-spinner *ngIf="savingAgent === item.id" [diameter]="14" style="display:inline-block"></mat-spinner>
+                  <mat-icon *ngIf="savingAgent !== item.id">save</mat-icon>
+                  Salva
+                </button>
+              </div>
+            </div>
+            <div class="skill-grid" *ngIf="agentSkillState[item.id]?.length">
+              <label *ngFor="let skill of agentSkillState[item.id]" class="skill-toggle"
+                     [class.active]="skill.active"
+                     (click)="toggleSkill(item.id, skill.id)">
+                <span class="skill-toggle-check">
+                  <mat-icon>{{skill.active ? 'check_box' : 'check_box_outline_blank'}}</mat-icon>
+                </span>
+                <span class="skill-toggle-name">{{skill.id}}</span>
+                <span class="skill-toggle-desc">{{skill.description?.slice(0,60)}}</span>
+              </label>
+            </div>
+            <div *ngIf="!agentSkillState[item.id]?.length" class="dv-loading">
+              <mat-spinner [diameter]="16"></mat-spinner> Caricamento skill...
+            </div>
+          </div>
+        </td>
+      </tr>
+      </ng-container>
     </tbody>
   </table>
 

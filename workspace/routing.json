@@ -1,36 +1,20 @@
 {
   "rules": [
     {
-      "id": "html-css-extraction",
-      "label": "HTML → SCSS Extraction (CSS + Material + Responsive)",
-      "description": "Estrae tutto il CSS dall'HTML, genera sistema SCSS completo: variabili Tailwind, mixin, breakpoints responsive, override Angular Material",
+      "id": "html-generate-lib",
+      "label": "HTML → Genera libreria Angular",
+      "description": "Analisi completa HTML sorgente + generazione lib Angular NgModule+NgRx+Material (16 step atomici)",
       "match": { "extensions": [".html", ".htm"], "mimeTypes": ["text/html"] },
-      "workflowId": "css-extraction-test",
-      "icon": "style"
-    },
-    {
-      "id": "html-full-pipeline",
-      "label": "HTML → Angular Lib (pipeline completa)",
-      "description": "Estrae design tokens + genera feature Angular + deploy nella test app",
-      "match": { "extensions": [".html", ".htm"], "mimeTypes": ["text/html"] },
-      "workflowId": "html-to-angular-lib",
+      "workflowId": "html-angular-architecture-test",
       "icon": "code"
     },
     {
-      "id": "css-to-scss",
-      "label": "CSS → Design System SCSS",
-      "description": "Estrae i design token dal CSS e genera il pacchetto SCSS a 3 livelli",
-      "match": { "extensions": [".css"], "mimeTypes": ["text/css"] },
-      "workflowId": "design-system-bootstrap",
-      "icon": "palette"
-    },
-    {
-      "id": "scss-audit",
-      "label": "SCSS → Design System (audit + rebrand)",
-      "description": "Analizza SCSS esistente e ristruttura in token primitivi/semantici/component",
-      "match": { "extensions": [".scss", ".sass"], "mimeTypes": ["text/x-scss", "text/x-sass"] },
-      "workflowId": "design-system-bootstrap",
-      "icon": "palette"
+      "id": "html-integrate",
+      "label": "HTML → Integra lib in test-webapp",
+      "description": "Copia la lib generata in test-webapp/projects/, aggiorna angular.json e tsconfig",
+      "match": { "extensions": [".html", ".htm"], "mimeTypes": ["text/html"] },
+      "workflowId": "integrate-lib-to-webapp",
+      "icon": "integration_instructions"
     }
   ]
 }

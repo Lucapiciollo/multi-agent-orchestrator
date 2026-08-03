@@ -1,84 +1,286 @@
 [
   {
-    "id": "html-scanner-agent",
-    "name": "HTML Scanner Agent",
-    "description": "Analizza il file HTML in workspace/input/ e produce il contratto di navigazione (routing-map.json, sections-map.json, app-config.json) usato dagli agenti successivi. Nessuna dipendenza — parte immediatamente.",
-    "skills": ["html-scanner"],
-    "tags": ["html", "scanner", "routing", "navigation"],
+    "id": "html-analyst",
+    "name": "HTML Analyst Agent",
+    "description": "Analizza file HTML e produce il contratto di navigazione (routing-map, sections-map, app-config). Usa html-nav-parser. Nessuna dipendenza.",
+    "skills": [
+      "html-nav-parser"
+    ],
+    "tags": [
+      "html",
+      "parser",
+      "navigation"
+    ],
     "priority": 100,
-    "allowedPaths": ["workspace/**"],
-    "forbiddenPaths": [".git/**", "node_modules/**"],
-    "capabilities": ["read-files", "write-files"],
-    "provider": { "type": "copilot", "model": "claude-sonnet-5", "timeoutMs": 900000 }
+    "allowedPaths": [
+      "workspace/**"
+    ],
+    "forbiddenPaths": [
+      ".git/**",
+      "node_modules/**"
+    ],
+    "capabilities": [
+      "read-files",
+      "write-files"
+    ],
+    "provider": {
+      "type": "copilot",
+      "model": "claude-sonnet-5",
+      "timeoutMs": 600000
+    }
   },
   {
-    "id": "scss-extractor-agent",
-    "name": "SCSS Design System Extractor Agent",
-    "description": "Estrae il sistema di design dal file HTML sorgente producendo un pacchetto SCSS a 3 livelli di token (primitivi/semantici/componenti) con main.scss. Dimostra equivalenza visiva con Playwright su 5 viewport. Nessuna dipendenza — parte in parallelo con html-scanner-agent.",
-    "skills": ["scss-bootstrap-vars", "css-to-material"],
-    "tags": ["css", "scss", "design-system", "visual-regression", "playwright"],
-    "priority": 100,
-    "allowedPaths": ["workspace/**"],
-    "forbiddenPaths": [".git/**", "node_modules/**"],
-    "capabilities": ["read-files", "write-files"],
-    "provider": { "type": "copilot", "model": "claude-sonnet-5", "timeoutMs": 1800000 }
+    "id": "design-extractor",
+    "name": "Design System Extractor Agent",
+    "description": "Estrae CSS dal sorgente HTML e lo converte in design token SCSS (_tokens.scss + main.scss). Usa css-extractor + css-to-tokens.",
+    "skills": [
+      "css-extractor",
+      "css-to-tokens"
+    ],
+    "tags": [
+      "css",
+      "scss",
+      "design-tokens"
+    ],
+    "priority": 95,
+    "allowedPaths": [
+      "workspace/**"
+    ],
+    "forbiddenPaths": [
+      ".git/**",
+      "node_modules/**"
+    ],
+    "capabilities": [
+      "read-files",
+      "write-files"
+    ],
+    "provider": {
+      "type": "copilot",
+      "model": "claude-sonnet-5",
+      "timeoutMs": 900000
+    }
   },
   {
-    "id": "angular-lib-agent",
-    "name": "Angular Library Generator Agent",
-    "description": "Genera la libreria Angular NgModule completa da HTML sorgente: componenti, NgRx store, Material 19, pl-dynamicform, dialog con overlay, fidelit\u00e0 visiva al 100%. Dipende da html-scanner-agent (routing-map) e scss-extractor-agent (design tokens).",
-    "skills": ["angular-component-extractor"],
-    "tags": ["angular", "ngrx", "material", "pl-dynamicform", "lib-generation"],
+    "id": "lib-architect",
+    "name": "Angular Lib Architect Agent",
+    "description": "Scaffold NgModule + NgRx store completo per una feature. Usa angular-module + angular-ngrx.",
+    "skills": [
+      "angular-module",
+      "angular-ngrx"
+    ],
+    "tags": [
+      "angular",
+      "ngrx",
+      "architecture"
+    ],
+    "priority": 85,
+    "allowedPaths": [
+      "workspace/**",
+      "test-webapp/**"
+    ],
+    "forbiddenPaths": [
+      ".git/**",
+      "node_modules/**"
+    ],
+    "capabilities": [
+      "read-files",
+      "write-files"
+    ],
+    "provider": {
+      "type": "copilot",
+      "model": "claude-sonnet-5",
+      "timeoutMs": 1800000
+    }
+  },
+  {
+    "id": "lib-coder",
+    "name": "Angular Lib Coder Agent",
+    "description": "Genera componenti Angular, migra forms e SCSS. Usa angular-component + angular-forms + angular-scss. Skill assegnabili manualmente.",
+    "skills": [
+      "angular-component",
+      "angular-forms",
+      "angular-scss"
+    ],
+    "tags": [
+      "angular",
+      "components",
+      "forms",
+      "scss"
+    ],
     "priority": 80,
-    "allowedPaths": ["workspace/**", "projects/**", "test-webapp/**"],
-    "forbiddenPaths": [".git/**", "node_modules/**"],
-    "capabilities": ["read-files", "write-files"],
-    "provider": { "type": "copilot", "model": "claude-sonnet-5", "timeoutMs": 3600000 }
+    "allowedPaths": [
+      "workspace/**",
+      "test-webapp/**"
+    ],
+    "forbiddenPaths": [
+      ".git/**",
+      "node_modules/**"
+    ],
+    "capabilities": [
+      "read-files",
+      "write-files"
+    ],
+    "provider": {
+      "type": "copilot",
+      "model": "claude-sonnet-5",
+      "timeoutMs": 3600000
+    }
   },
   {
-    "id": "test-webapp-agent",
-    "name": "Test WebApp Shell Agent",
-    "description": "Crea e mantiene la shell Angular test-webapp con sidebar/topbar replicati 1:1 dal sorgente HTML, lazy-loading delle lib e integrazione del tema SCSS. Dipende da scss-extractor-agent.",
-    "skills": ["test-webapp-scaffolder"],
-    "tags": ["angular", "shell", "sidebar", "topbar", "test-webapp"],
+    "id": "build-fixer",
+    "name": "Build Fixer Agent",
+    "description": "Diagnostica e corregge errori ng build fino a build pulita. Usa angular-build-fix.",
+    "skills": [
+      "angular-build-fix"
+    ],
+    "tags": [
+      "build",
+      "typescript",
+      "angular"
+    ],
     "priority": 70,
-    "allowedPaths": ["test-webapp/**", "workspace/output/test-webapp/**"],
-    "forbiddenPaths": [".git/**", "node_modules/**"],
-    "capabilities": ["read-files", "write-files"],
-    "provider": { "type": "copilot", "model": "claude-sonnet-5", "timeoutMs": 1800000 }
+    "allowedPaths": [
+      "workspace/**",
+      "test-webapp/**"
+    ],
+    "forbiddenPaths": [
+      ".git/**"
+    ],
+    "capabilities": [
+      "read-files",
+      "write-files",
+      "run-commands"
+    ],
+    "provider": {
+      "type": "copilot",
+      "model": "claude-sonnet-5",
+      "timeoutMs": 1800000
+    }
   },
   {
-    "id": "app-integrator-agent",
-    "name": "App Integrator & Build Validator Agent",
-    "description": "Integra tutte le lib generate nella test-app (routing lazy-load, app.module, stili globali), esegue ng build e corregge automaticamente gli errori fino a compilazione pulita. Dipende da angular-lib-agent e test-webapp-agent.",
-    "skills": ["app-integrator", "build-validator"],
-    "tags": ["angular", "integration", "build", "validation", "fix"],
-    "priority": 60,
-    "allowedPaths": ["test-webapp/**", "workspace/**", "projects/**"],
-    "forbiddenPaths": [".git/**"],
-    "capabilities": ["read-files", "write-files", "run-commands"],
-    "provider": { "type": "copilot", "model": "claude-sonnet-5", "timeoutMs": 1800000 }
+    "id": "webapp-integrator",
+    "name": "WebApp Integrator Agent",
+    "description": "Integra lib generate in test-webapp/projects/, aggiorna angular.json, tsconfig, sidebar e routing. Usa lib-integrator.",
+    "skills": [
+      "lib-integrator"
+    ],
+    "tags": [
+      "integration",
+      "angular",
+      "routing"
+    ],
+    "priority": 65,
+    "allowedPaths": [
+      "workspace/**",
+      "test-webapp/**"
+    ],
+    "forbiddenPaths": [
+      ".git/**"
+    ],
+    "capabilities": [
+      "read-files",
+      "write-files"
+    ],
+    "provider": {
+      "type": "copilot",
+      "model": "claude-sonnet-5",
+      "timeoutMs": 1800000
+    }
+  },
+  {
+    "id": "qa-validator",
+    "name": "QA Visual Validator Agent",
+    "description": "Test visivo Playwright su 8 viewport, verifica overflow e fedeltà con il sorgente. Usa playwright-visual.",
+    "skills": [
+      "playwright-visual"
+    ],
+    "tags": [
+      "playwright",
+      "visual",
+      "responsive",
+      "qa"
+    ],
+    "priority": 55,
+    "allowedPaths": [
+      "workspace/**",
+      "test-webapp/**"
+    ],
+    "forbiddenPaths": [
+      ".git/**",
+      "node_modules/**"
+    ],
+    "capabilities": [
+      "read-files",
+      "write-files",
+      "run-commands"
+    ],
+    "provider": {
+      "type": "copilot",
+      "model": "claude-sonnet-5",
+      "timeoutMs": 1800000
+    }
   },
   {
     "id": "devops-agent",
     "name": "DevOps Work Items Agent",
-    "description": "Connessione a Azure DevOps per recuperare bug e task. Produce report strutturati e pu\u00f2 generare workflow task per ogni elemento trovato. Agente autonomo senza dipendenze.",
-    "skills": ["devops-work-items"],
-    "tags": ["devops", "azure", "work-items", "bug", "task"],
+    "description": "Connessione Azure DevOps per recuperare bug e task.",
+    "skills": [
+      "devops-work-items"
+    ],
+    "tags": [
+      "devops",
+      "azure",
+      "work-items"
+    ],
     "priority": 50,
-    "allowedPaths": ["workspace/**"],
-    "forbiddenPaths": [".git/**", "node_modules/**"],
-    "capabilities": ["read-files", "write-files"],
-    "provider": { "type": "copilot", "model": "claude-sonnet-5", "timeoutMs": 900000 }  },
+    "allowedPaths": [
+      "workspace/**"
+    ],
+    "forbiddenPaths": [
+      ".git/**",
+      "node_modules/**"
+    ],
+    "capabilities": [
+      "read-files",
+      "write-files"
+    ],
+    "provider": {
+      "type": "copilot",
+      "model": "claude-sonnet-5",
+      "timeoutMs": 900000
+    }
+  },
   {
-    "id": "responsive-agent",
-    "name": "Responsive Design Expert Agent",
-    "description": "Senior Responsive UI/UX Architect per librerie Angular. Analizza ogni componente (toolbar, form, tabelle, dialog, card, accordion) e sceglie la strategia responsive ottimale: flex-wrap, container query, grid auto-fit, scroll selettivo. Testa con Playwright su 13+ viewport (320px→1920px), rileva overflow/sovrapposizioni automaticamente e garantisce zero regressioni desktop. Dipende da angular-lib-agent (lib già generata).",
-    "skills": ["responsive"],
-    "tags": ["responsive", "css", "angular", "material", "flex", "grid", "playwright", "mobile"],
-    "priority": 55,
-    "allowedPaths": ["test-webapp/**", "projects/**", "workspace/**"],
-    "forbiddenPaths": [".git/**", "node_modules/**"],
-    "capabilities": ["read-files", "write-files"],
-    "provider": { "type": "copilot", "model": "claude-sonnet-5", "timeoutMs": 3600000 }  }
+    "id": "angular-lib-agent",
+    "name": "Angular Library Generator Agent",
+    "description": "Genera la libreria Angular NgModule completa da HTML sorgente (16 step atomici). Usa la skill completa angular-component-extractor.",
+    "skills": [
+      "angular-component-extractor"
+    ],
+    "tags": [
+      "angular",
+      "ngrx",
+      "material",
+      "lib-generation"
+    ],
+    "priority": 80,
+    "allowedPaths": [
+      "workspace/**",
+      "projects/**",
+      "test-webapp/**"
+    ],
+    "forbiddenPaths": [
+      ".git/**",
+      "node_modules/**"
+    ],
+    "capabilities": [
+      "read-files",
+      "write-files"
+    ],
+    "provider": {
+      "type": "copilot",
+      "model": "claude-sonnet-5",
+      "timeoutMs": 3600000
+    }
+  }
 ]

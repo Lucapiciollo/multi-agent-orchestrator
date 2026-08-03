@@ -268,7 +268,7 @@
 .tl-log-line.ll-task-started   .ll-ev { color: var(--c-primary); }
 .tl-log-line.ll-task-completed .ll-ev { color: #34d399; }
 .tl-log-line.ll-task-failed    .ll-ev { color: #f87171; }
-.tl-log-line.ll-execution-started   .ll-ev { color: #a78bfa; }
+.tl-log-line.ll-execution-started   .ll-ev { color: #F5C9B8; }
 .tl-log-line.ll-execution-completed .ll-ev { color: #34d399; }
 .tl-log-line.ll-execution-failed    .ll-ev { color: #f87171; }
 
@@ -331,7 +331,7 @@
   mat-icon { font-size: 15px; width: 15px; height: 15px; }
 }
 .pulse-dot {
-  width: 8px; height: 8px; border-radius: 50%; background: #818cf8;
+  width: 8px; height: 8px; border-radius: 50%; background: #f2844a;
   animation: pulse 1.4s ease-in-out infinite;
 }
 @keyframes pulse { 0%,100%{ opacity:1; transform:scale(1); } 50%{ opacity:.5; transform:scale(.7); } }
@@ -449,10 +449,10 @@
   font-family: inherit;
 }
 .tl-log-line.ll-task-output { opacity: .9; }
-.tl-log-line.ll-task-started    .ll-ev { color: #818cf8; }
+.tl-log-line.ll-task-started    .ll-ev { color: #f2844a; }
 .tl-log-line.ll-task-completed  .ll-ev { color: #4ade80; }
 .tl-log-line.ll-task-failed     .ll-ev { color: #f87171; }
-.tl-log-line.ll-execution-started    .ll-ev { color: #a78bfa; }
+.tl-log-line.ll-execution-started    .ll-ev { color: #F5C9B8; }
 .tl-log-line.ll-execution-completed  .ll-ev { color: #34d399; }
 .tl-log-line.ll-execution-failed     .ll-ev { color: #f87171; }
 

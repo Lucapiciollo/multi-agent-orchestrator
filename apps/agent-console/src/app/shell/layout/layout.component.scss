@@ -1,10 +1,11 @@
 .sidenav-container { height: 100vh; }
 .sidenav {
-  width: 220px; background: #ffffff !important;
-  --mat-sidenav-container-background-color: #ffffff;
-  --mat-sidenav-container-text-color: #1a1f36;
-  border-right: 1px solid var(--c-border);
-  box-shadow: 2px 0 8px rgba(50,50,93,.04);
+  width: 220px;
+  background: var(--sidebar-bg, #1a1a2e) !important;
+  --mat-sidenav-container-background-color: var(--sidebar-bg, #1a1a2e);
+  --mat-sidenav-container-text-color: rgba(255,255,255,.85);
+  border-right: none;
+  box-shadow: 2px 0 16px rgba(0,0,0,.18);
 }
 .main-content { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
 .content-area { flex: 1; overflow-y: auto; background: var(--c-bg, #f6f9fc); }

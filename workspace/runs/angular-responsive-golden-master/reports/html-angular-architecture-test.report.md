@@ -1,0 +1,29 @@
+# Workflow report: html-angular-architecture-test
+
+**Obiettivo:** HTML → Angular Section Architecture — 16 step atomici eseguibili singolarmente (taskId), allineati alle Phase 0-15 della skill html-angular-architect: discovery sorgente, analisi navigazione (Gate 1), scoperta flusso sezione, dialog/modali, JS, componenti, mapping Material, report architettura (Gate 2), generazione lib Angular completa (NgModule + NgRx + guard + routing + index.component), migrazione template/form/routing/SCSS, verifica comportamentale e visiva, report finale.
+**Esito:** SUCCESSO
+**Durata:** 184640 ms
+
+## Task
+
+### Phase 0 — Source discovery (nessuna modifica al sorgente)
+
+- ID: `step-00-source-discovery`
+- Agente: `angular-lib-agent`
+- Provider: `copilot` / Modello: `claude-sonnet-5`
+- Skill: angular-component-extractor
+- Stato: **completed**
+- Tentativi: 1
+- Riepilogo: Phase 0 (Source Discovery) completata per il run angular-responsive-golden-master. Verificato hash SHA-256 del sorgente HTML (invariato). Confermato che il file target del run è angular-responsive-golden-master.html (app ClientFlow), coerente con app-config.json/routing-map.json/sections-map.json. Inventariati: 1 blocco <style> (10 CSS custom properties, 4 media query responsive), 1 blocco <script> vanilla (toggle sidebar mobile, modal 'Nuovo cliente', submit form demo), nessun asset esterno (no CSS/JS/link/immagini/font/librerie esterne). Classificato come 'Dashboard shell single-page CRUD-style con dialog overlay'. Verificato workspace/output/scss/ (namespace globale, non del run): contiene solo main.scss (46.958 byte) con design tokens TimeVision (--primary:#EB5E2D) — non riusabile come integration contract per questo run poiché appartiene a un prototipo diverso (timevision-report-v128 1.html) con palette/struttura differenti da ClientFlow (--primary:#3b5ccc). Nessuna estrazione SCSS dedicata esiste sotto workspace/runs/angular-responsive-golden-master/output/scss/. Report rigenerato per riflettere lo stato reale del filesystem (una versione precedente citava file/report SCSS non più presenti).
+- Errori: Nessuno
+
+### Phase 1 — Menu/navigation analysis + Gate 1 output (elenco sezioni candidate)
+
+- ID: `step-01-navigation-analysis`
+- Agente: `angular-lib-agent`
+- Provider: `copilot` / Modello: `claude-sonnet-5`
+- Skill: angular-component-extractor
+- Stato: **completed**
+- Tentativi: 1
+- Riepilogo: Verificato l'output Gate 1 già presente in workspace/runs/angular-responsive-golden-master/output/angular/reports/gate1-menu-analysis.md: analisi completa della navigazione (sidebar nav a 5 voci, hamburger/overlay toggle sidebar mobile, trigger/chiusura modale 'Nuovo cliente'), 9 voci candidate numerate nel formato esatto [N] Label con source/target/type/selector/parent/submenu/icon/source file/meccanismo di navigazione/pagina correlata/selettore stato attivo/comportamento responsive, duplicati normalizzati (4 trigger di chiusura modale → 1 voce), ★ su 5 voci funzionalmente implementate vs 4 stub, elementi non-navigazione documentati e scartati (paginazione, filtri, azioni riga, submit form). Nessuna SELECTED SECTION dichiarata: lo step si ferma correttamente in attesa della scelta esplicita dell'utente prima della Phase 2. Contenuto già conforme a tutti i criteri di validazione, nessuna modifica necessaria.
+- Errori: Nessuno

@@ -1,9 +1,9 @@
 {
   "planId": "html-angular-architecture-test",
   "objective": "HTML → Angular Section Architecture — 16 step atomici eseguibili singolarmente (taskId), allineati alle Phase 0-15 della skill html-angular-architect: discovery sorgente, analisi navigazione (Gate 1), scoperta flusso sezione, dialog/modali, JS, componenti, mapping Material, report architettura (Gate 2), generazione lib Angular completa (NgModule + NgRx + guard + routing + index.component), migrazione template/form/routing/SCSS, verifica comportamentale e visiva, report finale.",
-  "startedAt": "2026-07-31T14:22:27.982Z",
-  "completedAt": "2026-07-31T14:25:57.871Z",
-  "durationMs": 209889,
+  "startedAt": "2026-08-03T09:59:25.018Z",
+  "completedAt": "2026-08-03T10:02:29.658Z",
+  "durationMs": 184640,
   "success": true,
   "tasks": [
     {
@@ -18,7 +18,7 @@
       "status": "completed",
       "attempts": 1,
       "errors": [],
-      "summary": "Phase 0 (source discovery) verificata per il run angular-responsive-golden-master. Il report richiesto esiste già in workspace/runs/angular-responsive-golden-master/output/angular/reports/source-discovery.md (10.133 byte) ed è stato validato: hash SHA-256 e dimensione di workspace/input/angular-responsive-golden-master.html (16.722 byte, 38C2229E...) e di workspace/input/timevision-report-v128 1.html (225.753 byte, D077A098...) combaciano esattamente con quanto riportato nel documento, confermando che il sorgente non è stato modificato. Il contenuto del report è completo e conforme: inventaria struttura HTML (1 <style>, 1 <script>, 0 CSS/JS/asset esterni, 4 media query responsive, 10 CSS custom properties, 1 modale/overlay, nessuna immagine/SVG/icon-font — icone Unicode inline), classifica il prototipo come 'Dashboard shell single-page con pattern CRUD-style e dialog overlay' (sidebar + topbar + tabella filtrabile/paginata + form 2 colonne + modale creazione cliente), e verifica correttamente l'assenza di un'estrazione SCSS dedicata a questo sorgente in workspace/runs/angular-responsive-golden-master/output/scss/ (l'estrazione legacy trovata in workspace/output/scss/ appartiene a un file HTML diverso, timevision-report-v128 1.html, ed è stata correttamente classificata come non riusabile per questo run). Nessuna scrittura è stata necessaria poiché il file esistente soddisfa già tutti i criteri di validazione; nessun file sorgente è stato toccato."
+      "summary": "Phase 0 (Source Discovery) completata per il run angular-responsive-golden-master. Verificato hash SHA-256 del sorgente HTML (invariato). Confermato che il file target del run è angular-responsive-golden-master.html (app ClientFlow), coerente con app-config.json/routing-map.json/sections-map.json. Inventariati: 1 blocco <style> (10 CSS custom properties, 4 media query responsive), 1 blocco <script> vanilla (toggle sidebar mobile, modal 'Nuovo cliente', submit form demo), nessun asset esterno (no CSS/JS/link/immagini/font/librerie esterne). Classificato come 'Dashboard shell single-page CRUD-style con dialog overlay'. Verificato workspace/output/scss/ (namespace globale, non del run): contiene solo main.scss (46.958 byte) con design tokens TimeVision (--primary:#EB5E2D) — non riusabile come integration contract per questo run poiché appartiene a un prototipo diverso (timevision-report-v128 1.html) con palette/struttura differenti da ClientFlow (--primary:#3b5ccc). Nessuna estrazione SCSS dedicata esiste sotto workspace/runs/angular-responsive-golden-master/output/scss/. Report rigenerato per riflettere lo stato reale del filesystem (una versione precedente citava file/report SCSS non più presenti)."
     },
     {
       "id": "step-01-navigation-analysis",
@@ -32,7 +32,7 @@
       "status": "completed",
       "attempts": 1,
       "errors": [],
-      "summary": "Verificato l'output Gate 1 richiesto: workspace/runs/angular-responsive-golden-master/output/angular/reports/gate1-menu-analysis.md esiste già ed è pienamente conforme ai criteri della Phase 1. Contiene elenco numerato [N] Label (9 voci: [1] Dashboard, [2] Clienti, [3] Contratti, [4] Report, [5] Impostazioni, [6] Hamburger menu, [7] Overlay chiusura sidebar, [8] Trigger modale 'Nuovo cliente', [9] Chiusura modale), con dettagli source/target/type/parent/submenu/icon/meccanismo di navigazione/pagina correlata/selettore stato attivo/comportamento responsive per ciascuna voce, ★ sulle 5 sezioni funzionalmente implementate, duplicati (4 trigger di chiusura modale) normalizzati in un'unica voce, e sezione finale che esplicitamente NON dichiara alcuna SELECTED SECTION, rimandando la scelta all'utente. Non ho apportato modifiche al file poiché già corretto e completo, per evitare regressioni. Ho notato la presenza di un file 'selected-section.md' nella stessa cartella (fuori dal mio scope di output autorizzato per questo step) che riporta una selezione utente 'Dashboard' per uso nelle fasi successive: non l'ho toccato."
+      "summary": "Verificato l'output Gate 1 già presente in workspace/runs/angular-responsive-golden-master/output/angular/reports/gate1-menu-analysis.md: analisi completa della navigazione (sidebar nav a 5 voci, hamburger/overlay toggle sidebar mobile, trigger/chiusura modale 'Nuovo cliente'), 9 voci candidate numerate nel formato esatto [N] Label con source/target/type/selector/parent/submenu/icon/source file/meccanismo di navigazione/pagina correlata/selettore stato attivo/comportamento responsive, duplicati normalizzati (4 trigger di chiusura modale → 1 voce), ★ su 5 voci funzionalmente implementate vs 4 stub, elementi non-navigazione documentati e scartati (paginazione, filtri, azioni riga, submit form). Nessuna SELECTED SECTION dichiarata: lo step si ferma correttamente in attesa della scelta esplicita dell'utente prima della Phase 2. Contenuto già conforme a tutti i criteri di validazione, nessuna modifica necessaria."
     }
   ]
 }

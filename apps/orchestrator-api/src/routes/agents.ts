@@ -1,6 +1,7 @@
 import { Router } from "express";
 import path from "node:path";
-import { readdir } from "node:fs/promises";
+import { readdir, readFile, writeFile, mkdir } from "node:fs/promises";
+import { existsSync } from "node:fs";
 import { readJson } from "../utils.js";
 import { ROOT_DIR } from "../config.js";
 
@@ -53,7 +54,7 @@ agentsRouter.get("/", async (_req, res) => {
       id: a.id,
       name: a.name,
       description: a.description,
-      skills: a.skills ?? [],
+      skills: skillOverrides.get(a.id) ?? a.skills ?? [],
       tags: a.tags ?? [],
       capabilities: a.capabilities ?? [],
       allowedPaths: a.allowedPaths ?? [],
@@ -66,6 +67,64 @@ agentsRouter.get("/", async (_req, res) => {
   } catch (err) {
     res.status(500).json({ error: "InternalError", message: String(err), statusCode: 500 });
   }
+});
+
+// ── In-memory skill overrides con persistenza su disco ───────────────────
+const OVERRIDES_PATH = path.join(ROOT_DIR, "workspace", "logs", "skill-overrides.json");
+const skillOverrides = new Map<string, string[]>();
+
+// Carica overrides da disco all'avvio
+(async () => {
+  try {
+    if (existsSync(OVERRIDES_PATH)) {
+      const raw = await readFile(OVERRIDES_PATH, "utf8");
+      const saved: Record<string, string[]> = JSON.parse(raw);
+      for (const [agentId, skills] of Object.entries(saved)) {
+        skillOverrides.set(agentId, skills);
+      }
+      console.log(`[skill-overrides] Loaded ${skillOverrides.size} overrides from disk`);
+    }
+  } catch { /* first run */ }
+})();
+
+async function persistOverrides() {
+  try {
+    await mkdir(path.dirname(OVERRIDES_PATH), { recursive: true });
+    const obj: Record<string, string[]> = {};
+    for (const [k, v] of skillOverrides) obj[k] = v;
+    await writeFile(OVERRIDES_PATH, JSON.stringify(obj, null, 2), "utf8");
+  } catch { /* non-critical */ }
+}
+
+agentsRouter.get("/:id/skills", async (req, res) => {
+  const agentId = req.params["id"] ?? "";
+  try {
+    const agents = await readJson<RawAgent[]>("agents/registry.json");
+    const agent = agents.find(a => a.id === agentId);
+    if (!agent) { res.status(404).json({ error: "NotFound", message: "Agent not found", statusCode: 404 }); return; }
+    const allSkills = await readJson<{ id: string; name: string; description: string }[]>("skills/registry.json");
+    const activeSkills = skillOverrides.get(agentId) ?? agent.skills ?? [];
+    res.json({
+      data: allSkills.map(s => ({ ...s, active: activeSkills.includes(s.id) })),
+      activeSkills
+    });
+  } catch (err) { res.status(500).json({ error: "InternalError", message: String(err), statusCode: 500 }); }
+});
+
+agentsRouter.patch("/:id/skills", async (req, res) => {
+  const agentId = req.params["id"] ?? "";
+  const { skills } = req.body as { skills: string[] };
+  if (!Array.isArray(skills)) { res.status(400).json({ error: "BadRequest", message: "skills deve essere un array", statusCode: 400 }); return; }
+  skillOverrides.set(agentId, skills);
+  await persistOverrides();
+  res.json({ data: { agentId, skills, overridden: true, persisted: true } });
+});
+
+agentsRouter.delete("/:id/skills/override", async (req, res) => {
+  const agentId = req.params["id"] ?? "";
+  skillOverrides.delete(agentId);
+  await persistOverrides();
+  res.json({ data: { agentId, reset: true } });
 });
 
 agentsRouter.get("/:id", async (req, res) => {

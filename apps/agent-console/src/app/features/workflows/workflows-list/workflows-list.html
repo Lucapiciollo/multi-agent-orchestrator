@@ -80,42 +80,59 @@
     <div class="input-files-list" *ngIf="inputFiles.length">
       <div *ngFor="let f of inputFiles" class="input-file-row">
         <mat-icon class="file-icon">description</mat-icon>
-        <span class="file-name" [matTooltip]="'workspace/input/' + f.name">{{f.name}}</span>
-        <span class="file-size">{{formatSize(f.size)}}</span>
+        <div class="file-info">
+          <span class="file-name" [matTooltip]="'workspace/input/' + f.name">{{f.name}}</span>
+          <span class="file-size">{{formatSize(f.size)}}</span>
+        </div>
 
-        <!-- Scelta del workflow per QUESTO file, prima di premere Esegui -->
-        <mat-form-field appearance="outline" class="file-workflow-select" subscriptSizing="dynamic"
-                         (click)="$event.stopPropagation()">
-          <mat-select [(ngModel)]="fileWorkflowSelection[f.name]"
-                      [matTooltip]="detectRule(f) ? 'Automatico rileva: ' + detectRule(f)!.label : 'Nessun rilevamento automatico per questo file'">
-            <mat-option value="">
-              Automatico{{ detectRule(f) ? ' (' + detectRule(f)!.label + ')' : '' }}
-            </mat-option>
-            <mat-option *ngFor="let w of items" [value]="w.id">{{w.id}}</mat-option>
-          </mat-select>
-        </mat-form-field>
+        <!-- Azioni: sempre visibili, nessun combo -->
+        <div class="file-actions">
+          <span class="action-label">Cosa vuoi fare?</span>
+          <button class="action-btn action-css"
+                  [class.selected]="fileWorkflowSelection[f.name] === 'html-angular-architecture-test'"
+                  [disabled]="fileRunning[f.name]"
+                  (click)="quickRun(f, 'html-angular-architecture-test')"
+                  matTooltip="Analisi HTML + generazione libreria Angular completa (16 step)">
+            <mat-icon>auto_awesome</mat-icon>
+            <span>Genera lib</span>
+          </button>
+          <button class="action-btn action-integrate"
+                  [class.selected]="fileWorkflowSelection[f.name] === 'integrate-lib-to-webapp'"
+                  [disabled]="fileRunning[f.name]"
+                  (click)="quickRun(f, 'integrate-lib-to-webapp')"
+                  matTooltip="Copia la lib generata in test-webapp e aggiorna angular.json">
+            <mat-icon>integration_instructions</mat-icon>
+            <span>Integra</span>
+          </button>
 
-        <button class="file-run-btn"
-                [disabled]="fileRunning[f.name] || !canRunFile(f)"
-                (click)="runInputFile(f)"
-                [matTooltip]="canRunFile(f) ? 'Avvia: ' + resolvedWorkflowId(f) : 'Nessun workflow disponibile per questo file'">
-          <mat-spinner *ngIf="fileRunning[f.name]" [diameter]="12" style="display:inline-block"></mat-spinner>
-          <mat-icon *ngIf="!fileRunning[f.name]">play_arrow</mat-icon>
-          <span>Esegui</span>
-        </button>
+          <!-- Spinner durante esecuzione -->
+          <div class="file-running" *ngIf="fileRunning[f.name]">
+            <mat-spinner [diameter]="16"></mat-spinner>
+            <span>Avvio...</span>
+          </div>
+        </div>
 
-        <button class="del-btn" (click)="deleteInputFile(f.name)" matTooltip="Rimuovi">
+        <button class="del-btn" (click)="deleteInputFile(f.name)" matTooltip="Rimuovi file">
           <mat-icon>delete_outline</mat-icon>
         </button>
       </div>
     </div>
     <div class="input-empty" *ngIf="!inputFiles.length && !uploading">
-      Nessun file — carica CSS, HTML o SCSS da analizzare
+      Nessun file — trascina qui un file HTML o clicca <strong>Carica file</strong>
     </div>
   </div>
 
-  <!-- ── Configurazione esecuzione ─────────────────────────────────── -->
-  <div class="run-config-panel">
+  <!-- ── Configurazione esecuzione (collassabile) ───────────────────── -->
+  <details class="run-config-panel">
+    <summary class="run-config-summary">
+      <mat-icon>tune</mat-icon>
+      <span>Configurazione esecuzione</span>
+      <span class="provider-status-dot"
+            [class.ok]="isProviderHealthy(selectedProvider)"
+            [matTooltip]="selectedProvider + ': ' + (isProviderHealthy(selectedProvider) ? 'healthy' : 'down')">
+      </span>
+      <span class="run-config-summary-info">{{selectedProvider}} · {{runMode}}</span>
+    </summary>
     <!-- Provider -->
     <div class="run-config-row">
       <span class="run-config-label"><mat-icon>dns</mat-icon> Provider</span>
@@ -127,25 +144,15 @@
           <mat-icon>storage</mat-icon> Ollama
         </mat-button-toggle>
       </mat-button-toggle-group>
-      <span class="provider-status-dot"
-            [class.ok]="isProviderHealthy(selectedProvider)"
-            [matTooltip]="selectedProvider + ': ' + (isProviderHealthy(selectedProvider) ? 'healthy' : 'down')">
-      </span>
     </div>
 
     <!-- Modalità -->
     <div class="run-config-row">
       <span class="run-config-label"><mat-icon>tune</mat-icon> Modalità</span>
       <mat-button-toggle-group [(ngModel)]="runMode" class="config-toggle">
-        <mat-button-toggle value="single" matTooltip="Avvia una singola esecuzione">
-          <mat-icon>play_arrow</mat-icon> Singolo
-        </mat-button-toggle>
-        <mat-button-toggle value="parallel" matTooltip="Avvia N esecuzioni in parallelo">
-          <mat-icon>call_split</mat-icon> Parallelo
-        </mat-button-toggle>
-        <mat-button-toggle value="sequential" matTooltip="Avvia N esecuzioni in sequenza — attende la fine di ciascuna">
-          <mat-icon>format_list_numbered</mat-icon> Sequenziale
-        </mat-button-toggle>
+        <mat-button-toggle value="single"><mat-icon>play_arrow</mat-icon> Singolo</mat-button-toggle>
+        <mat-button-toggle value="parallel"><mat-icon>call_split</mat-icon> Parallelo</mat-button-toggle>
+        <mat-button-toggle value="sequential"><mat-icon>format_list_numbered</mat-icon> Sequenziale</mat-button-toggle>
       </mat-button-toggle-group>
     </div>
 
@@ -169,12 +176,12 @@
         Ogni run parte automaticamente al completamento del precedente
       </span>
     </div>
-  </div>
+  </details>
 
   <div *ngIf="loading" class="dv-loading"><mat-spinner [diameter]="20"></mat-spinner> Caricamento...</div>
   <div *ngIf="error" class="dv-error">{{error}}</div>
 
-  <table class="dv-table" *ngIf="!loading && !error && items.length > 0">
+  <table class="dv-table wf-table" *ngIf="!loading && !error && items.length > 0">
     <thead>
       <tr>
         <th style="width:28px;"></th>

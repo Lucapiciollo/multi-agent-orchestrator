@@ -1,6 +1,6 @@
 
 @use '@angular/material' as mat;
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 
 /* ─── Layout utility ──────────────────────────────────────────────────────── */
 html, body, app-root { height: 100%; display: block; }
@@ -12,7 +12,7 @@ html, body, app-root { height: 100%; display: block; }
 .p-0           { padding: 0 !important; }
 .mat-drawer-container, .mat-sidenav-container { width: 100%; height: 100%; }
 
-/* ─── Modern Indigo Design System ────────────────────────────────────────── */
+/* ─── TimeVision Design System ──────────────────────────────────────────── */
 :root {
   --sidebar-w: 228px;
   --header-h:  52px;
@@ -28,54 +28,60 @@ html, body, app-root { height: 100%; display: block; }
   --c-border-lt: rgba(0,0,0,.04);
 
   /* Text */
-  --c-text:       #111118;
+  --c-text:       #1a1a1a;
   --c-text-2:     #5c5c6b;
   --c-text-muted: #a0a0b4;
-  --c-text-mono:  #4f46e5;
+  --c-text-mono:  #EB5E2D;
 
-  /* Indigo primary */
-  --c-primary:      #6366f1;
-  --c-primary-dark: #4f46e5;
-  --c-primary-soft: #f0f0ff;
-  --c-primary-bd:   #c7d2fe;
+  /* TimVision Orange primary */
+  --c-primary:      #EB5E2D;
+  --c-primary-dark: #BA3D12;
+  --c-primary-soft: #FFF3EE;
+  --c-primary-bd:   #F5C9B8;
 
-  /* Status — vivid & modern */
+  /* Status */
   --c-green:  #059669; --c-green-bg:  #ecfdf5; --c-green-bd:  #a7f3d0;
   --c-red:    #dc2626; --c-red-bg:    #fef2f2; --c-red-bd:    #fecaca;
   --c-amber:  #d97706; --c-amber-bg:  #fffbeb; --c-amber-bd:  #fde68a;
   --c-blue:   #2563eb; --c-blue-bg:   #eff6ff; --c-blue-bd:   #bfdbfe;
 
   /* Gradients */
-  --grad-primary: linear-gradient(135deg, #6366f1 0%, #818cf8 100%);
-  --grad-dark:    linear-gradient(135deg, #111118 0%, #1e1e2e 100%);
-  --grad-card:    linear-gradient(160deg, rgba(99,102,241,.04) 0%, transparent 60%);
+  --grad-primary: linear-gradient(135deg, #EB5E2D 0%, #f2844a 100%);
+  --grad-dark:    linear-gradient(160deg, #1a1a2e 0%, #2d1a0e 100%);
+  --grad-card:    linear-gradient(160deg, rgba(235,94,45,.04) 0%, transparent 60%);
+  --grad-sidebar: linear-gradient(180deg, #1a1a2e 0%, #2a1a0e 100%);
 
-  /* Shadows — very fine */
+  /* Shadows */
   --shadow-xs: 0 1px 2px rgba(0,0,0,.04);
   --shadow-sm: 0 1px 3px rgba(0,0,0,.06), 0 0 0 1px rgba(0,0,0,.04);
   --shadow-md: 0 4px 12px rgba(0,0,0,.08), 0 0 0 1px rgba(0,0,0,.04);
   --shadow-lg: 0 12px 32px rgba(0,0,0,.1), 0 0 0 1px rgba(0,0,0,.05);
-  --shadow-focus: 0 0 0 3px rgba(99,102,241,.2);
+  --shadow-focus: 0 0 0 3px rgba(235,94,45,.25);
 
-  /* Shell */
-  --sidebar-bg: #ffffff;
-  --content-bg: #f5f5f7;
+  /* Shell — sidebar scura TimVision */
+  --sidebar-bg:   #1a1a2e;
+  --sidebar-text: rgba(255,255,255,.85);
+  --sidebar-text-muted: rgba(255,255,255,.45);
+  --sidebar-hover: rgba(255,255,255,.08);
+  --sidebar-active-bg: rgba(235,94,45,.18);
+  --sidebar-active-text: #f2844a;
+  --content-bg:   #f5f5f7;
 
   /* mat-sidenav */
-  --mat-sidenav-container-background-color: #ffffff;
-  --mat-sidenav-container-text-color: #111118;
+  --mat-sidenav-container-background-color: #1a1a2e;
+  --mat-sidenav-container-text-color: rgba(255,255,255,.85);
 }
 
 /* ─── Reset + base ────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
 html, body {
   height: 100%; margin: 0; padding: 0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 14px; line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   color: var(--c-text);
 }
-.mat-drawer { background-color: #ffffff !important; color: var(--c-text) !important; }
+.mat-drawer { background-color: var(--sidebar-bg) !important; color: var(--sidebar-text) !important; }
 
 /* ─── Page layout ─────────────────────────────────────────────────────────── */
 .dv-page { padding: 32px 36px; max-width: 1280px; }
@@ -101,27 +107,28 @@ html, body {
 
   th {
     background: var(--c-surface-2);
-    font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+    font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
     color: var(--c-text-muted); padding: 11px 18px; text-align: left;
     border-bottom: 1px solid var(--c-border);
   }
   td {
-    padding: 14px 18px; border-bottom: 1px solid var(--c-border);
-    font-size: 13.5px; color: var(--c-text-2); vertical-align: middle;
+    padding: 13px 18px; border-bottom: 1px solid var(--c-border);
+    font-size: 13px; color: var(--c-text-2); vertical-align: middle;
   }
   tr:last-child td { border-bottom: none; }
-  tr:hover td { background: var(--c-primary-soft); }
+  tr:hover td { background: #FFF3EE; }   /* TimVision primary-soft */
 }
 
 /* ─── Badge ───────────────────────────────────────────────────────────────── */
 .dv-badge {
   display: inline-flex; align-items: center; gap: 5px;
-  font-size: 11.5px; font-weight: 500; padding: 3px 10px; border-radius: 20px;
+  font-size: 11.5px; font-weight: 600; padding: 3px 10px; border-radius: 20px;
   &.ok      { background: var(--c-green-bg); color: var(--c-green); border: 1px solid var(--c-green-bd); }
   &.warn    { background: var(--c-amber-bg); color: var(--c-amber); border: 1px solid var(--c-amber-bd); }
   &.err     { background: var(--c-red-bg);   color: var(--c-red);   border: 1px solid var(--c-red-bd);   }
   &.neutral { background: var(--c-surface-2); color: var(--c-text-muted); border: 1px solid var(--c-border); }
-  &.blue    { background: var(--c-blue-bg);  color: var(--c-blue);  border: 1px solid var(--c-blue-bd);  }
+  /* "blue" → TimVision arancione */
+  &.blue    { background: #FFF3EE; color: #EB5E2D; border: 1px solid #F5C9B8; }
   &::before { content:''; width:5px; height:5px; border-radius:50%; background:currentColor; display:inline-block; }
 }
 
@@ -403,10 +410,10 @@ html, body, app-root { height: 100%; display: block; }
   --c-text-mono:  #3b3730;
 
   /* accent — soft indigo */
-  --c-accent:     #6366f1;
-  --c-accent-dk:  #4f46e5;
-  --c-accent-soft:#eef2ff;
-  --c-accent-bd:  #c7d2fe;
+  --c-accent:     #EB5E2D;
+  --c-accent-dk:  #BA3D12;
+  --c-accent-soft:#FFF3EE;
+  --c-accent-bd:  #F5C9B8;
 
   /* status */
   --c-green:      #059669; --c-green-bg:  #ecfdf5; --c-green-bd:  #a7f3d0;
@@ -516,7 +523,7 @@ html, body {
 .skill-chip { display: inline-block; background: var(--c-surface-2); color: var(--c-text-2); font-size: 11px; padding: 2px 9px; border-radius: 6px; margin: 2px; border: 1px solid var(--c-border); }
 
 /* ─── Stat card colors ───────────────────────────────────────────────────── */
-.stat-agents     { --stat-color: #6366f1; --stat-bg: #eef2ff; }
+.stat-agents     { --stat-color: #EB5E2D; --stat-bg: #FFF3EE; }
 .stat-skills     { --stat-color: #d97706; --stat-bg: #fffbeb; }
 .stat-workflows  { --stat-color: #059669; --stat-bg: #ecfdf5; }
 .stat-executions { --stat-color: #dc2626; --stat-bg: #fff1f2; }

@@ -234,8 +234,13 @@ export class WorkflowsList implements OnInit, OnDestroy {
     return !!this.resolvedWorkflowId(file);
   }
 
-  // Esegue il workflow SOLO quando l'utente preme "Esegui" sul file già caricato.
-  // Il caricamento del file (drop/selezione) non avvia mai un run automaticamente.
+  // Avvio rapido: imposta il workflow e avvia subito
+  quickRun(file: InputFile, workflowId: string) {
+    this.fileWorkflowSelection[file.name] = workflowId;
+    this.cdr.detectChanges();
+    this.runInputFile(file);
+  }
+
   runInputFile(file: InputFile) {
     const workflowId = this.resolvedWorkflowId(file);
     if (!workflowId) return;

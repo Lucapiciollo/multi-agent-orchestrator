@@ -1,18 +1,71 @@
-.td-desc      { color: var(--c-text-2); max-width: 320px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.td-skills    { display: flex; flex-wrap: wrap; gap: 3px; align-items: center; max-width: 280px; }
-.td-tags      { display: flex; flex-wrap: wrap; gap: 3px; align-items: center; max-width: 180px; }
-.td-workflows { display: flex; flex-wrap: wrap; gap: 3px; align-items: center; max-width: 220px; }
+.td-desc      { color: var(--c-text-2); max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.td-skills    { display: flex; flex-wrap: wrap; gap: 3px; align-items: center; max-width: 240px; }
+.td-tags      { display: flex; flex-wrap: wrap; gap: 3px; align-items: center; max-width: 160px; }
+.td-workflows { display: flex; flex-wrap: wrap; gap: 3px; align-items: center; max-width: 200px; }
 .td-priority  { text-align: center; }
 .td-none      { color: #9ca3af; }
+
+/* skill-tag più compatto per non spezzarsi */
+.skill-tag {
+  display: inline-block; font-size: 10px; padding: 1px 6px; border-radius: 4px;
+  background: #FFF3EE; color: #EB5E2D; font-family: 'SFMono-Regular', Consolas, Menlo, monospace;
+  white-space: nowrap; max-width: 120px; overflow: hidden; text-overflow: ellipsis;
+}
+
+.skill-edit-btn {
+  background: none; border: none; cursor: pointer; padding: 2px; margin-left: 2px;
+  flex-shrink: 0; opacity: 0.45; line-height: 1;
+  mat-icon { font-size: 13px !important; width: 13px !important; height: 13px !important; color: #EB5E2D; }
+  &:hover { opacity: 1; }
+}
 
 .workflow-tag {
   display: inline-block; font-size: 11px; padding: 2px 7px; border-radius: 4px;
   background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0;
 }
 
+/* ── Skill toggle panel ──────────────────────────────────────────────────── */
+.skill-panel-row td { padding: 0 !important; }
+.skill-panel-cell { padding: 0 !important; border-bottom: 2px solid #EB5E2D !important; }
+.skill-panel {
+  background: #faf5ff; border-top: 1px solid #e9d5ff; padding: 16px 20px;
+}
+.skill-panel-header {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap;
+  mat-icon { font-size: 18px; width: 18px; height: 18px; color: #EB5E2D; }
+  > span { font-size: 13px; font-weight: 600; color: #4c1d95; }
+}
+.skill-panel-note { font-size: 11px; font-weight: 400; color: #9ca3af; margin-left: 4px; }
+.skill-panel-actions { margin-left: auto; display: flex; gap: 8px; }
+.btn-save {
+  display: inline-flex; align-items: center; gap: 5px; background: #EB5E2D; color: #fff;
+  border: none; border-radius: 6px; padding: 5px 12px; font-size: 12px; cursor: pointer;
+  mat-icon { font-size: 14px !important; width: 14px !important; height: 14px !important; }
+  &:disabled { opacity: .5; cursor: default; }
+}
+.btn-reset {
+  display: inline-flex; align-items: center; gap: 5px; background: none; color: #6b7280;
+  border: 1px solid #d1d5db; border-radius: 6px; padding: 5px 10px; font-size: 12px; cursor: pointer;
+  mat-icon { font-size: 14px !important; width: 14px !important; height: 14px !important; }
+  &:hover { background: #f3f4f6; }
+}
+.skill-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 6px;
+}
+.skill-toggle {
+  display: flex; align-items: flex-start; gap: 8px; padding: 8px 10px;
+  border: 1px solid #e9d5ff; border-radius: 8px; background: #fff; cursor: pointer;
+  transition: border-color 120ms, background 120ms;
+  &.active { border-color: #EB5E2D; background: #FFF3EE; }
+  &:hover { border-color: #F5C9B8; }
+}
+.skill-toggle-check { flex-shrink: 0; mat-icon { font-size: 18px !important; width: 18px !important; height: 18px !important; color: #EB5E2D; } }
+.skill-toggle-name { font-size: 12px; font-weight: 600; color: #1e1b4b; font-family: monospace; }
+.skill-toggle-desc { font-size: 11px; color: #6b7280; margin-top: 2px; line-height: 1.3; }
+
 .skill-tag {
   display: inline-block; font-size: 11px; padding: 2px 7px; border-radius: 4px;
-  background: #ede9fe; color: #6d28d9; font-family: 'SFMono-Regular', Consolas, Menlo, monospace;
+  background: #FFF3EE; color: #EB5E2D; font-family: 'SFMono-Regular', Consolas, Menlo, monospace;
 }
 .tag-chip {
   display: inline-block; font-size: 11px; padding: 2px 7px; border-radius: 4px;

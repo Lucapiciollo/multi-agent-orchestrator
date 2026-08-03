@@ -3,18 +3,24 @@
   border-bottom: 1px solid var(--c-border);
   display: flex; align-items: center; padding: 0 24px; gap: 16px;
   flex-shrink: 0; position: relative;
+  // Sottile accent line TimVision in cima
+  &::after {
+    content: ''; position: absolute; top: 0; left: 0; right: 0;
+    height: 2px; background: linear-gradient(90deg, #EB5E2D, #f2844a, transparent);
+    pointer-events: none;
+  }
 }
 .dv-header-left { flex: 1; }
 .dv-header-title {
-  font-size: 14px; font-weight: 600; color: var(--c-text);
+  font-size: 15px; font-weight: 700; color: var(--c-text);
   letter-spacing: -.02em;
 }
 .dv-header-right { display: flex; align-items: center; gap: 6px; }
 
 .dv-pchip {
   display: inline-flex; align-items: center; gap: 5px;
-  font-size: 11.5px; font-weight: 500;
-  padding: 3px 10px; border-radius: 20px;
+  font-size: 11.5px; font-weight: 600;
+  padding: 4px 11px; border-radius: 20px;
   border: 1px solid var(--c-border); background: var(--c-surface-2); color: var(--c-text-muted);
   letter-spacing: -.01em;
 
@@ -24,8 +30,8 @@
   }
 
   &.ok {
-    background: var(--c-green-bg); color: var(--c-green); border-color: var(--c-green-bd);
-    .dv-pchip-dot { background: var(--c-green); box-shadow: 0 0 5px var(--c-green); }
+    background: #FFF3EE; color: #EB5E2D; border-color: #F5C9B8;
+    .dv-pchip-dot { background: #EB5E2D; box-shadow: 0 0 5px rgba(235,94,45,.4); }
   }
   &.ko {
     background: var(--c-red-bg); color: var(--c-red); border-color: var(--c-red-bd);
