@@ -13,8 +13,10 @@
       "id": "discover-generated-lib",
       "title": "Scopre la lib generata nel workspace",
       "description": "Scansiona workspace/output/test-app/src/libs/ e individua la cartella della libreria generata (unica sottocartella presente). Leggi index.module.ts per ricavare il nome del NgModule e il selector prefix. Produci workspace/output/angular/reports/lib-integration-plan.md con: nome lib, percorso sorgente, percorso destinazione (test-webapp/projects/{lib-name}/), il nome del package (@app/{lib-name}) e l'elenco dei file da copiare.",
-      "agentId": "app-integrator-agent",
-      "skillIds": ["app-integrator"],
+      "agentId": "lib-packager-agent",
+      "skillIds": [
+        "angular-lib-packager"
+      ],
       "dependencies": [],
       "inputPaths": [
         "workspace/output/test-app/src/libs/**",
@@ -35,9 +37,13 @@
       "id": "copy-lib-to-projects",
       "title": "Copia la lib in test-webapp/projects/",
       "description": "Leggi workspace/output/angular/reports/lib-integration-plan.md per conoscere il percorso sorgente e destinazione. Copia TUTTI i file da workspace/output/test-app/src/libs/{lib-name}/ a test-webapp/projects/{lib-name}/src/lib/ mantenendo la struttura delle sottocartelle (components/, dialogs/, redux/, mock-data/, ecc.). Crea anche test-webapp/projects/{lib-name}/src/index.ts che esporta il modulo principale. Crea test-webapp/projects/{lib-name}/package.json con name='{lib-name}', version='0.0.1'. NON modificare angular.json o tsconfig.json in questo step.",
-      "agentId": "app-integrator-agent",
-      "skillIds": ["app-integrator"],
-      "dependencies": ["discover-generated-lib"],
+      "agentId": "lib-packager-agent",
+      "skillIds": [
+        "angular-lib-packager"
+      ],
+      "dependencies": [
+        "discover-generated-lib"
+      ],
       "inputPaths": [
         "workspace/output/test-app/src/libs/**",
         "workspace/output/angular/reports/lib-integration-plan.md"
@@ -59,9 +65,13 @@
       "id": "register-in-angular-json",
       "title": "Registra la lib in angular.json e tsconfig",
       "description": "Leggi workspace/output/angular/reports/lib-integration-plan.md per il nome della lib. Aggiorna test-webapp/angular.json aggiungendo un blocco 'projects.{lib-name}' di tipo 'library' con: root=projects/{lib-name}, sourceRoot=projects/{lib-name}/src, prefix ricavato da index.module.ts. Aggiorna test-webapp/tsconfig.json aggiungendo l'alias '{lib-name}': ['dist/{lib-name}'] nel blocco compilerOptions.paths. Aggiorna test-webapp/tsconfig.app.json se presente.",
-      "agentId": "app-integrator-agent",
-      "skillIds": ["app-integrator"],
-      "dependencies": ["copy-lib-to-projects"],
+      "agentId": "lib-packager-agent",
+      "skillIds": [
+        "angular-lib-packager"
+      ],
+      "dependencies": [
+        "copy-lib-to-projects"
+      ],
       "inputPaths": [
         "workspace/output/angular/reports/lib-integration-plan.md",
         "test-webapp/angular.json",
@@ -83,9 +93,13 @@
       "id": "build-and-validate",
       "title": "Build della lib e verifica",
       "description": "Esegui 'npx ng build {lib-name} --configuration=development' nella cartella test-webapp/. Se la build fallisce, analizza ogni errore TypeScript e correggilo (import mancanti, moduli non registrati, tipi errati). Continua a fixare e rebuilddare fino a build pulita. Produci workspace/output/angular/reports/lib-build-report.md con: stato build, lista errori corretti, lista file modificati.",
-      "agentId": "app-integrator-agent",
-      "skillIds": ["build-validator"],
-      "dependencies": ["register-in-angular-json"],
+      "agentId": "lib-packager-agent",
+      "skillIds": [
+        "angular-lib-packager"
+      ],
+      "dependencies": [
+        "register-in-angular-json"
+      ],
       "inputPaths": [
         "test-webapp/projects/**",
         "test-webapp/angular.json",

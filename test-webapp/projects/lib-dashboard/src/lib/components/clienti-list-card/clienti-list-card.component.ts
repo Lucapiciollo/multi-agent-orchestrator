@@ -6,7 +6,6 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 import { Cliente, ClientiFilters } from '../../index.models';
 
 @Component({
-  standalone: false,
   selector: 'lib-dashboard-clienti-list-card',
   templateUrl: './clienti-list-card.component.html',
   styleUrls: ['./clienti-list-card.component.scss'],

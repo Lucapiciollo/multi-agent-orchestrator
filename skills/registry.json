@@ -82,5 +82,11 @@
     "name": "DevOps Work Items",
     "description": "Connessione Azure DevOps per recuperare bug e task.",
     "file": "skills/devops-work-items/SKILL.md"
+  },
+  {
+    "id": "angular-lib-packager",
+    "name": "Angular Lib Packager",
+    "description": "Trasforma il codice generato in una vera lib ng-packagr: public-api.ts, ng-package.json, tsconfig.lib.json, lib-name.theme.scss, aggiornamento angular.json e build di verifica.",
+    "file": "skills/angular-lib-packager/SKILL.md"
   }
 ]

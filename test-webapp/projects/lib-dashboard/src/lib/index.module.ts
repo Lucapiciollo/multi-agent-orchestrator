@@ -26,18 +26,6 @@ import { MatTableModule } from '@angular/material/table';
 // vedi architecture-report.md §COMPONENTS PROPOSED riga 6.
 import { PlDynamicFormModule } from 'pl-dynamicform';
 
-import { ActivityItemComponent } from './components/activity-item/activity-item.component';
-import { AttivitaRecentiComponent } from './components/attivita-recenti/attivita-recenti.component';
-import { ClientiFilterBarComponent } from './components/clienti-filter-bar/clienti-filter-bar.component';
-import { ClientiListCardComponent } from './components/clienti-list-card/clienti-list-card.component';
-import { ClientiPaginationComponent } from './components/clienti-pagination/clienti-pagination.component';
-import { ClientiTableComponent } from './components/clienti-table/clienti-table.component';
-import { ClientiTableRowComponent } from './components/clienti-table-row/clienti-table-row.component';
-import { DashboardHeadingComponent } from './components/dashboard-heading/dashboard-heading.component';
-import { ProfiloCommercialeFormComponent } from './components/profilo-commerciale-form/profilo-commerciale-form.component';
-import { StatCardComponent } from './components/stat-card/stat-card.component';
-import { StatsPanelComponent } from './components/stats-panel/stats-panel.component';
-import { NuovoClienteDialogComponent } from './dialogs/nuovo-cliente/nuovo-cliente-dialog.component';
 import { IndexComponent } from './index.component';
 import { DashboardGuard } from './index.guard';
 import { DashboardService } from './index.service';
@@ -51,14 +39,7 @@ import { DashboardStoreModule } from './redux';
 // ProfiloCommercialeFormComponent, AttivitaRecentiComponent, ActivityItemComponent,
 // NuovoClienteDialogComponent (tutti standalone: false, coerenti con questo modulo).
 @NgModule({
-  declarations: [
-    IndexComponent,
-    DashboardHeadingComponent, StatsPanelComponent, StatCardComponent,
-    ClientiListCardComponent, ClientiFilterBarComponent,
-    ClientiTableComponent, ClientiTableRowComponent, ClientiPaginationComponent,
-    ProfiloCommercialeFormComponent, AttivitaRecentiComponent, ActivityItemComponent,
-    NuovoClienteDialogComponent,
-  ],
+  declarations: [IndexComponent],
   imports: [
     CommonModule,
     HttpClientModule,

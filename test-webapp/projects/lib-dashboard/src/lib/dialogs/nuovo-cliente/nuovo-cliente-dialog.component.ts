@@ -16,7 +16,6 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { NuovoClientePayload } from '../../index.models';
 
 @Component({
-  standalone: false,
   selector: 'lib-dashboard-nuovo-cliente-dialog',
   templateUrl: './nuovo-cliente-dialog.component.html',
   styleUrls: ['./nuovo-cliente-dialog.component.scss'],

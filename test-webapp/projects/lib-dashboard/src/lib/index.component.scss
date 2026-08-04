@@ -1,11 +1,12 @@
 // index.component.scss — lib-dashboard
 //
 // Phase 12 (SCSS migration / step-13-scss-migration): design token condivisi
-// centralizzati in src/libs/_tokens.scss (classe GLOBAL_KEEP), perché
-// workspace/output/scss/** (output atteso di scss-extractor-agent) risulta
-// ancora vuoto. Le custom properties CSS restano l'unica fonte di verità
-// RUNTIME per i componenti figli (ereditano via cascata anche con
-// ViewEncapsulation.Emulated) — invariato rispetto allo step precedente.
+// centralizzati in src/libs/_tokens.scss (classe GLOBAL_KEEP). Verificato
+// workspace/output/scss/main.scss: appartiene a un'altra feature (shell
+// sidebar/topbar/storico, zero overlap con lib-dashboard) → nessuna
+// riconciliazione applicabile. Le custom properties CSS restano l'unica
+// fonte di verità RUNTIME per i componenti figli (ereditano via cascata
+// anche con ViewEncapsulation.Emulated) — invariato rispetto allo step precedente.
 // Con questo step i valori letterali sono stati spostati in tokens.$color-* /
 // tokens.$radius-* per eliminare la duplicazione con gli altri
 // *.component.scss della feature che referenziano gli stessi valori

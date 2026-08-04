@@ -23,7 +23,6 @@ const INITIAL_VALUE: ProfiloCommercialePayload = {
 };
 
 @Component({
-  standalone: false,
   selector: 'lib-dashboard-profilo-form',
   templateUrl: './profilo-commerciale-form.component.html',
   styleUrls: ['./profilo-commerciale-form.component.scss'],

@@ -282,5 +282,39 @@
       "model": "claude-sonnet-5",
       "timeoutMs": 3600000
     }
+  },
+  {
+    "id": "lib-packager-agent",
+    "name": "Angular Lib Packager Agent",
+    "description": "Confeziona il codice Angular generato in una libreria ng-packagr distribuibile: crea public-api.ts, ng-package.json, tsconfig files, lib.theme.scss, aggiorna angular.json e tsconfig.json, esegue ng build di verifica.",
+    "skills": [
+      "angular-lib-packager",
+      "angular-build-fix"
+    ],
+    "tags": [
+      "angular",
+      "ng-packagr",
+      "lib",
+      "packaging"
+    ],
+    "priority": 72,
+    "allowedPaths": [
+      "workspace/**",
+      "test-webapp/**"
+    ],
+    "forbiddenPaths": [
+      ".git/**",
+      "node_modules/**"
+    ],
+    "capabilities": [
+      "read-files",
+      "write-files",
+      "run-commands"
+    ],
+    "provider": {
+      "type": "copilot",
+      "model": "claude-sonnet-5",
+      "timeoutMs": 1800000
+    }
   }
 ]

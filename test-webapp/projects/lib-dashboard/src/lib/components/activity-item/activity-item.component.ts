@@ -4,7 +4,6 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { Activity } from '../../index.models';
 
 @Component({
-  standalone: false,
   selector: 'lib-dashboard-activity-item',
   templateUrl: './activity-item.component.html',
   styleUrls: ['./activity-item.component.scss'],

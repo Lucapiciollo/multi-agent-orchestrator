@@ -4,7 +4,6 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 import { Activity } from '../../index.models';
 
 @Component({
-  standalone: false,
   selector: 'lib-dashboard-attivita-recenti',
   templateUrl: './attivita-recenti.component.html',
   styleUrls: ['./attivita-recenti.component.scss'],

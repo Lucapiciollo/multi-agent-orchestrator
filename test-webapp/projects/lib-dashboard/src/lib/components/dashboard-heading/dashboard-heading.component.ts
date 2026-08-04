@@ -4,7 +4,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
 
 @Component({
-  standalone: false,
   selector: 'lib-dashboard-heading',
   templateUrl: './dashboard-heading.component.html',
   styleUrls: ['./dashboard-heading.component.scss'],

@@ -19,7 +19,6 @@ const SEGMENTO_LABELS: Record<string, string> = {
 };
 
 @Component({
-  standalone: false,
   // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'tr[lib-dashboard-clienti-table-row]',
   templateUrl: './clienti-table-row.component.html',

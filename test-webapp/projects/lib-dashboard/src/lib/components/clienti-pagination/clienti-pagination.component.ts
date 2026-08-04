@@ -8,7 +8,6 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 type PageItem = number | '...';
 
 @Component({
-  standalone: false,
   selector: 'lib-dashboard-clienti-pagination',
   templateUrl: './clienti-pagination.component.html',
   styleUrls: ['./clienti-pagination.component.scss'],

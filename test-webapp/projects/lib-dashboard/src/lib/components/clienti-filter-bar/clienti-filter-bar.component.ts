@@ -13,7 +13,6 @@ import { FormBuilder } from '@angular/forms';
 import { ClientiFilters } from '../../index.models';
 
 @Component({
-  standalone: false,
   selector: 'lib-dashboard-clienti-filter-bar',
   templateUrl: './clienti-filter-bar.component.html',
   styleUrls: ['./clienti-filter-bar.component.scss'],

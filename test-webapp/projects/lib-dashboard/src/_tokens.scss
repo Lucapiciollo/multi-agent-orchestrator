@@ -1,15 +1,21 @@
 // _tokens.scss — Design tokens condivisi per src/libs/**
 //
-// ⚠️ Fallback Phase 12 (SCSS migration / step-13-scss-migration):
-// workspace/output/scss/** (output atteso di scss-extractor-agent, skill
-// css-to-material) risulta VUOTO al momento di questa generazione.
-// Questo file assume temporaneamente il ruolo di _tokens.scss condiviso:
-// consolida in un unico punto (classe GLOBAL_KEEP) i valori già introdotti
-// come CSS custom properties in lib-dashboard/index.component.scss (:host)
-// più i valori hardcoded duplicati identificati durante la classificazione
-// Phase 12 (classe UTILITY_SHARED). Quando scss-extractor-agent produrrà i
-// design token reali, riconciliare qui SENZA alterare i valori già in uso,
-// per non violare la fedeltà visiva al 100%.
+// Fallback Phase 12 (SCSS migration / step-13-scss-migration): questo file
+// assume il ruolo di _tokens.scss condiviso per lib-dashboard. Consolida in
+// un unico punto (classe GLOBAL_KEEP) i valori già introdotti come CSS
+// custom properties in lib-dashboard/index.component.scss (:host) più i
+// valori hardcoded duplicati identificati durante la classificazione Phase 12
+// (classe UTILITY_SHARED).
+//
+// ⚠️ Verifica riconciliazione (step-13-scss-migration): workspace/output/scss/
+// main.scss è stato ispezionato — contiene i design token TimeVision
+// (--primary:#EB5E2D, --neutral-*, --success, --font) di un'altra feature
+// (shell sidebar/topbar, storico, wizard: classi sb-*, storico-*, wizard-*).
+// Zero overlap di classi/valori con lib-dashboard (stat-card, clienti-*,
+// stats-panel, attivita-recenti, profilo-commerciale-form, ecc.), quindi
+// NESSUNA riconciliazione applicabile: i due set di token appartengono a
+// feature/palette distinte e non vanno unificati (violerebbe la fedeltà
+// visiva). Questo file resta l'unica fonte di verità per lib-dashboard.
 //
 // Ogni *.component.scss della lib fa `@use` di questo file con il path
 // relativo corretto in base alla propria profondità in src/libs/{slug}/.

@@ -15,7 +15,6 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 import { Cliente } from '../../index.models';
 
 @Component({
-  standalone: false,
   selector: 'lib-dashboard-clienti-table',
   templateUrl: './clienti-table.component.html',
   styleUrls: ['./clienti-table.component.scss'],

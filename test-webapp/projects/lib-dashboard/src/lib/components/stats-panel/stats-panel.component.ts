@@ -5,7 +5,6 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { StatCard } from '../../index.models';
 
 @Component({
-  standalone: false,
   selector: 'lib-dashboard-stats-panel',
   templateUrl: './stats-panel.component.html',
   styleUrls: ['./stats-panel.component.scss'],
